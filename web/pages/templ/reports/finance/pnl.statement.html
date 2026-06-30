@@ -1,0 +1,204 @@
+ 
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-10">
+        <form id="frmGstr1" class="form-horizontal">
+            <div class="col-sm-12">
+
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 text-left">From</label>
+                        <div class="col-sm-8">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+                            </datepicker>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 text-left">To</label>
+                        <div class="col-sm-8">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.To" type="text" tabindex="2" class="form-control" />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+
+
+                        <button type="button" class="btn btn-primary" ng-click="show();"><i class="fa fa-eye"></i> Show</button>
+
+                        <button type="button" class="btn btn-primary" ng-click="exportToExcel();"><i class="fa fa-file-excel-o"></i> Excel</button>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+
+        <style>
+            td label {
+                font-size: 14px;
+            }
+        </style>
+
+    </div>
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <div class="col-sm-6">
+                <table class="table table-condensed " med-key>
+                    <tr class="headerRow">
+                        <th colspan="2" class="text-center">Debit</th>
+                    </tr>
+                    <tr class="headerRow">
+                        <th style="width:50%">Particular</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                    <tr>
+                        <td><label>Opening Stock</label></td>
+                        <td class="text-right">
+                            <label>  {{ReportData.OpeningStock |number:2}}</label>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="item in ReportData.Groups | filter:{AccType:'Liability'}" ng-dblclick="showLedgerDetails(item)">
+                        <td><label>  {{item.Group}}</label></td>
+                        <td class="text-right"><label>{{(item.Amount ) |number:2 }}</label>  </td>
+                    </tr>
+
+
+                    <tr ng-if="ReportData.GrossLoss >=0">
+                        <td><label>Gross Loss</label></td>
+                        <td class="text-right">  {{ReportData.GrossLoss |number:2}}</td>
+                    </tr>
+                    <tr ng-if="ReportData.GrossLoss ==0">
+                        <td><label>Gross Profit</label></td>
+                        <td class="text-right">  {{ReportData.GrossProfit |number:2}}</td>
+                    </tr>
+                    <tr ng-if="ReportData.GrossLoss ==0">
+                        <td><label>Net Profit</label></td>
+                        <td class="text-right"> <label> {{ReportData.NetProfit |number:2}}</label> </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-6">
+                <table class="table table-condensed " med-key>
+                    <tr class="headerRow">
+                        <th colspan="2" class="text-center">Credit</th>
+                    </tr>
+                    <tr class="headerRow">
+                        <th style="width:50%">Particular</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+
+                    <tr ng-repeat="item in ReportData.Groups | filter:{AccType:'Asset'}"  ng-dblclick="showLedgerDetails(item)">
+                        <td><label>  {{item.Group}}</label></td>
+                        <td class="text-right"><label>{{(item.Amount ) |number:2 }}</label>  </td>
+                    </tr>
+                    <tr ng-if="ReportData.GrossLoss ==0">
+                        <td><label>Gross Profit</label></td>
+                        <td class="text-right">  {{ReportData.GrossProfit |number:2}}</td>
+                    </tr>
+                    <tr ng-if="ReportData.GrossLoss >=0">
+                        <td><label>Gross Loss</label></td>
+                        <td class="text-right">  {{ReportData.GrossLoss |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Indirect Income</label></td>
+                        <td class="text-right">{{ReportData.InDirectIncome |   number:2}} </td>
+                    </tr>
+                    <tr>
+                        <td><label>Interest A/C</label></td>
+                        <td class="text-right"> - </td>
+                    </tr>
+                    <tr ng-if="ReportData.NetLoss > 0">
+                        <td><label>Net Loss</label></td>
+                        <td class="text-right"> <label> {{ReportData.NetLoss |number:2}}</label> </td>
+                    </tr>
+
+                </table>
+            </div>
+
+
+
+            <div class="col-sm-6">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background-color: #d7d7d7">
+                    <label style="margin-bottom:0px;">Total</label>
+                    <label style="margin-bottom:0px;">
+                        {{ReportData.NetLoss + ReportData.NetProfit | number:2}}
+                    </label>
+                </div>
+
+            </div>
+            <div class="col-sm-6">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background-color: #d7d7d7">
+                    <label style="margin-bottom:0px;">Total</label>
+                    <label style="margin-bottom:0px;">
+                        {{ReportData.NetLoss + ReportData.NetProfit | number:2}}
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal right fade" id="dlgLedgerDetails" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:50%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Details</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-condensed ">
+                        <tr class="headerRow">
+                            <th>S.No</th>
+                            <th>Group</th>
+                            <th>Account</th>
+                            <th>Date</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Balance</th>
+                            <th>Narration</th>
+                        </tr>
+                        <tr ng-repeat="item in TransList">
+
+                            <td>{{$index + 1 }}</td>
+                            <td>{{item.Group}}</td>
+                            <td>{{item.Name}}</td>
+                            <td>{{item.TransactionDate | formatDate}}</td>
+                            <!--<td class="text-right">{{ (item.TransactionType == 1 ||  item.TransactionType == 3  ?  item.TransactionAmount : 0) | number:2}}</td>
+    <td class="text-right">{{ (item.TransactionType == 2 || item.TransactionType == 4 ?    item.TransactionAmount :0)| number:2}}</td>-->
+                            <td class="text-right">{{item.Debit | number:2}}</td>
+                            <td class="text-right">{{item.Credit | number:2}}</td>
+                            <td class="text-right">
+                                 {{Abs(item.Closingbalance)   }}
+                            </td>
+                            <td>
+                                {{item.Narration}}
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+

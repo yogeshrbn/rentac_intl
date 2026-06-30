@@ -1,0 +1,31 @@
+﻿<md-dialog style="height:40%;">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{Title}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+           
+        </md-button>
+      </div>
+    </md-toolbar>
+  <md-dialog-content  layout="row" layout-wrap layout-margin layout-align="center">
+        
+        
+         <div class="text-center">
+             {{Message}}
+        
+      </div>
+     
+            
+           
+         
+
+      </md-dialog-content>
+      <md-dialog-actions layout="row">
+          <div  class="pull-right"> 
+          <md-button ng-click="OkButtonClick()" class="btn btn-primary" value="Print">OK <i class="fa fa-spinner fa-spin hide" style="color:#fff;"></i></md-button>
+          <span flex></span>
+          <!--<md-button ng-click="closeDialog()" class="btn btn-danger" value="Close" >Close</md-button>-->
+              </div>
+  </md-dialog-actions>
+</md-dialog>

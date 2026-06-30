@@ -1,0 +1,301 @@
+<!--<pageheader heading="Received Register" />-->
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-2">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" data-item="Client" data-all="true" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Billing.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+        </div>
+        <div class="col-sm-2">
+            <label>Site</label>
+            <searchableselect id="Searchableselect1" ng-model="Billing.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+            <div class="row">
+                <div style="display: flex; justify-content: space-around;">
+                    <div class="form-group">
+                        <label>From</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Billing.From" type="text" class="form-control" />
+                        </datepicker>
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Billing.To" type="text" class="form-control" />
+                        </datepicker>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-2">
+            <label>Type</label>
+            <select class="form-control" ng-model="ChallanType">
+                <option ng-value="2" ng-selected="ChallanType == 2">Rent Challan</option>
+                <option ng-value="12" ng-selected="ChallanType == 12">Transfer Challan</option>
+                <option ng-value="11" ng-selected="ChallanType == 11">Contract Challan</option>
+                <option ng-value="10" ng-selected="ChallanType == 10">Hire Challan</option>
+
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <label class="col-sm-12 hidden-xs">&nbsp;</label>
+            <div class="d-flex col-sm-12" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding-left:0; width:100%;">
+                <input type="button" class="btn btn-primary" value="Search" ng-click="ItemsIssued();" />
+                <input type="button" class="btn btn-primary" ng-show="AccessData.Add" value="New Challan" ng-click="goNewReceivedChallan($event)" />
+                <input type="button" class="btn btn-info" value="Print Report" ng-click="PrintReceivedRegisterReport();" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <a href="#" stop="true" class="text-success" data-target="#advFilterDialog" data-toggle="modal">
+                <i class="fa fa-sliders"></i> Advance Filters
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <div class="table-responsive" style="margin-top:7px;height:550px;overflow-y:auto;">
+            <table class="table table-condensed " med-key>
+
+                <tr class="headerRow">
+                    <th style="width: 40px;">#</th>
+
+                    <th style="width: 80px;" sort-header="ReceivedItems" sort-field="ReceivingDate">Date</th>
+                    <th style="width: 300px;" sort-header="ReceivedItems" sort-field="Client">Party</th>
+                    <!--<th style="width: 150px;">Site</th>-->
+
+                    <th style="width: 130px;" sort-header="ReceivedItems" sort-field="GRN">Vch</th>
+                    <th style="width: 140px;">Challan Type</th>
+                    <th style="text-align: center; width: 50px;">Qty</th>
+                    <th style="width: 100px;">Driver</th>
+                    <th style="width: 50px;">Freight</th>
+                    <th style="width: 70px;">Add. Exp</th>
+                    <!--<th style="width: 250px;">Remarks</th>-->
+                    <!--<th style="width: 200px;">Item</th>-->
+
+                    <th style="text-align: center; width: 50px;">B.Qty</th>
+                    <th style="text-align: center; width: 50px;">Short</th>
+                    <th style="text-align: center; width: 50px;">Excess</th>
+                    <th style="text-align: center; width: 80px;">Total</th>
+                    <th style="width: 50px;" class="text-center">Actions</th>
+
+
+                </tr>
+                <tbody dir-paginate="item in ReceivedItems | itemsPerPage: PAGE_SIZE" pagination-id="recvdList" total-items="TotalItems" current-page="CurrentPage">
+                    <tr id="recvd-row-{{item.GRNId}}" ng-class="item.Deleted == 1 ? 'text-danger':''">
+                        <td class="text-center">
+
+                            <span>{{(CurrentPage - 1) * PAGE_SIZE + $index + 1}}</span>
+                            <!--<span>
+                                <input type="checkbox" ng-model="item.Print" />
+                                <i class="fa fa-chevron-down toggle" style="cursor: pointer;" data-toggle="collapse" data-target="#tr{{$index}}" ng-click="LoadItems($index);"></i>
+                            </span>-->
+                        </td>
+                        <td>{{item.ReceivingDate |date: 'dd-MM-yyyy'}}</td>
+                        <td>
+
+                            <span class="overflow-ellipse" style="max-width:150px;">{{item.Client}}</span>
+                            <span style="font-size:10px"> <br />(  {{item.SiteName}})</span>
+                        </td>
+                        <!--<td  >
+                            <span class="overflow-ellipse" style="max-width:150px;">{{item.SiteName}}</span>
+                        </td>-->
+                        <td>
+                            {{item.GRN }}
+                            <span ng-if="item.InwardConfirm || item.inwardConfirm" class="text-success" style="font-weight:bold;font-size:11px;">
+                                <br />
+                                (Inward Confirm)
+                            </span>
+                            <span ng-if="item.EwayBillNo" class="text-success" style="font-weight:bold;font-size:11px;">
+                                <br />
+                                (ewb: {{item.EwayBillNo}})
+                            </span>
+                        </td>
+                        <td>{{getRecvdChallanTypeLabel(item.ChallanType)}}</td>
+                        <td class="text-center"><span class="clickable" ng-click="ShowItems(item.GRNId);">{{item.Quantity}}</span></td>
+                        <td>
+                            {{item.Driver }}
+                            <span>{{item.VehicleNo}}</span>
+                        </td>
+                        <td>{{item.Freight }}</td>
+
+                        <td>{{item.AddExp }}</td>
+
+
+                        <!--<td>{{item.Remarks }}</td>-->
+                        <!--  <td >{{item.Item }}</td>-->
+
+
+                        <td class="text-center">{{item.Breakage }}</td>
+                        <td class="text-center">{{item.ShortQty }}</td>
+                        <td class="text-center">{{item.ExcessQty }}</td>
+                        <td class="text-center">{{item.Breakage + item.Quantity}}</td>
+                        <td class="text-center">
+                            <a href="javascript:void(0)" class="mr-1" ng-show="enableRecvdListPreview" ng-click="previewReceivedChallan(item);" stop="true" title="Preview"><i class="fa fa-eye fa-2x text-info"></i></a>
+                            <!-- <a href="#/inv_grn?grnId={{item.GRNId}}"><span class="fa fa-edit text-primary"></span></a>
+                            <span class="fa fa-file-pdf-o text-danger" title="Export to pdf" ng-click="Print(item);"></span>-->
+                            <div class="btn-group">
+
+                                <i class="fa fa-cog fa-2x text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li ng-if="enableRecvdListPreview"><a href="#" ng-click="previewReceivedChallan(item);" stop="true"><i class="fa fa-eye text-info fa-2x"></i>Preview</a></li>
+                                    <li><a href="#" ng-click="edit(item);" stop="true"><i class="fa fa-edit text-primary fa-2x"></i>Edit</a></li>
+
+                                    <li><a href="#" ng-click="Print(item);" stop="true"><i class="fa fa-print text-primary fa-2x"></i>Print</a></li>
+                                    <li ng-if="item.Deleted == 0 && !item.InwardConfirm && !item.inwardConfirm">
+                                        <a href="#" ng-click="inwardConfirm(item);" stop="true"><i class="fa fa-check-square-o fa-2x text-success"></i>Inward Confirm</a>
+                                    </li>
+                                    <li ng-if="item.Deleted == 0"> <a ng-show="comp.EwayBillEnabled ==true && (!item.EwayBillNo || item.EwayBillNo == '')" href="#" ng-click="createEwayBill(item);"> <i class="fa fa-paper-plane fa-2x"></i>E-Way Bill</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li ng-if="item.Deleted == 0"><a href="#" ng-click="deleteChallan(item);" stop="true"><i class="fa fa-trash text-danger fa-2x"></i>Delete</a></li>
+
+
+                                    <!--<li><a href="#" ng-click="SendEmail(item.GRNId);" stop="true"><i class="fa fa-envelope-o text-success fa-2x"></i>Email To Client</a></li>-->
+
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" style="padding: 0px; border-top: 0px;">
+                            <div class="collapse" id="tr{{$index}}" style="margin-left: 20px;margin-top:2px; border-left: solid 1px #e4e4e4;">
+                                <table class="table table-condensed table-responsive" style="border-left: none; border-right: none;">
+                                    <tr class="headerRow">
+                                        <th style="width: 100px">
+                                            Product
+                                        </th>
+
+                                        <th style="width: 40px">
+                                            Quantity
+                                        </th>
+                                        <th style="width: 40px">
+                                            Breakage
+                                        </th>
+                                        <th style="width: 70%"></th>
+                                    </tr>
+                                    <tr ng-repeat="it in (item.Items || [])">
+                                        <td>{{it.Item}}</td>
+                                        <td>{{it.Quantity}}</td>
+                                        <td>
+                                            {{it.Breakage}}
+                                        </td>
+
+                                        <td style="width: 70%"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <!--<tr class="totalRow" ng-if="ReceivedItems">
+                    <td colspan="6">Total:</td>
+                    <td>{{ReceivedItems | sum:'Quantity'|number:2}}</td>
+                    <td>{{ReceivedItems | sum:'Breakage'|number:2}}</td>
+                    <td>{{(ReceivedItems | sum:'Breakage')+(ReceivedItems | sum:'Quantity')|number:2}}</td>
+                    <td></td>
+                </tr>-->
+            </table>
+        </div>
+        <div class="flex-between" style="margin-top:8px;">
+            <div class="text-muted small" ng-if="ReceivedItems.length > 0">Showing {{(CurrentPage - 1) * PAGE_SIZE + 1}} - {{(CurrentPage - 1) * PAGE_SIZE + ReceivedItems.length}} of {{TotalItems}}</div>
+            <dir-pagination-controls pagination-id="recvdList" on-page-change="onPageChange(newPageNumber)"></dir-pagination-controls>
+        </div>
+    </div>
+</div>
+<div class="modal right fade" id="previewDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:50%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Preview</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0px;">
+                <loadingcircle ng-show="ReceivedPreview == 1"></loadingcircle>
+                <div class="row">
+                    <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                        <div class="d-flex d-sm-block" style="justify-content: space-between; flex-direction: row;">
+                            <button class="btn btn-primary btn-sm" ng-click="edit(SelectedReceivedItem)">Edit</button>
+                            <button class="btn btn-primary btn-sm" ng-click="Print(SelectedReceivedItem)">Print</button>
+                            <button class="btn btn-primary btn-sm" ng-click="printReceivedChallanPdf()">Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="rpt" style="zoom: 0.8; overflow-y: auto; max-height: 93vh;">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <div class="form-group" ng-show="promptHeaderOriginalDuplicate == true">
+                            <label class="col-sm-3">Header Type</label>
+                            <div class="col-sm-4">
+                               
+                                <select class="form-control" ng-model="printHeaderType"  >
+                                    <option value="none">None</option>
+                                    <option value="original">Original</option>
+                                    <option value="duplicate">Duplicate</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" ng-click="printReceivedChallanPdf()">Download PDF</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="advFilterDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Advance Filters</h4>
+            </div>
+            <div class="modal-body" style="overflow-y:auto;">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="vcenter col-sm-2">Challan#</label>
+                        <div class="col-sm-4">
+                            <input type="text" ng-model="Billing.ChallanNo" maxlength="30" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="vcenter col-sm-2">Status</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" ng-model="Billing.ReceivedListStatusFilter">
+                                <option value="All">All</option>
+                                <option value="Active">Active</option>
+                                <option value="Deleted">Deleted</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelAdvDialog" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="btnCancelAdvDialog" type="button" class="btn btn-default" ng-click="Billing.ChallanNo=''; Billing.ReceivedListStatusFilter='All'">Clear</button>
+                <button id="btnApplyAdvDialog" type="button" class="btn btn-primary" data-dismiss="modal" ng-click="ItemsIssued()">Apply</button>
+
+            </div>
+        </div>
+    </div>
+</div>

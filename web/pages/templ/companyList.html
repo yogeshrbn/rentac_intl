@@ -1,0 +1,61 @@
+﻿<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+    <!-- <pageheader heading="Company List" />-->
+    <!--<div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>-->
+    <div class="col-lg-12">
+
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <div class="d-flex mb-1 mr-1">
+                <input type="text" class="form-control mr-1" placeholder="Find by name" ng-model="Search.Name" />
+
+                <input type="button" value="Find" class="btn btn-primary  mr-1" ng-click="find();" />
+
+                <a href="#addeditcompany"   class="btn btn-primary" ng-show="AccessData.Add">New Company</a>
+                
+            </div>
+            <div>
+                <export data="Companies" url="'companies.html'"></export>
+            </div>
+        </div>
+        <div class="table-responsive">
+
+            <table class="table table-condensed table-responsive " med-key>
+
+                <tr class="headerRow">
+                    <th style="width:50px" class="text-center">S.No.</th>
+                    <th sort-header="Companies" sort-field="Name">Company</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+
+
+                </tr>
+                <tr ng-repeat="item in Companies">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        {{item.Name}}
+                    </td>
+                    <td>
+                        {{item.Address1}},{{item.Address2}}
+                    </td>
+                    <td>{{item.Phone1}}</td>
+                    <td>{{item.Email}}</td>
+                    <td>
+                        <a href="#addeditcompany/{{item.CompanyId}}" ng-show="AccessData.Edit"><span class="fa fa-edit text-primary"></span></a>&nbsp;&nbsp;
+                        <a ng-show="item.IsActive==1" ng-click="Activate(0,item.CompanyId);"><span class="fa fa-trash text-danger"></span></a>
+                        <a ng-show="item.IsActive==0" ng-click="Activate(1,item.CompanyId);"><span class="fa fa-check text-primary"></span></a>
+                    </td>
+                </tr>
+                <tr ng-if="Companies.length == 0">
+                    <td colspan="7" class="text-center">
+                        <div class="alert alert-info">No branches found.</div>
+                    </td>
+                </tr>
+            </table>
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+</div>

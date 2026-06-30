@@ -1,0 +1,72 @@
+<!--<div class="col-sm-10">
+    <div class="col-sm-12">
+        <label>Non GST Bill</label>
+    </div>
+
+    <div class="col-sm-3" ng-repeat="item in BillSettings | filter:{Category:'Invoice'}:true">
+        <label>{{item.Key}}</label>
+        <input type="text" class="form-control" ng-model="item.Value" />
+
+    </div>
+
+</div>-->
+
+
+<div class="col-sm-12">
+    <div class="alert alert-dismissable alert-success" role="alert">
+        <label>
+            <i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>&nbsp;Rentac provides a gallery of templates, you can pick any which suites your branding.
+            Click on <code>Use This button</code> to set your default template.
+        </label>
+    </div>
+    <style>
+        .template-gallery-thumb-wrap { position: relative; }
+        .template-gallery-thumb {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            object-position: center center;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+    <div class="row">
+        <div class="col-sm-4 col-md-4" ng-repeat="item in Templates">
+            <div class="thumbnail template-gallery-thumb-wrap" ng-class="item.TemplateId == DefaultTemplateId ? 'template-thumbnail':''">
+                <a class="template-gallery-customize" style="position: absolute; top: 8px; right: 8px; z-index: 2;" ui-sref="templates.customize" title="Customize">
+                    <i class="fa fa-gear text-primary fa-2x"></i>
+                </a>
+                <img class="template-gallery-thumb"  style="height:200px;" ng-src="../img/{{item.PreviewImage}}" alt="{{item.Name}}">
+                <div class="caption text-center">
+                    <h3>{{item.Name}}</h3>
+                    <div style="margin-top:10px;min-height:36px;">
+                        <button type="button" class="btn btn-default btn-sm" title="Enlarge preview"
+                                ng-click="openTemplatePreview(item); $event.stopPropagation();">
+                            <i class="fa fa-search-plus" aria-hidden="true"></i> Preview
+                        </button>
+                        <button ng-if="item.TemplateId != DefaultTemplateId" type="button" class="btn btn-primary btn-sm" style="margin-left:6px;"
+                                ng-click="onUseThisClick(item.TemplateId)">
+                            Use This
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="templateGalleryPreviewModal" tabindex="-1" role="dialog" aria-labelledby="templateGalleryPreviewTitle">
+    <div class="modal-dialog modal-lg" role="document" style="width: 92%; max-width: 800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="templateGalleryPreviewTitle">{{templatePreview.Name}}</h4>
+            </div>
+            <div class="modal-body text-center" style="padding:16px; background:#f5f5f5; overflow:auto; max-height:85vh;">
+                <img ng-if="templatePreview.PreviewImage" ng-src="../img/{{templatePreview.PreviewImage}}" alt="{{templatePreview.Name}}"
+                     style="max-width:100%; max-height:80vh; width:auto; height:auto; object-fit:contain;" />
+            </div>
+        </div>
+    </div>
+</div>
+

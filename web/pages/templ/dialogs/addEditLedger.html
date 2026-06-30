@@ -1,0 +1,142 @@
+﻿<md-dialog style="width:50%;height:70%;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Add Ledger</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="closeDialog()">
+
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout="row" layout-wrap layout-margin layout-align="center">
+        <form id="form-client" method="post" class="form-horizontal form-bordered">
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="required">Code</label>
+                  
+                    <input type="text" ng-disabled="Config.partycodegenmode == 'auto' ? 'true': null" required class="form-control" ng-model="Ledger.Code" />
+                </div>
+                <div class="col-sm-6">
+                    <label class="required">Name</label>
+                    <input type="text" name="val_clientName" required class="form-control" ng-model="Ledger.Name" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Address 1</label>
+                    <input type="text" class="form-control" id="val_address1" ng-model="Ledger.Address1" maxlength="200" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Address 2</label>
+                    <input type="text" class="form-control" ng-model="Ledger.Address2" maxlength="200" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Email</label>
+                    <input type="text" class="form-control" ng-model="Ledger.Email" maxlength="50" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Fax</label>
+                    <input type="text" class="form-control" ng-model="Ledger.Fax" maxlength="15" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Phone 1</label>
+                    <input type="text" class="form-control maskednumber" ng-model="Ledger.Phone1" phoneformat="true" maxlength="10" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Phone 2</label>
+                    <input type="text" class="form-control maskednumber" ng-model="Ledger.Phone2" phoneformat="true" maxlength="10" />
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+
+                        <div class="panel  panel-primary">
+                            <div class="panel-heading">
+                                <span>Billing Address</span>
+                            </div>
+                            <div class="panel-body" id="billing">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <label>Address1</label>
+                                    <input type="text" id="val_address1" tabindex="6" name="val_address1" ng-model="Ledger.BillingAddress.Address1" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Address2</label>
+                                    <input type="text" id="txtAddress2" tabindex="7" ng-model="Ledger.BillingAddress.Address2" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>City</label>
+                                    <input type="text" id="Text6" tabindex="8" name="val_address1" ng-model="Ledger.BillingAddress.City" class="form-control " maxlength="30" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>State</label>
+                                    <!--<input type="text" id="Text7" tabindex="9" ng-model="Ledger.BillingAddress.State" class="form-control" />-->
+
+                                    <state ng-model="Ledger.BillingAddress.StateId"></state>
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Email</label>
+                                    <input type="text" tabindex="10" ng-model="Ledger.BillingAddress.Email" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Zip Code</label>
+                                    <input type="tel" id="txtFax" tabindex="11" ng-model="Ledger.BillingAddress.ZipCode" class="form-control maskednumber text-left" style="text-align:left" nodecimal maxlength="6" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Web</label>
+                                    <input type="text" tabindex="12" ng-model="Ledger.BillingAddress.Web" class="form-control" maxlength="50" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <span>Shipping Address</span>
+
+                                <span class="pull-right" ng-click="copyBillingAddress();">Copy Billing Address</span>
+                            </div>
+                            <div class="panel-body" id="shipping">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <label>Address1</label>
+                                    <input type="text" id="Text8" tabindex="13" name="val_address1" ng-model="Ledger.ShippingAddress.Address1" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Address2</label>
+                                    <input type="text" id="Text10" tabindex="14" ng-model="Ledger.ShippingAddress.Address2" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>City</label>
+                                    <input type="text" id="Text11" tabindex="15" name="val_address1" ng-model="Ledger.ShippingAddress.City" class="form-control" maxlength="30" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>State</label>
+
+                                    <state ng-model="Ledger.ShippingAddress.StateId"></state>
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Email</label>
+                                    <input type="text" tabindex="17" ng-model="Ledger.ShippingAddress.Email" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Zip Code</label>
+                                    <input type="tel" id="Tel4" tabindex="18" ng-model="Ledger.ShippingAddress.ZipCode" class="form-control maskednumber text-left" style="text-align:left" nodecimal maxlength="6" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Web</label>
+                                    <input type="text" tabindex="19" ng-model="Ledger.ShippingAddress.Web" class="form-control" maxlength="50" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="pull-right">
+            <button ng-click="closeDialog()" class="btn btn-default" value="Close">Close</button>
+            <span flex></span>
+            <button ng-click="OkButtonClick()" class="btn btn-primary" value="Print">Save <i class="fa fa-spinner fa-spin hide" style="color:#fff;"></i></button>
+
+
+        </div>
+    </md-dialog-actions>
+</md-dialog>

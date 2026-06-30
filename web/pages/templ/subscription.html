@@ -1,0 +1,155 @@
+<!--<div class="row">
+    <div class="col-md-3">
+        <table class="table table-bordered">
+            <tr>
+                <td colspan="4" style="text-align:right">
+                    <b class="text-danger"> Prev. Balance: {{bills.prevBalance}}</b>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered" ng-if="bills.currentBill">
+
+            <tr>
+                <td colspan="4" class="alert-info">Current Bill Breakup</td>
+            </tr>
+            <tr ng-repeat="d in bills.currentBill.Details">
+                <td>{{d.Range}}</td>
+                <td>{{d.Quantity }} Challans</td>
+                <td>{{d.Rate | number :2}}/Challan</td>
+                <td class="text-right">{{d.Amount | number :2}}</td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td>Tax</td>
+                <td class="text-right">{{bills.currentBill.Tax | number :2}}</td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td>Total</td>
+                <td style="text-align:right"><b>{{bills.currentBill.TotalAmount | number :2}}</b></td>
+            </tr>
+        </table>
+        <table style="width:100%;">
+            <tr>
+                <td>
+                    <div ng-if="dueAmount == 0">
+                        <label class="text-success">Paid   <i class="fa fa-2x fa-check-circle-o text-success"></i></label>
+                    </div>
+                </td>
+                <td style="text-align:right">
+                    <div ng-if="dueAmount > 0">
+                        <label style="margin-right:10px;">Total Due: {{bills.currentBill.TotalAmount + bills.prevBalance}}</label>
+
+                        <button ng-if="dueAmount > 0" class="btn btn-success" ng-click="makePayment()">Pay Now</button>
+                    </div>
+
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="panel">
+                    <div class="panel-heading">Current Month Usage</div>
+                    <div class="panel-body">
+                <div class="row">-->
+<!--<div class="col-md-12 text-center">
+    <label>Current Usage</label>
+</div>-->
+<!--<div class="col-md-12"> <canvas id="chartCurrentUsage"></canvas></div>
+
+        </div>
+
+
+        </div>
+            </div>
+        </div>
+    </div>
+</div>-->
+<!--<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">Invoices Over Time</div>
+        <div class="panel-body">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>-->
+<!--</div>-->
+ 
+
+        <div class="">
+            <div class="col-sm-12">
+                <div class="col-sm-1 nopadding text-center">
+
+                    <label>From</label>
+
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.fromDate" type="text" tabindex="2" class="form-control" />
+                    </datepicker>
+                </div>
+                <div class="col-sm-1 nopadding text-center" style="padding-left: 3px !important;">
+
+                    <label>To</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.endDate" type="text" tabindex="3" class="form-control" />
+                    </datepicker>
+
+                </div>
+                <div class="col-sm-3">
+                    <label class="col-sm-12">&nbsp;</label>
+                    <input type="button" class="btn btn-primary" tabindex="4" value="Search Bills" ng-click="getBills();" />&nbsp;
+
+
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <!--<div class="panel-heading">Billing History</div>-->
+
+                <table class="table table-condensed table-responsive">
+                    <tr class="headerRow">
+                        <th style="width:50px">#</th>
+                        <!--<th>Month</th>-->
+                        <th style="width:100px" class="text-right">Amount</th>
+                        <th style="width:100px" class="text-center">Inv. Date</th>
+                        <!--<th>Status</th>
+                        <th>P.Date</th>-->
+                        <th style="width:30px" class="text-center">Download</th>
+                    </tr>
+                    <tbody>
+                        <tr ng-repeat="bill in bills">
+
+                            <td>{{bill.InvoiceNumber}}</td>
+                            <td class="text-right">{{bill.TotalAmount |number:2}}</td>
+
+                            <!--<td>{{bill.PaymentDate |date}}</td>-->
+
+                            <!--<td>{{bill.PaymentDate |date}}</td>-->
+                            <!--<td>
+                                <span ng-if="bill.Paid==1" class="badge badge-success">Paid</span>
+                                <span ng-if="bill.Paid==0" class="badge badge-warning">Not-Paid</span>
+                            </td>-->
+                            <td class="text-center">
+                                <span class="badge badge-success">{{bill.PaymentDate  |date}}</span>
+                            </td>
+                            <td class="text-center">
+                                <i class="fa fa-2x fa-download text-success" ng-click="print(bill);"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <!--<tfoot>
+                        <tr ng-if="!bills.prev || bills.prev.length ==0">
+                            <td colspan="7">
+                                <div class="alert alert-info">No previous bills found!</div>
+                            </td>
+                        </tr>
+                    </tfoot>-->
+                </table>
+                <!--<a href="#"  ng-click="viewMoreBills($event);">View More</a>-->
+
+
+            </div>
+
+        </div>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{704CC814-21E6-42C3-87D5-5EC2CBDB65C1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DbUpMigration</RootNamespace>
+    <AssemblyName>DbUpMigration</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="dbup-core, Version=5.0.37.0, Culture=neutral, PublicKeyToken=4b419c53bdfd4cbf, processorArchitecture=MSIL">
+      <HintPath>..\packages\dbup-core.5.0.37\lib\net462\dbup-core.dll</HintPath>
+    </Reference>
+    <Reference Include="dbup-sqlserver, Version=5.0.41.0, Culture=neutral, PublicKeyToken=4b419c53bdfd4cbf, processorArchitecture=MSIL">
+      <HintPath>..\packages\dbup-sqlserver.5.0.41\lib\net462\dbup-sqlserver.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Azure.Services.AppAuthentication, Version=1.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Azure.Services.AppAuthentication.1.6.2\lib\net472\Microsoft.Azure.Services.AppAuthentication.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.5.2.9\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Security, Version=4.0.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Security.4.3.2\lib\net46\System.Net.Security.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DbMigrationService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Db\" />
+    <Folder Include="Functions\" />
+    <Folder Include="PostRun\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp02.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp03.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\view001.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp004.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\view002.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp005.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp006.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp007.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp008.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SP\sp009.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PreRun\table020.sql" />
+    <EmbeddedResource Include="PreRun\table021.sql" />
+    <EmbeddedResource Include="PreRun\table023.sql" />
+    <EmbeddedResource Include="PreRun\table024.sql" />
+    <EmbeddedResource Include="PreRun\table025.sql" />
+    <EmbeddedResource Include="PreRun\table026.sql" />
+    <EmbeddedResource Include="PreRun\table027_GRNItems_DamageComponent.sql" />
+    <EmbeddedResource Include="PreRun\table028_GRNItemDamageComponents.sql" />
+    <EmbeddedResource Include="PreRun\table029_InvoiceBreakageDamageComponent.sql" />
+    <EmbeddedResource Include="PreRun\table030_WorkOrder_Dispatched.sql" />
+    <EmbeddedResource Include="PreRun\table031_GRN_InwardConfirm.sql" />
+    <EmbeddedResource Include="PreRun\table032_WorkOrder_GRN_ModifiedColumns.sql" />
+    <EmbeddedResource Include="PreRun\table033_Ledger_CreditDays.sql" />
+    <EmbeddedResource Include="PreRun\table034_WorkOrder_SezDescription.sql" />
+    <EmbeddedResource Include="PreRun\table035_Quotation_PartyType_ManualGst.sql" />
+    <EmbeddedResource Include="PreRun\table036_WorkOrder_GRN_AdjType.sql" />
+    <EmbeddedResource Include="PreRun\table037_Purchase_WarehouseId.sql" />
+    <EmbeddedResource Include="PreRun\table038_WorkOrder_ShipFrom.sql" />
+    <EmbeddedResource Include="PreRun\table039_Invoice_Taxable.sql" />
+    <EmbeddedResource Include="PreRun\table040_GRN_ShipFrom.sql" />
+    <EmbeddedResource Include="PreRun\table041_Invoice_PrintAllPO.sql" />
+    <EmbeddedResource Include="PreRun\table042_ClientSites_Documents.sql" />
+    <EmbeddedResource Include="PreRun\table043_Contract_ApproximateWeight.sql" />
+    <EmbeddedResource Include="PreRun\table044_Quotation_ContractArea.sql" />
+    <EmbeddedResource Include="PreRun\table045_QuotationItems_LineArea.sql" />
+    <EmbeddedResource Include="PreRun\table046_Quotation_LineTotalMode.sql" />
+    <EmbeddedResource Include="PreRun\table047_LedgerTransactions_ContractId.sql" />
+    <EmbeddedResource Include="PreRun\table048_InvoiceItems_Unit.sql" />
+    <EmbeddedResource Include="PreRun\table049_QuotationItems_GstRates.sql" />
+    <EmbeddedResource Include="PreRun\table050_ContractDocuments.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PreRun\table022.sql" />
+    <EmbeddedResource Include="PreRun\table041_Invoice_PONumbers.sql" />
+    <EmbeddedResource Include="SP\sp0037_GRN_PONumber.sql" />
+    <EmbeddedResource Include="SP\sp0038_Billing_FilterChallansByPO.sql" />
+    <EmbeddedResource Include="SP\sp0039_partyQtyVarianceReports.sql" />
+    <EmbeddedResource Include="SP\sp0040_Quotation_party_manual_gst_procs.sql" />
+    <EmbeddedResource Include="SP\sp0041_MaterialAdjust_AdjType_procs.sql" />
+    <EmbeddedResource Include="SP\sp0039_ClientSites_BillingToSiteId.sql" />
+    <EmbeddedResource Include="SP\sp0042_Purchase_Warehouse_procs.sql" />
+    <EmbeddedResource Include="SP\sp0043_WorkOrder_ShipFrom_procs.sql" />
+    <EmbeddedResource Include="SP\sp0044_Invoice_Taxable_procs.sql" />
+    <EmbeddedResource Include="SP\sp0045_GRN_ShipFrom_procs.sql" />
+    <EmbeddedResource Include="SP\sp0046_Invoice_PrintAllPO_procs.sql" />
+    <EmbeddedResource Include="SP\sp0047_ClientSites_Documents_procs.sql" />
+    <EmbeddedResource Include="SP\sp0048_Challan_next_preview_procs.sql" />
+    <EmbeddedResource Include="SP\sp0049_GRN_next_receiving_challan_preview_procs.sql" />
+    <EmbeddedResource Include="SP\sp0050_Quotation_link_party_procs.sql" />
+    <EmbeddedResource Include="SP\sp0051_Contract_ApproximateWeight_procs.sql" />
+    <EmbeddedResource Include="SP\sp0052_Quotation_ContractArea_procs.sql" />
+    <EmbeddedResource Include="SP\sp0053_QuotationItems_LineArea_procs.sql" />
+    <EmbeddedResource Include="SP\sp0054_Quotation_LineTotalMode_procs.sql" />
+    <EmbeddedResource Include="SP\sp0055_contracts_list_range_filters_procs.sql" />
+    <EmbeddedResource Include="SP\sp0056_LedgerTransactions_ContractId_procs.sql" />
+    <EmbeddedResource Include="SP\sp0057_InvoiceItems_Unit_procs.sql" />
+    <EmbeddedResource Include="SP\sp0058_ContractBillingReport_preview_columns_doc.sql" />
+    <EmbeddedResource Include="SP\sp0060_ContractDocuments_procs.sql" />
+    <EmbeddedResource Include="SP\sp0061_QuotationItems_GstRates_procs.sql" />
+    <EmbeddedResource Include="PreRun\table052_GRN_TransferWorkOrderId.sql" />
+    <EmbeddedResource Include="SP\sp0062_GRN_TransferWorkOrderId_procs.sql" />
+    <EmbeddedResource Include="PreRun\table053_LedgerTransactions_ReceiptDocumentPath.sql" />
+    <EmbeddedResource Include="SP\sp0063_LedgerTransactions_receiptPath_procs.sql" />
+    <EmbeddedResource Include="SP\sp0064_LedgerTransactions_clr_receiptPath_procs.sql" />
+    <EmbeddedResource Include="PreRun\table054_Quotation_UnregisteredPartyPhone.sql" />
+    <EmbeddedResource Include="SP\sp0065_Quotation_UnregisteredPartyPhone_procs.sql" />
+    <EmbeddedResource Include="PreRun\table055_QuotationItems_LineTotalMode.sql" />
+    <EmbeddedResource Include="PreRun\table056_Quotation_ContractId.sql" />
+    <EmbeddedResource Include="PreRun\table057_Quotation_InvoiceId.sql" />
+    <EmbeddedResource Include="PreRun\table057_LedgerTransactions_TotalTds.sql" />
+    <EmbeddedResource Include="PreRun\table058_LedgerTransactionDetails_TdsAmount.sql" />
+    <EmbeddedResource Include="SP\sp0066_QuotationItems_LineTotalMode_procs.sql" />
+    <EmbeddedResource Include="SP\sp0067_Quotation_ContractId_procs.sql" />
+    <EmbeddedResource Include="SP\sp0068_Quotation_InvoiceId_procs.sql" />
+    <EmbeddedResource Include="SP\sp0068_LedgerTransaction_Tds_procs.sql" />
+    <EmbeddedResource Include="PreRun\table059_Quotation_ValidUntil.sql" />
+    <EmbeddedResource Include="SP\sp0069_Quotation_ValidUntil_procs.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

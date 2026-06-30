@@ -1,0 +1,228 @@
+<div class="col-sm-12">
+    <!--<div class="col-sm-3">-->
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <!-- Party Field -->
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Choose Party</label>
+                        <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                          ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                    </div>
+                </div>
+
+                <!-- Site Field -->
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label>Choose Site</label>
+                        <searchableselect ng-id="val_site" ng-name="val_site" ng-model="Filter.LedgerSiteId"
+                                          data-field="LedgerSites" tabindex="1" data-val="LedgerSiteId"
+                                          data-text="SiteAddress"></searchableselect>
+                    </div>
+                </div>
+
+                <!-- From Date -->
+                <!--<div class="col-sm-2">
+                    <div class="form-group">
+                        <label>From</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+                        </datepicker>
+                    </div>
+                </div>-->
+                <!-- To Date -->
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label>As On</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Filter.To" type="text" class="form-control" tabindex="3" />
+                        </datepicker>
+                    </div>
+
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group text-center">
+                        <label>Show</label>
+                        <div class="col-sm-12">
+                            <div class="radio-inline">
+                                <label for="exampleInputName2">
+                                    <input type="radio" ng-checked="Filter.BalanceType == 'rent'"  ng-model="Filter.BalanceType" name="balanceType" value="rent" />
+                                    Rent
+                                </label>
+                            </div>
+                            <div class="radio-inline">
+                                <label for="exampleInputName2">
+                                    <input type="radio" name="balanceType" ng-model="Filter.BalanceType"  value="hire" />
+                                    Hire
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group" style="padding-top:22px;">
+
+                        <div class="btn-group" role="group">
+                            <input type="button" class="btn btn-primary" tabindex="4" value="Show" ng-click="GetClientWiseItems();" />
+
+                            <button class="btn btn-default" tabindex="5" ng-click="Print();">
+                                <i class="fa fa-print"></i> Print
+                            </button>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#" stop="true" class="text-success" data-target="#advFilterDialog" data-toggle="modal">
+                        <i class="fa fa-sliders"></i> Advance Filters
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+</div>
+
+<!--<div class="col-sm-9" ng-show="ClientWiseItemsList.length == 0">
+    No result found!
+</div>
+<div class="col-sm-9" id="printData" name="printData">-->
+<table class="table table-condensed table-responsive">
+    <tr ng-repeat-start="(key,value) in ClientWiseItemsList | groupBy: 'LedgerSiteId'" style="background:#E3F2FD;">
+        <td>
+            <div class="col-sm-12">
+
+                <label>{{$index+1}}) - {{value[0].ClientName}} | {{value[0].SiteAddress}}</label>
+                <i class="fa fa-chevron-down toggle" style="cursor: pointer;" data-toggle="collapse" data-target="#tr{{$index}}"></i>
+
+
+            </div>
+        </td>
+
+    </tr>
+    <tr ng-repeat-end class="childRows">
+        <td>
+            <div class="row row-eq-height" style="margin-left: 0px;min-height: 150px">
+                <!--<div class="col-sm-4">
+                    <label>Address</label> : {{value[0].Address}} <br />
+                    <label>Phone</label> : <a href="tel:{{value[0].Phone}}">{{value[0].Phone}}</a> <br />
+
+                    <label>Email</label> : <a href="mailto:{{value[0].Email}}">{{value[0].Email}}</a><br />
+
+                </div>-->
+                <div class="col-sm-12">
+                    <div class="collapse in" id="tr{{$index}}" style="border-left: solid 1px #e4e4e4;">
+                        <table class="table table-condensed table-responsive table-list" style="margin-bottom: 1px;float:right;">
+                            <tr>
+                                <th style="width:50px;" class="text-center">#</th>
+                                <th>Item</th>
+                                <th>Unit</th>
+                                <th class="text-center">OP</th>
+                                <th class="text-center">Issue</th>
+                                <th class="text-center">Receive</th>
+                                <th class="text-center">Lost Qty</th>
+                                <th class="text-center">Scrap Qty</th>
+
+                                <th class="text-center">Excess Qty</th>
+                                <th class="text-center">Qty Balance</th>
+                                <th class="text-center">Size Balance</th>
+                                <th class="text-center">Weight Balance</th>
+
+                            </tr>
+                            <tr ng-repeat="item in value">
+                                <td class="text-center">{{$index+1}}</td>
+                                <!--<td style="width: 40px;"></td>-->
+                                <td style="width: 52%">
+                                    {{item.Product}}
+
+                                </td>
+                                <td>{{item.Unit}}</td>
+                                <td class="text-center" style="width: 8%">{{item.OpeningBalance }}</td>
+                                <td class="text-center" style="width: 14%">{{item.IssuedQty }}</td>
+                                <td class="text-center" style="width: 14%">{{item.ReceivedQty}}</td>
+                                <td class="text-center" style="width: 14%">{{item.ShortQty}}</td>
+                                <td class="text-center" style="width: 14%">{{item.ScrapQty}}</td>
+                                <td class="text-center" style="width: 14%">
+                                    {{item.ExcessQty}}
+                                </td>
+                                <td class="text-center" style="width: 14%">
+                                    {{item.ClosingBalance}}
+                                </td>
+                                <td class="text-center">{{item.SizeBalance |number:2}}</td>
+                                <td class="text-center">{{item.WeightBalance |number:2}}</td>
+
+
+                            </tr>
+                            <tr class="tblFooter">
+                                <td colspan="3" class="sub-total">Total</td>
+                                <td class="text-center sub-total"> <label>{{value  | sum:'OpeningBalance' }} </label> </td>
+                                <td class="text-center sub-total"> {{value  | sum:'IssuedQty' }}  </td>
+                                <td class="text-center sub-total"> {{value  | sum:'ReceivedQty' }}  </td>
+                                <td class="text-center sub-total"> {{value  | sum:'ShortQty' }}  </td>
+                                <td class="text-center sub-total"> {{value  | sum:'ScrapQty' }}  </td>
+                                <td class="text-center sub-total"> {{value  | sum:'ExcessQty' }}  </td>
+                                <td class="text-center sub-total"> {{value  | sum:'ClosingBalance' }}  </td>
+                                <td class="text-center sub-total"> {{value  | sum:'SizeBalance' |number:2}}</td>
+                                <td class="text-center sub-total"> {{value  | sum:'WeightBalance' |number:2}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </td>
+
+
+    </tr>
+</table>
+
+<!--</div>-->
+
+
+
+
+<script lang="ja">
+
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+</script>
+
+<div class="modal fade" id="advFilterDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Advance Filters</h4>
+            </div>
+            <div class="modal-body" style="overflow-y:auto;">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="vcenter col-sm-3">PO Number</label>
+                        <div class="col-sm-6">
+                            <input type="text" ng-model="Filter.PONumber" maxlength="100" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" ng-click="Filter.PONumber=''">Clear</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>

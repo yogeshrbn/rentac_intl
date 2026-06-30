@@ -1,0 +1,69 @@
+﻿
+
+
+<div style="margin: 15px">
+    <style>
+        .repTable th,td{padding:2px;}
+        .border1 {
+            border-right: solid 1px;
+            border-bottom: solid 1px;
+            border-left: solid 1px;
+        }
+        .borderMid {
+            border-right: solid 1px;
+            border-bottom: solid 1px;
+
+        }
+        .borderLast {
+            border-right: solid 1px;
+            border-bottom: solid 1px;
+        }
+        .brTop{
+            border-top:solid 1px;
+        }
+    </style>
+    <table class="repTable" style="width: 100%;font-size:9px;" cellpadding="2">
+
+        <tr class="headerRow">
+
+            <th style="width: 30px;text-align:center; " class="border1 brTop">#</th>
+            <th style="width: 30px;" class="borderMid brTop">Item Code</th>
+            <th style="width: 150px;" class="borderMid brTop">Item Name</th>
+            <th style="width: 40px;" class="text-right borderMid  brTop">O.P</th>
+            <th style="width: 50px;" class="text-right borderMid brTop">Purchase</th>
+            <th style="width: 50px;" class="text-right borderMid brTop">Sold</th>
+            <!--<th style="width: 50px">Issued Qty</th>-->
+            <th style="width: 50px;" class="text-right borderMid brTop">On Site</th>
+            <th style="width: 50px;" class="borderLast text-right brTop">On Floor</th>
+
+
+        </tr>
+        <tr ng-repeat="item in data">
+
+            <td class="rowtd border1" style="text-align: center;">{{$index + 1 }}</td>
+            <td style="width: 30px;" class="borderMid">{{item.Code }}</td>
+            <td style="width: 30px;" class="borderMid">{{item.ClientName }}</td>
+            <td class="text-right borderMid ">{{item.OpeningBalance | number:2}}</td>
+            <td class="text-right borderMid">{{item.PurchaseQty | number:2 }}</td>
+            <td class="text-right borderLast">{{item.SaleQty | number:2 }}</td>
+
+            <!--<td>{{item.IssuedQty | number:2
+            }}
+                </td>-->
+
+            <td class="text-right borderMid"><b>{{item.OnSite | number:2}}</b></td>
+            <td  class="text-right borderLast"><b>{{item.OnFloor | number:2}}</b></td>
+
+
+
+        </tr>
+        <!--<tr class="total">
+
+            <td colspan="8"></td>
+            <td>Total</td>
+
+            <td>{{LastRow.Balance |number:2 }} {{LastRow.TransactionTypeName}}</td>
+
+        </tr>-->
+    </table>
+</div>

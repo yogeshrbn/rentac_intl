@@ -1,0 +1,181 @@
+﻿<div class="form-group">
+    <div class="col-lg-12">
+        <!--<a href="#/companylist" class="btn btn-primary">Back To List</a>-->
+        <!--   <pageheader heading="Add/Edit Company" />-->
+    </div>
+    <form id="form-company" name="frmCompany" method="post" class="form-horizontal form-bordered">
+        <div class="clearfix">&nbsp;</div>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Company Name</label>
+                    <input type="text" id="val_companyName" maxlength="50" tabindex="1" name="val_companyName" ng-model="Company.Props.Name" class="form-control" placeholder="Your username..">
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Address1</label>
+                    <input type="text" id="val_address1" " maxlength="50" tabindex="2" name="val_address1" ng-model="Company.Props.Address1" class="form-control" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Address2</label>
+                    <input type="text" id="txtAddress2" maxlength="50" tabindex="3" ng-model="Company.Props.Address2" class="form-control" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>City</label>
+                    <input type="text" id="Text3" maxlength="20" tabindex="4" name="val_address1" ng-model="Company.Props.City" class="form-control" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>State</label>
+                    <!--<input type="text" id="Text4" tabindex="3" ng-model="Company.Props.State" class="form-control" />-->
+                    <state ng-model="Company.Props.StateId"></state>
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Contact Person Name</label>
+                    <!--<input type="text" id="Text4" tabindex="3" ng-model="Company.Props.State" class="form-control" />-->
+                    <input type="text" id="Text3" maxlength="50" tabindex="4" name="val_contactPerson" ng-model="Company.Props.Contact" class="form-control" />
+
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-4 col-sm-4 ">
+                            <label>Phone-1</label>
+                            <input type="text" id="Text5" maxlength="10" tabindex="5" ng-model="Company.Props.Phone1" class="form-control maskednumber" phoneformat="true" />
+                        </div>
+                        <div class="col-lg-6 col-md-4 col-sm-4">
+                            <label>Phone-2</label>
+                            <input type="text" id="Text7" maxlength="10" tabindex="6" ng-model="Company.Props.Phone2" class="form-control maskednumber" phoneformat="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Email</label>
+                    <input type="text" tabindex="4" ng-model="Company.Props.Email" class="form-control" maxlength="50" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>ZipCode</label>
+                    <input type="tel" id="txtFax" tabindex="5" ng-model="Company.Props.ZipCode" class="form-control maskednumber" nodecimal style="text-align:left;" maxlength="6" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Web</label>
+                    <input type="text" tabindex="6" name="val_website" ng-model="Company.Props.Web" class="form-control" maxlength="50" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>PAN</label>
+                    <input type="text" id="Text8" tabindex="7" ng-model="Company.Props.PAN" class="form-control" maxlength="10" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>TIN</label>
+                    <input type="text" id="Tel1" tabindex="7" ng-model="Company.Props.TIN" class="form-control" maxlength="11" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>TAN</label>
+                    <input type="text" id="Url1" tabindex="8" ng-model="Company.Props.TAN" class="form-control" maxlength="10" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>GST No.</label>
+
+                    <div class="input-group" style="margin:0px;">
+                        <input type="text" id="Text1" tabindex="16" ng-model="Company.Props.GSTNo" maxlength="15" class="form-control" placeholder="Your username..">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="button" ng-click="verifyGST()">Verify</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Signing Authority</label>
+                    <input type="text" id="Text1" tabindex="9" ng-model="Company.Props.SignAuthority" class="form-control" maxlength="50" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>MSME Number</label>
+                    <input type="text" id="Text1" tabindex="9" ng-model="Company.Props.MSMENumber" class="form-control" maxlength="50" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Warehouse</label>
+                    <multi-select-dropdown options="warehouses"
+                                           selected-items="selectedWarehouses"
+                                           display-property="Name"
+                                           value-property="WarehouseId"
+                                           placeholder="Choose warehouse..."
+                                           select-all-text="Select All">
+                    </multi-select-dropdown>
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Default Warehouse</label>               
+                    <select class="form-control" ng-model="Company.Props.DefaultWarehouseId">
+                        <option ng-selected="Company.Props.DefaultWarehouseId == item.WarehouseId" ng-repeat="item in selectedWarehouses" ng-value="item.WarehouseId">{{item.Name}}</option>
+                    </select>
+
+                </div>
+                <!--<div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Report Header</label>
+                    <input type="text" id="Text6" tabindex="3" ng-model="Company.Props.ReportHeader" class="form-control" />
+                </div>-->
+
+
+                <div class="clearfix">&nbsp;</div>
+                <hr class="col-sm-offset-2 col-sm-10 col-sm-pull-1" />
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Bank Name</label>
+                    <input type="text" id="Text4" tabindex="20" ng-model="Company.Props.BankName" class="form-control" maxlength="100" placeholder="Bank Name" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Branch</label>
+                    <input type="text" id="Text5" tabindex="21" ng-model="Company.Props.BankBranch" class="form-control" placeholder="Bank Branch Address" maxlength="200">
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>Account Number</label>
+                    <input type="text" id="Text5" tabindex="21" ng-model="Company.Props.BankAccNumber" class="form-control" placeholder="Bank Account Number" maxlength="30">
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                    <label>IFSC Code</label>
+                    <input type="text" id="Text5" tabindex="21" ng-model="Company.Props.IFSCCode" class="form-control" placeholder="Branch IFSC Code" maxlength="20">
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-4 text-center bg-info">
+                <div class="form-group">
+                    <label class="col-sm-12 col-xs-12">Logo</label>
+                    <img src="{{Logo}}" style="width:80px;height:80px;object-fit:scale-down" />
+
+                    <input type="file" accept="image/jpg, image/jpeg,image/png" id="fileProfile" style="display:none;" onchange="angular.element(this).scope().onFileBrowse(event)" />
+                </div>
+                <button class="btn btn-danger" ng-click="removeLogo('fileProfile')" ng-disabled="Logo != '' ? null : 'disabled'">Remove</button>
+                <button class="btn btn-success" ng-click="browseFile('#fileProfile')">Upload</button>
+                <p style=" margin-bottom: 3px; margin-top: 10px; font-size: 12px;">   Only jpg,jpeg and png are allowd</p>
+                <p style="margin-bottom: 3px; margin-top: 3px; font-size: 12px;">   Maximum file size can be 100 Kilo bytes</p>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-4 text-center bg-info mt-2">
+                <!--<span>
+                    <i class="fa fa-trash fa-2x"></i>
+                </span>-->
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label class="col-sm-12 col-xs-12">Signature</label>
+                    <img src="{{Signature}}" style="width:80px;height:80px;object-fit:scale-down" />
+
+                    <input type="file" accept="image/jpg, image/jpeg,image/png" id="fileSignature" style="display:none;" onchange="angular.element(this).scope().onFileBrowse(event)" />
+                </div>
+                <button class="btn btn-danger" ng-click="removeLogo('fileSignature')" ng-disabled="Signature != '' ? null : 'disabled'">Remove</button>
+                <button class="btn btn-success" ng-click="browseFile('#fileSignature')">Upload</button>
+                <p style=" margin-bottom: 3px; margin-top: 10px; font-size: 12px;">   Only jpg,jpeg and png are allowd</p>
+                <p style="margin-bottom: 3px; margin-top: 3px; font-size: 12px;">   Maximum file size can be 100 Kilo bytes</p>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-4 text-center bg-info mt-2">
+                <div class="form-group">
+                    <label class="col-sm-12 col-xs-12">Qr Code</label>
+                    <img src="{{QrCode}}" style="width:80px;height:80px;object-fit:scale-down" />
+
+                    <input type="file" accept="image/jpg, image/jpeg,image/png" id="qrCode" style="display:none;" onchange="angular.element(this).scope().onFileBrowse(event)" />
+                </div>
+                <button class="btn btn-danger" ng-click="removeLogo('qrCode')" ng-disabled="QrCode != '' ? null : 'disabled'">Remove</button>
+
+                <button class="btn btn-success" ng-click="browseFile('#qrCode')">Upload</button>
+                <p style=" margin-bottom: 3px; margin-top: 10px; font-size: 12px;">   Only jpg,jpeg and png are allowd</p>
+                <p style="margin-bottom: 3px; margin-top: 3px; font-size: 12px;">   Maximum file size can be 100 Kilo bytes</p>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="btnBlock">
+    <input type="button" class="btn btn-secondary" tabindex="10" value="Cancel" ui-sref="companylist" />
+
+    <input type="button" class="btn btn-primary ml-1" tabindex="10" value="Save" ng-click="Save();" ng-show="AccessData.Add" />
+</div>

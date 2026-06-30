@@ -1,0 +1,42 @@
+﻿
+
+<li ng-repeat="item in Alerts">
+    <a href="javascript:void()" style="text-overflow:ellipsis;overflow:hidden;">
+        <!--<i class="fa fa-clock-o fa-fw pull-right"></i>-->
+        <!--<span class="badge pull-right">10</span>-->
+        {{item.Subject}}
+    </a>
+
+</li>
+<li>
+    <a ui-sref="notifications">View All</a>
+</li>
+<!-- views/notifications.html -->
+<!--<div ng-controller="NotificationController as nc">
+    <div class="card control-card">
+        <h3><i class="icon-controls"></i> Controls</h3>
+        <div class="button-group">
+            {{nc.permissionStatus}}
+            <button class="btn btn-primary"
+                    ng-click="nc.requestPermission()"
+                    ng-disabled="!nc.isSupported || nc.permissionStatus !== 'default' || nc.isLoading">
+                <span ng-if="!nc.isLoading">Enable Notifications</span>
+                <span ng-if="nc.isLoading">Enabling...</span>
+            </button>
+
+            <button class="btn btn-secondary"
+                    ng-click="nc.disableNotifications()"
+                    ng-disabled="!nc.fcmToken || nc.isLoading">
+                Disable Notifications
+            </button>
+
+            <button class="btn btn-info"
+                    ng-click="nc.sendTestNotification()"
+                    ng-disabled="!nc.fcmToken || nc.isLoading">
+                Test Notification
+            </button>
+        </div>
+    </div>
+</div>-->
+
+

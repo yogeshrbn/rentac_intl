@@ -1,0 +1,260 @@
+﻿<!--<pageheader heading="Party-Wise Pendency Register" />-->
+<style>
+    .copayRateFrom div {
+        height: 100px;
+    }
+
+    .rentac-multiselect {
+        border: solid 1px #cdcdcd;
+        position: relative;
+        width: auto;
+        zoom: 1;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .rentac-multiselect li {
+            padding: 2px;
+        }
+</style>
+<div class="clearfix">&nbsp;</div>
+<div class="">
+    <div class="col-sm-3">
+        <partysites on-selected="onRatesPartySelected(e)" accounts="Accounts"></partysites>
+    </div>
+    <div class="col-sm-9">
+        <div class="form-group">
+            <!--<div class="page-header">
+                <h1>Example page header <small>Subtext for header</small></h1>
+            </div>-->
+            <div class="alert alert-dismissable alert-warning" role="alert">
+                <label> <i class="fa fa-exclamation-triangle fa-2x" aria-hidden="true"></i>   Note: Rates are per unit basis.</label>
+            </div>
+
+            <table class="table table-condensed table-responsive">
+
+                <tr class="headerRow">
+
+                    <th style="width: 20px">#</th>
+                    <th style="width: 400px;">
+                        Item
+                        <input type="text" class="form-control input-sm" ng-model="itemListFilter"
+                               placeholder="Filter items by name, code, unit…" />
+                    </th>
+                    <!--<th class="text-center" style="width: 10%">OP</th>-->
+                    <th class="text-center" style="width: 50px">Rent</th>
+                    <th class="text-center" style="width: 50px">Loss Rate</th>
+                    <th class="text-center" style="width: 50px">Breakage</th>
+                    <th class="text-center" style="width: 50px">Rent Rate/Size</th>
+
+                </tr>
+                <tr>
+                    <td colspan="6" style="padding:0px;">
+                        <!--<div class="row" style="padding:8px 8px 4px 8px;">
+                            <div class="col-sm-8">
+                               
+                            </div>
+                        </div>-->
+                        <div style="max-height:400px; overflow-y:auto;">
+                            <table class="table table-condensed table-responsive" style="width:100%;border:none;">
+                                <tr ng-show="Rates && Rates.length && itemListFilter && (Rates | filter:itemListFilter).length === 0">
+                                    <td colspan="5" class="text-muted" style="padding:12px;">No items match this filter.</td>
+                                </tr>
+                                <tr ng-repeat="item in Rates | filter:itemListFilter" class="childRows">
+                                    <td style="width: 20px">{{$index+1}}</td>
+                                    <td style="width: 365px">
+                                        {{item.Product}}<br />
+                                        <small><i>Unit: {{item.UnitName}}</i></small>
+                                    </td>
+                                    <!--<td class="text-right maskednumber" style="width: 10%"><input class="form-control" style="width:100%;text-align:right;" min-value="0.00" placeholder="000.00" type="number" ng-model="item.OpeningBalance" /></td>-->
+                                    <td class="text-right" style="width: 50px"><input class="form-control maskednumber" style="width:100%;text-align:right;" min-value="0.00" maxlength="10" placeholder="000.00" type="text" ng-model="item.RentRate" ng-value="item.RentRate|number:2" /></td>
+                                    <td class="text-right" style="width: 50px"><input class="form-control maskednumber" style="width:100%;text-align:right;" placeholder="000.00" maxlength="10" type="text" ng-model="item.LossRate" ng-value="item.LossRate|number:2" /></td>
+                                    <td class="text-right" style="width: 50px"><input class="form-control maskednumber" style="width:100%;text-align:right;" placeholder="000.00" maxlength="10" type="text" ng-model="item.DamageRate" ng-value="item.DamageRate|number:2" /></td>
+                                    <td class="text-right" style="width: 50px">
+                                        <input  class="form-control maskednumber" style="width:100%;text-align:right;" placeholder="000.00" maxlength="10" type="text" ng-model="item.UnitSizeRate" ng-value="item.UnitSizeRate|number:2" />
+                                    </td>
+
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <!--<tr class="tblFooter">
+                <td style="width: 7%">Product</td>
+                <td style="width: 45%">
+                    <searchabletext ng-id="itemSelect" local-data="AllSizes" title-field="Product" name="Product"
+                                    search-fields="Product,Code" data-field="Product" ng-model="newitem.selectedProduct"
+                                    selected-object="newitem.selectedProduct" data-entry="1"> </searchabletext>
+                </td>-->
+                <!--<td class="text-right maskednumber" style="width: 10%"><input class="form-control" style="width:100%;text-align:right;" min-value="0.00" placeholder="000.00" type="number" ng-model="newitem.OpeningBalance" /></td>-->
+                <!--<td class="text-right maskednumber" style="width: 10%"><input class="form-control" style="width:100%;text-align:right;" min-value="0.00" placeholder="000.00" type="number" ng-model="newitem.RentRate" /></td>
+                    <td class="text-right maskednumber" style="width: 10%"><input class="form-control" style="width:100%;text-align:right;" placeholder="000.00" type="number" ng-model="newitem.LossRate" /></td>
+                    <td class="text-right maskednumber" style="width: 10%"><input class="form-control" style="width:100%;text-align:right;" placeholder="000.00" type="number" ng-model="newitem.DamageRate" /></td>
+
+                </tr>-->
+
+                <tr>
+                    <td colspan="6" style="text-align:right;width:100%;">
+                        <div class="row">
+                            <div class="col-sm-6 text-left">
+                                <input type="button" data-toggle="modal"
+                                       data-target="#copyModal" value="Copy Rates" class="btn btn-primary" />
+                                <input type="button" class="btn btn-default" style="margin-left:6px;" value="Change Rates"
+                                       ng-click="resetChangeRatesForm()" data-toggle="modal" data-target="#changeRatesModal" />
+                            </div>
+                            <div class="col-sm-6"> <input type="button" ng-click="SaveRates();" value="Update Rates" class="btn btn-primary" /></div>
+
+                        </div>
+
+
+                    </td>
+                </tr>
+                <!--<tr>
+                    <td colspan="2" style="text-align:left">
+                        <download-as-excel xlname="PartyRates.xls" sheetname="PartyRates" template="templ/exports/partyRates.html" object="Rates"></download-as-excel>
+                        <input type="button" ng-click="SaveRates();" value="Update Rates" class="btn btn-primary" />
+
+
+                    </td>
+
+
+                    <td colspan="4" style="text-align:right" class="headingCol">
+
+                        {{fileName}}
+                        <input type="button" ng-click="browseRateFile();" value="Choose File" class="btn btn-primary" />
+
+                        <input type="file" id="rateFile" style="display:none;" file-reader="fileContent" />
+
+
+                    </td>
+                </tr>-->
+
+
+            </table>
+            <!--<div>{{fileContent}}</div>-->
+            <table class="table table-condensed table-responsive" ng-show="!hasData">
+                <tr>
+                    <td colspan="7" style="text-align:center">
+
+
+                        No Records found
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="copyModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" style="padding:0px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Copy Rates</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:30px;">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group copayRateFrom">
+                            <label class="">Copy From</label>
+                            <partysites on-selected="onCopyPartySelected(e)" accounts="Accounts"></partysites>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group copayRateFrom">
+                            <label class="">Copy To
+                            <!--<span>
+                                <input type="checkbox" ng-model="CopyRatesModel.CopyToAll"  /> All</span>-->
+                            </label>
+                            <!--<partysites on-selected="onCopyPartySelected(e)" accounts="Accounts"></partysites>-->
+                            <multiselectcheckbox   data="Accounts" text="Name" text2="SiteAddress" key="LedgerSiteId"
+                                                 selecteddata="copyToSelected"></multiselectcheckbox>
+
+                        </div>
+                    </div>
+                    <!--<div class="col-sm-12" style="margin-top: 25px;" >
+                        <label>Choose Rates To Copy</label>
+                        <div class="form-group copayRateFrom">
+                            <label class="vcenter"><input type="checkbox" ng-model="CopyRatesModel.Rent" /> Rent</label>
+                            <label class="vcenter"><input type="checkbox" ng-model="CopyRatesModel.Loss" /> Loss</label>
+                            <label class="vcenter"><input type="checkbox" ng-model="CopyRatesModel.Brekage" /> Brekage</label>
+                            <label class="vcenter"><input type="checkbox" ng-model="CopyRatesModel.RentRatePerSize" /> Rent Rate/Size</label>
+                        </div>
+                    </div>-->
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+
+                <div class="d-flex d-sm-block" style=" justify-content: space-between; flex-direction: row;">
+
+                    <div>
+                        <button class="btn btn-primary btn-sm" ng-click="copyRates()">Copy</button>
+                        <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="changeRatesModal" tabindex="-1" role="dialog" aria-labelledby="changeRatesModalLabel" aria-hidden="true" style="padding:0px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="changeRatesModalLabel">Change rates</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted" style="margin-bottom:12px;">
+                    Applies to <strong>all</strong> rows for the rate types you select below. Use <strong>Update Rates</strong> to save. Filter does not limit which rows are adjusted.
+                </p>
+                <div class="form-group">
+                    <label class="control-label">Rate types to change</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" ng-model="changeRatesForm.applyRent" /> Rent</label>
+                        <label class="checkbox-inline"><input type="checkbox" ng-model="changeRatesForm.applyLoss" /> Loss rate</label>
+                        <label class="checkbox-inline"><input type="checkbox" ng-model="changeRatesForm.applyBreakage" /> Breakage</label>
+                        <label class="checkbox-inline"><input type="checkbox" ng-model="changeRatesForm.applySizeRate" /> Rent rate/size</label>
+                    </div>
+                    <p class="small text-muted" style="margin-top:6px;margin-bottom:0;">
+                        <a href="" ng-click="changeRatesSelectAllTypes(); $event.preventDefault();">Select all</a>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Adjustment</label>
+                    <div>
+                        <label class="radio-inline"><input type="radio" ng-model="changeRatesForm.mode" value="percent" /> Percent (%)</label>
+                        <label class="radio-inline"><input type="radio" ng-model="changeRatesForm.mode" value="amount" /> Fixed amount</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Direction</label>
+                    <div>
+                        <label class="radio-inline"><input type="radio" ng-model="changeRatesForm.direction" value="increase" /> Increase</label>
+                        <label class="radio-inline"><input type="radio" ng-model="changeRatesForm.direction" value="decrease" /> Decrease</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="changeRatesValue">Value</label>
+                    <input id="changeRatesValue" type="text" class="form-control" ng-model="changeRatesForm.value"
+                           placeholder="{{ changeRatesForm.mode == 'percent' ? 'e.g. 10 for 10%' : 'e.g. 50 for fixed amount' }}" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="applyBulkRateChange()">OK</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

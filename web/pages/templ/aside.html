@@ -1,0 +1,312 @@
+﻿<div class="sidebar-content" id="navSideBar">
+    <!-- Brand -->
+    <a class="sidebar-brand">
+        <i class="gi gi-flash"></i><span class="sidebar-nav-mini-hide"><strong>Ren</strong>tac</span>
+    </a>
+    <!-- END Brand -->
+    <!-- User Info -->
+    <div class="sidebar-section sidebar-user clearfix sidebar-nav-mini-hide">
+        <div class="sidebar-user-avatar">
+            <a href="page_ready_user_profile.html">
+                <img src="../img/userpic.JPG" alt="avatar">
+            </a>
+        </div>
+        <div class="sidebar-user-name"></div>
+        <div class="sidebar-user-links">
+            <!--   <a href="page_ready_user_profile.html" data-toggle="tooltip" data-placement="bottom" title="Profile"><i class="gi gi-user"></i></a>
+            <a href="page_ready_inbox.html" data-toggle="tooltip" data-placement="bottom" title="Messages"><i class="gi gi-envelope"></i></a>-->
+            <!-- Opens the user settings modal that can be found at the bottom of each page (page_footer.html in PHP version) -->
+            <a href="#settings?type=1" title="Settings"><i class="gi gi-cogwheel"></i></a>
+            <a data-ng-click="logOut()" data-toggle="tooltip" data-placement="bottom" title="Logout"><i class="gi gi-exit"></i></a>
+        </div>
+    </div>
+    <!-- END User Info -->
+    <!-- Theme Colors -->
+    <!-- Change Color Theme functionality can be found in ../dist/js/app.js - templateOptions() -->
+    <!-- END Theme Colors -->
+    <!-- Sidebar Navigation -->
+    <ul class="sidebar-nav">
+        <li>
+            <a href="#/home" class=" active">
+                <i class="fa fa-tachometer sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="sidebar-nav-menu">
+                <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                <i class="fa fa-folder-open sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Masters</span>
+            </a>
+            <ul>
+                <li>
+                    <a href="#companylist">Locations</a>
+                </li>
+                <li>
+                    <a href="#products">Items</a>
+                </li>
+                <li>
+                    <a href="#clientlist">Accounts</a>
+                </li>
+                <!-- <li>
+                    <a href="#prodcats">Item Category</a>
+                </li>-->
+                <li>
+                    <a href="#partyWiseRates">Party-Wise Rate List</a>
+                </li>
+                <li>
+                    <a href="#empList">Employees</a>
+                </li>
+                <li>
+                    <a href="#vehicleList">Vehicles</a>
+                </li>
+
+            </ul>
+
+        </li>
+        <li>
+            <a href="#" class="sidebar-nav-menu">
+                <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                <i class="fa fa-book sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Transactions</span>
+            </a>
+            <ul>
+                <li>
+                    <a href="#issueChallan">Issue Items - Rent</a>
+                </li>
+                <li>
+                    <a href="#inv_grn">Receive Items</a>
+                </li>
+                <li>
+                    <a href="#matTransfer">Transfer Material</a>
+                </li>
+                <li>
+                    <a href="#matAdjstList">Material Adjustment</a>
+                </li>
+                <li>
+                    <hr class="leftnav_separator" />
+                </li>
+
+                <!--  <li>
+                    <a href="#workorders">Sites</a>
+                </li>
+                <li><a href="#challanlist">Challans</a></li>
+                <li>
+                    <hr class="leftnav_separator" />
+                </li>-->
+                <li>
+                    <a href="#billList">Bill Register</a>
+                </li>
+                <li>
+                    <a href="#manbill?type=3">Manual Bill</a>
+                </li>
+                <!-- <li>
+                    <a href="#manbill?type=2">Breakage Bill</a>
+                </li>-->
+                <li>
+                    <hr class="leftnav_separator" />
+                </li>
+                <li>
+                    <a href="#purchaseReg">Purchase Register</a>
+                </li>
+                <li>
+                    <a href="#salesReg">Sale Register</a>
+                </li>
+                <li>
+                    <hr class="leftnav_separator" />
+                </li>
+
+
+
+            </ul>
+        </li>
+        <!--  <li>
+            <a href="#" class="sidebar-nav-menu"><i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                <i class="gi gi-briefcase sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Billing</span></a>
+            <ul>
+            </ul>
+        </li>-->
+
+        <li>
+            <a href="#" class="sidebar-nav-menu">
+                <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                <i class="fa fa-table sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Reports</span>
+            </a>
+            <ul>
+                <li>
+                    <a data-target="#mnuRegisterrs" data-toggle="collapse" aria-expanded="false">
+                        <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                        <span class="sidebar-nav-mini-hide">Inventory Reports</span>
+                    </a>
+                    <ul class="collapse offset-lg-5" id="mnuRegisterrs">
+                        <li>
+                            <a href="#receiptRegister?type=1">Quick Receipt Register</a>
+                        </li>
+                        <li>
+                            <a href="#receiptRegister?type=2">Quick Payment Register</a>
+                        </li>
+                        <li>
+                            <a href="#bankEntryregister">Bank Entry Register</a>
+                        </li>
+                        <li>
+                            <a href="#dueReports">Due Reports</a>
+                        </li>
+                        <li>
+                            <a href="#issuedList">Items Issued Register</a>
+                        </li>
+                        <li>
+                            <a href="#recvdList">Items Received Register</a>
+                        </li>
+                    </ul>
+
+                </li>
+                <li>
+                    <a data-target="#mnuTransactions" data-toggle="collapse" aria-expanded="false">
+                        <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                        <span class="sidebar-nav-mini-hide">Transactions</span>
+                    </a>
+                    <ul class="collapse offset-lg-5" id="mnuTransactions">
+                        <li>
+                            <a href="#dueBills?type=1">Due Bills</a>
+                        </li>
+
+                        <li>
+                            <a href="#dailyTrans">Daily Transactions</a>
+                        </li>
+
+                        <li>
+                            <a href="#estRent">Estimated Rent Per Day</a>
+                        </li>
+                        <li>
+                            <a href="#ledgerAnalysis">Ledger Analysis</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a data-target="#mnuInventoryReports" data-toggle="collapse" aria-expanded="false">
+                        <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                        <span class="sidebar-nav-mini-hide">Inventory Reports</span>
+                    </a>
+                    <ul class="collapse offset-lg-5" id="mnuInventoryReports">
+                        <li>
+                            <a href="#itemWiseClientBalance">Item wise Client Balance</a>
+                        </li>
+                        <li>
+                            <a href="#clientWiseItemBalance">Client wise Item Balance</a>
+                        </li>
+                        <li>
+                            <a href="#partystockregxtab">Stock Register - Cross Tab</a>
+                        </li>
+                        <li>
+                            <a href="#partypendreport">Pendency Register</a>
+                        </li>
+                        <li>
+                            <a href="#partystockreg">Party-Wise Stock Register</a>
+                        </li>
+                        <li>
+                            <a href="#cashbook"> Cash Book</a>
+                        </li>
+                        <li>
+                            <a href="#stockInhand">Stock In-hand</a>
+                        </li>
+                        <li>
+                            <a href="#stockSummary" class="navItem">Stock Summary</a>
+                        </li>
+
+
+                    </ul>
+                </li>
+                <li>
+
+                    <a data-target="#submenu1" data-toggle="collapse" aria-expanded="false">
+                        <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                        <span class="sidebar-nav-mini-hide">GST Reports</span>
+                    </a>
+                    <ul class="collapse offset-lg-5" id="submenu1">
+                        <li>
+                            <a href="#gstr-1">GSTR-1</a>
+                        </li>
+                        <li>
+                            <a href="#gstr-1">GSTR- 3(B)</a>
+                        </li>
+                    </ul>
+
+
+                </li>
+
+                <!--  <li>
+                    <a href="#siteInventory">Print Breakage Bill</a>
+                </li>-->
+                <!--                                    <li>
+                    <a href="#sitepaymentSummary?r=1">Site/Job# Payment Summary</a>
+                </li>
+                <li>
+                    <a href="#payments?r=1">Payment Received</a>
+                </li>
+                <li>
+                    <a href="#payments?r=2">Overdue Payments</a>
+                </li>-->
+            </ul>
+        </li>
+
+
+        <li>
+            <a href="#" class="sidebar-nav-menu">
+                <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                <i class="fa fa-credit-card sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Accounting</span>
+            </a>
+            <ul>
+                <li>
+                    <a href="#quickReceipts?type=1">Cash Receipt</a>
+                </li>
+                <li>
+                    <a href="#quickReceipts?type=2">Cash Payment</a>
+                </li>
+                <li>
+                    <a href="#bankEntries?type=1">Bank Entry</a>
+                </li>
+                <li>
+                    <a href="#drNotesList?type=3">Debit Notes</a>
+                </li>
+                <li>
+                    <a href="#crNotesList?type=4">Credit Notes</a>
+                </li>
+                <!--<li>
+                    <a href="#drNote?type=3">Debit Note</a>
+                </li>
+                <li>
+                    <a href="#crNote?type=4">Credit Note</a>
+                </li>-->
+                <li>
+                    <a href="#ledger">Balance Sheet</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="sidebar-nav-menu">
+                <i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+                <i class="fa fa-cogs sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Tools</span>
+            </a>
+            <ul>
+                <li>
+                    <a href="#settings?type=1">Settings</a>
+                </li>
+                <li>
+                    <a href="#roles">Roles</a>
+                </li>
+                <li>
+                    <a href="#users">User Accounts</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#subscriptions">
+                <!--<i class="fa fa-angle-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>-->
+                <i class="fa fa-credit-card sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Subscription</span>
+            </a>
+
+        </li>
+    </ul>
+    <!-- END Sidebar Navigation -->
+    <!-- Sidebar Notifications -->
+    <!-- END Sidebar Notifications -->
+</div>

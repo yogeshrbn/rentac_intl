@@ -1,0 +1,105 @@
+<form id="frmewaybill_addvehhicle" method="post" class="form-horizontal form-bordered">
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span class="col-sm-4">Mode Of Transportation</span>
+            <div class="col-sm-8">
+
+                <div class="btn-group" role="group">
+                    <button type="button"  name="val_transMode" class="btn btn-default mr-1" ng-click="EwayBill.TransportationMode=1">  <i class="fa fa-truck  text-info"></i>Road</button>
+                    <button type="button"  name="val_transMode" class="btn btn-default  mr-1" ng-click="EwayBill.TransportationMode=2">  <i class="fa fa-train  text-info"></i>Rail</button>
+                    <button type="button"  name="val_transMode" class="btn btn-default  mr-1" ng-click="EwayBill.TransportationMode=3">  <i class="fa fa-plane   text-info"></i>Air</button>
+                    <button type="button"  name="val_transMode" class="btn btn-default  mr-1" ng-click="EwayBill.TransportationMode=4">  <i class="fa fa-ship text-info"></i>Ship</button>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-sm-12 mt-1">
+
+
+
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Vehicle Type</span>
+            <div class="col-sm-8">
+
+
+                <div style="display: flex;width:77%;  flex-wrap: nowrap; justify-content: space-around; align-items: center;">
+                    <input type="radio" value="R" name="val_vehicleType" ng-model="EwayBill.VehicleType">Regular
+                    <input type="radio" value="O" name="val_vehicleType" ng-model="EwayBill.VehicleType">Over Dimentional Cargo
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Vehicle No</span>
+            <div class="col-sm-8">
+                <input type="text"  tabindex="1" name="val_vehicleno" ng-model="EwayBill.VehicleNo" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">From Place</span>
+            <div class="col-sm-8">
+                <input type="text" id="val_fromplace" tabindex="1" name="val_fromplace" ng-model="EwayBill.FromPlace" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">From State</span>
+            <div class="col-sm-8">
+                <state ng-model="EwayBill.FromStateId " name="val_fromstate"> </state>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Reason</span>
+            <div class="col-sm-8">
+                <!--<input type="text" id="val_reasoncode" tabindex="1" name="val_reasoncode" ng-model="EwayBill.ReasonCode" class="form-control" />-->
+                <select class="form-control"  name="val_reasoncode" ng-model="EwayBill.ReasonCode" >
+                    <option value="1">Due to Break Down</option>
+                    <option value="2">Due to Transshipment</option>
+                    <option value="3">Others</option>
+                    <option value="4">First Time</option>
+                   
+
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Remarks</span>
+            <div class="col-sm-8">
+                <input type="text" id="val_reasonremarks" tabindex="1" name="val_reasonremarks" ng-model="EwayBill.Remarks" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Transporter's Doc No'</span>
+            <div class="col-sm-8">
+                <input type="text" tabindex="1"  ng-model="EwayBill.TransporterDocNo" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Transporter's Doc Date</span>
+            <div class="col-sm-8">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input type="text" ng-model="EwayBill.TransporterDocDate" tabindex="1" class="form-control" field-required="true" name="TransactionDate" />
+                </datepicker>
+            </div>
+        </div>
+    </div>
+</form>

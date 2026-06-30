@@ -1,0 +1,121 @@
+﻿<md-dialog aria-label="List dialog">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Details</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+           
+        </md-button>
+      </div>
+    </md-toolbar>
+  <md-dialog-content>
+<div >
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-12">
+         <div class="panel panel-primary">
+            <div class="panel-heading">
+            Billed Items
+             </div>
+          
+         <table class="table table-condensed table-responsive">
+             <tr>
+
+                 <th>#</th>
+                 <th>Item</th>
+                 <th>From</th>
+                 <th>To</th>
+                 <th class="text-right">Days</th>
+
+                 <th class="text-right">Issue/<br />Rec Qty</th>
+                 <th class="text-right">CB</th>
+                 <th class="text-right">Rate</th>
+
+                 <th class="text-right">Amount</th>
+
+             </tr>
+              <tr ng-repeat="site in DialogData">
+                <td>{{$index+1}}</td>
+                <td >{{site.Item}}</td>
+                  <td>{{site.From | parseDate | date :'dd-MM-yyyy' }}</td>
+                  <td>{{site.To | parseDate | date :'dd-MM-yyyy' }}</td>
+                  <td class="text-right">{{site.Days}}</td>
+                  <td class="text-right">{{site.Quantity | number: 2}}</td>
+                  <td class="text-right">{{site.CB | number: 2}}</td>
+                  <td class="text-right">{{site.Rate | number: 2}}</td>
+                  <td class="text-right">{{site.SubTotal | number: 2}}</td>
+            </tr>
+             <tr class="totalRow">
+                 <td colspan="7"></td>
+                 <td>Total:</td>
+                 <td class="text-right">{{DialogData | sum:'SubTotal'| number:2}}</td>
+             </tr>
+        </table>
+              <h3>Breakage Items</h3>
+             <table class="table table-condensed table-responsive">
+             <tr>
+
+                 <th>#</th>
+                 <th>Item</th>
+                
+
+                 <th class="text-right">Qty</th>
+              
+                 <th class="text-right">Rate</th>
+
+                 <th class="text-right">Amount</th>
+
+             </tr>
+                 <tr ng-repeat="item in BreakageItems">
+                      <td>{{$index+1}}</td>
+                 <td>{{item.Item}}</td>
+                
+
+                 <td class="text-right">{{item.Quantity}}</td>
+              
+                 <td class="text-right">{{item.Rate}}</td>
+
+                 <td class="text-right">{{item.SubTotal|number:2}}</td>
+                 </tr>
+                 </table>
+             <h3>Loss Items</h3>
+             <table class="table table-condensed table-responsive">
+             <tr>
+
+                 <th>#</th>
+                 <th>Item</th>
+                
+
+                 <th class="text-right">Qty</th>
+              
+                 <th class="text-right">Rate</th>
+
+                 <th class="text-right">Amount</th>
+
+             </tr>
+                 <tr ng-repeat="item in LossItems">
+                      <td>{{$index+1}}</td>
+                 <td>{{item.Product}}</td>
+                
+
+                 <td class="text-right">{{item.Quantity}}</td>
+              
+                 <td class="text-right">{{item.Rate}}</td>
+
+                 <td class="text-right">{{item.Amount|number:2}}</td>
+                 </tr>
+                 </table>
+             
+                <md-progress-circular id="loadersite" md-mode="indeterminate" style="margin:auto;"></md-progress-circular>
+                </div>
+       </div>
+    <hr />
+</div>
+      </md-dialog-content>
+      <md-dialog-actions>
+          <div class="col-sm-2">
+    <!-- <input type="button" ng-click="closeDialog()" class="btn btn-primary" value="Print" />&nbsp;</div> <div class="col-sm-2">-->
+    <input type="button" ng-click="closeDialog()" class="btn btn-danger" value="Close" />
+         </div>
+  </md-dialog-actions>
+
+</md-dialog>

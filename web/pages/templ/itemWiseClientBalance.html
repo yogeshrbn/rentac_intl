@@ -1,0 +1,158 @@
+<div class="col-sm-12">
+    <div class="col-sm-3">
+        <div class="panel  panel-primary">
+            <div class="panel-heading">
+                <span data-toggle="collapse" data-target="#billing">Flter</span>
+            </div>
+            <div class="collapse in panel-body" id="billing">
+                <div class="col-sm-12">
+                    <label>Choose Product</label>
+                    <!--<searchabletext ng-id="client" data-item="Client" data-all="true" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+                    <searchableselect name="itemSelect" tabindex="2" data-field="AllSizes" ng-model="Filter.ProductId" data-val="ProductId" data-text="Product"></searchableselect>
+                    <!--<searchabletext ng-id="itemSelect" local-data="AllSizes" ng-model="Filter.ProductId" title-field="Product" name="Product" search-fields="Product,Code"
+                        selected-object="selectedProduct" data-entry="1" tab-index="8"> </searchabletext>-->
+
+                </div><div class="col-sm-12" style="display:none;">
+                    <label>From</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+                    </datepicker>
+                </div>
+                <div class="col-sm-12">
+                    <label>To</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.To" type="text" class="form-control" tabindex="3" />
+                    </datepicker>
+                </div>
+                <div class="col-sm-12" style="padding:5px;">
+                    <div class="form-group">
+                        <label class="col-sm-3">Type</label> 
+                        <div class="col-sm-9">
+                            <div class="radio-inline">
+                                <label for="exampleInputName2">
+                                    <input type="radio" ng-checked="Filter.BalanceType == 'rent'" ng-model="Filter.BalanceType" name="balanceType" value="rent" />
+                                    Rent
+                                </label>
+                            </div>
+                            <div class="radio-inline">
+                                <label for="exampleInputName2">
+                                    <input type="radio" name="balanceType" ng-model="Filter.BalanceType" value="hire" />
+                                    Hire
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="clearfix"></div>
+                    <div class="d-flex mt-1" style="align-items:center;justify-content:space-between;">
+                        <input type="button" class="btn btn-primary" tabindex="4" value="Show" ng-click="GetItemWiseClients();" />
+                        <button class="btn btn-default" tabindex="5" ng-click="Print();">
+                            <i class="fa fa-print"></i> Print
+                        </button>
+                        <!--<export data="ItemWiseClientsList" url="'itemWiseClientBalance.html'"></export>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-9">
+        <div class="table-responsive">
+            <table class="table table-condensed  table-list">
+                <tr class="headerRow">
+                    <!--<th>#</th>-->
+                    <!--<th>Item</th>-->
+                    <th class="text-right" style="width:120px">Issue</th>
+                    <th class="text-right"  style="width:100px">Receive</th>
+                    <th class="text-right"  style="width:100px">Balance</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat-start="(key,value) in ItemWiseClientsList | groupBy: 'GroupKey'" style="background:#E3F2FD;">
+                    <td colspan="4">
+                        <div class="col-sm-12">
+
+                            <label>{{$index+1}}) - {{value[0].ClientName}}<span ng-if="value[0].SiteAddress"> | Site: {{value[0].SiteAddress}}</span></label>
+                            <i class="fa fa-chevron-down toggle" style="cursor: pointer;" data-toggle="collapse" data-target="#tr{{$index}}"></i>
+
+
+                        </div>
+                    </td>
+
+                </tr>
+                <tr ng-repeat-end class="childRows">
+                    <td colspan="4">
+                        <div class="row row-eq-height" style="margin-left: 0px;">
+
+                            <div class="col-sm-12">
+                                <div class="collapse in" id="tr{{$index}}" style="border-left: solid 1px #e4e4e4;">
+                                    <table class="table table-condensed " style="margin-bottom: 1px;float:right;">
+
+                                        <tr ng-repeat="item in value">
+                                            <!--<td style="width: 90px">{{$index+1}}</td>-->
+                                            <!--<td style="width: 52%">{{item.Product}}</td>-->
+                                            <!--   <td class="text-right" style="width: 8%">{{item.OpeningBalance|number:2
+                                                                                    }}
+                                </td>  -->
+                                            <td class="text-right" style="width: 100px">{{item.IssuedQty|number:2}}</td>
+                                            <td class="text-right" style="width: 100px">{{item.ReceivedQty|number:2}}</td>
+                                            <td class="text-right"  style="width: 100px" >{{item.ClosingBalance|number:2}}</td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+
+
+
+                </tr>
+
+
+            </table>
+
+        </div>
+        <!--<table class="table table-condensed table-responsive" med-key>
+
+            <tr class="headerRow">
+
+                <th style="width: 5%">#</th>
+                <th style="width: 25%;">Item Name</th>
+                <th style="width: 30%">Client Name</th>
+                <th style="width: 10%;">Opening Balance</th>
+                <th style="width: 10%;">Issue Qty</th>
+                <th style="width: 10%;">Received Qty</th>
+                <th style="width: 10%;">Closing Balance</th>
+            </tr>
+            <tr ng-repeat="item in ItemWiseClientsList">
+
+                <td>{{$index + 1 }}</td>
+                <td>{{item.Product }}</td>
+                <td>{{item.ClientName }}</td>
+                <td>{{item.OpeningBalance | number:2}}</td>
+                <td>{{item.IssuedQty | number:2}}</td>
+                <td>{{item.ReceivedQty | number:2}}</td>
+                <td>{{item.ClosingBalance | number:2}}</td>
+
+
+            </tr>
+
+        </table>-->
+
+    </div>
+
+
+
+
+    <script lang="ja">
+
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+</div>

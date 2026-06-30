@@ -1,0 +1,87 @@
+@model ReportViewer.Models.BillListGstReportViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bill list — GST</title>
+    <style type="text/css">
+        body { font-family: Arial, Helvetica, sans-serif; font-size: 9pt; color: #111; margin: 12px; }
+        h1 { font-size: 14pt; margin: 0 0 4px 0; }
+        .meta { font-size: 9pt; margin-bottom: 10px; color: #333;text-align:center; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { border: 1px solid #333; padding: 4px 3px; vertical-align: top; word-wrap: break-word; }
+        th { font-weight: bold; background: #e8e8e8; text-align: center; font-size: 8pt; }
+        td.num { text-align: right; white-space: nowrap; }
+        td.client { text-align: left; }
+        tr.total td { font-weight: bold; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    
+    <div class="meta">
+        
+         
+            <div style="font-size:16px;font-weight:bold;">@Model.CompanyName</div>
+        
+        <div style="font-size:14px">Period: @Model.PeriodLabel</div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:9%">Bill no</th>
+                <th style="width:6%">Date</th>
+                <th style="width:14%">Client</th>
+                <th style="width:8%">Invoice amount</th>
+                <th style="width:8%">Taxable amount</th>
+                @*<th style="width:8%">Taxable CGST @@ 9.00</th>*@
+                <th style="width:7%">Tax CGST @@ 9.00</th>
+                @*<th style="width:8%">Taxable SGST @@ 9.00</th>*@
+                <th style="width:7%">Tax SGST @@ 9.00</th>
+                @*<th style="width:8%">Taxable IGST @@ 18.00</th>*@
+                <th style="width:7%">Tax IGST @@ 18.00</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Rows == null || Model.Rows.Count == 0)
+            {
+                <tr>
+                    <td colspan="11" style="text-align:center;padding:12px;">No bills found for the selected filters.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var r in Model.Rows)
+                {
+                    <tr>
+                        <td>@r.BillNo</td>
+                        <td style="text-align:center;">@r.BillDate</td>
+                        <td class="client">@r.Client</td>
+                        <td class="num">@r.InvoiceAmount</td>
+                        <td class="num">@r.TaxableAmount</td>
+                        @*<td class="num">@r.TaxableCgst</td>*@
+                        <td class="num">@r.TaxCgst</td>
+                        @*<td class="num">@r.TaxableSgst</td>*@
+                        <td class="num">@r.TaxSgst</td>
+                        @*<td class="num">@r.TaxableIgst</td>*@
+                        <td class="num">@r.TaxIgst</td>
+                    </tr>
+                }
+            }
+            @if (Model.Totals != null && Model.Rows != null && Model.Rows.Count > 0)
+            {
+                <tr class="total">
+                    <td colspan="3" class="client">@Model.Totals.Client</td>
+                    <td class="num">@Model.Totals.InvoiceAmount</td>
+                    <td class="num">@Model.Totals.TaxableAmount</td>
+                    @*<td class="num">@Model.Totals.TaxableCgst</td>*@
+                    <td class="num">@Model.Totals.TaxCgst</td>
+                    @*<td class="num">@Model.Totals.TaxableSgst</td>*@
+                    <td class="num">@Model.Totals.TaxSgst</td>
+                    @*<td class="num">@Model.Totals.TaxableIgst</td>*@
+                    <td class="num">@Model.Totals.TaxIgst</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

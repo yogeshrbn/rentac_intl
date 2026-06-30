@@ -1,0 +1,23 @@
+﻿<md-dialog aria-label="List dialog" flex="40" style="height: 200px;" class="mt-2">
+  <md-dialog-content >
+        
+      <div class="col-sm-12 col-md-12 col-lg-12">
+           <h4>Print for</h4>
+            <div class="col-sm-12 text-center" style="padding-top:20px;">
+             <span style="font-size: 16px;
+    font-weight: 500;" ng-bind="Message"></span>
+       
+      </div>
+           </div>
+         
+
+      </md-dialog-content>
+     <md-dialog-actions>
+          <div class="col-sm-12 col-md-12 col-lg-12 text-center"  style="padding-top:30px;">
+        
+     <input type="button" ng-click="OkButtonClick()" class="btn btn-primary" value="Print" /> 
+              
+    <input type="button" ng-click="closeDialog()" class="btn btn-danger" value="Close" />
+         </div>
+  </md-dialog-actions>
+</md-dialog>

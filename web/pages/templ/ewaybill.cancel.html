@@ -1,0 +1,36 @@
+﻿<form id="frmcancelewaybill" method="post" class="form-horizontal form-bordered">
+   
+
+    <div class="col-sm-12 mt-1">
+
+
+
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Cancel Reason</span>
+            <div class="col-sm-8">
+
+                <select ng-model="EwayBill.CancelReasonCode" class="form-control" nae="val_reasonCode">
+                    <option value="1">Duplicate</option>
+                    <option value="2">Order Cancelled</option>
+                    <option value="3">Data Enry Mistake</option>
+
+                    <option value="4">Others</option>
+
+                </select>
+                
+
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-12 mt-1">
+        <div class="form-group">
+            <span for="inputEmail3" class="col-sm-4">Remarks</span>
+            <div class="col-sm-8">
+                <input type="text" id="val_reasonremarks" tabindex="1" name="val_reasonremarks" ng-model="EwayBill.CancelRemarks" class="form-control" />
+            </div>
+        </div>
+    </div>
+   
+</form>

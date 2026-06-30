@@ -1,0 +1,1057 @@
+
+<div class="clearfix">&nbsp;</div>
+<style>
+    .employeesMultiSelect div {
+        height: 100px;
+    }
+
+    .rentac-multiselect {
+        border: solid 1px #cdcdcd;
+        position: relative;
+        width: auto;
+        zoom: 1;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .rentac-multiselect li {
+            padding: 2px;
+        }
+
+    @media (max-width:522px) {
+        .right .modal-dialog {
+            width: 100% !important;
+        }
+    }
+</style>
+<div class="col-sm-12">
+
+    <div class="row">
+
+
+        <div class="col-sm-12 table-responsive" ">
+            <!-- Form Horizontal Start -->
+            <table class="table table-condensed">
+                <tr>
+                    <td style="width:150px" class="headerRow">Contract Title</td>
+                    <td style="width:300px;">{{Contract.Title}}</td>
+                    <td style="width:150px" class="headerRow">Duration</td>
+                    <td>
+                        {{Contract.EffectiveFrom  | formatDate}} <strong>To</strong> {{Contract.ValidTill | formatDate}}
+                        <!--<button class="btn btn-sm btn-primary pull-right" ng-click="showExtendDialog()">Extend</button>-->
+                        <button class="btn btn-sm btn-primary pull-right" ng-if="Contract.QuotationId > 0" ng-click="editQuotation()">Edit primary quotation</button>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="headerRow">Client</td>
+                    <td>{{Contract.Client}}</td>
+                    <td style="width:150px" class="headerRow">Site</td>
+                    <td>{{Contract.SiteAddress}}</td>
+                </tr>
+
+                <tr>
+                    <td class="headerRow">Contract Type</td>
+                    <td>{{ContractType.Name}}</td>
+                    <td class="headerRow">Contract Area</td>
+                    <td>{{Contract.Area}} {{ContractMeasureType.Name}}</td>
+                </tr>
+
+                <tr>
+                    <td class="headerRow">Contract Duration</td>
+                    <td>{{Contract.Duration}} Days</td>
+                    <td class="headerRow">Effective From</td>
+                    <td>{{Contract.EffectiveFrom | date}}</td>
+                </tr>
+
+                <tr>
+                    <td class="headerRow">Rate</td>
+                    <td>{{Contract.Rate |number:2}} / {{ContractMeasureType.Name}}</td>
+                    <td class="headerRow">Contract Value</td>
+                    <td style="background: #fff5d5; font-weight: bold;">
+                        <div class="row">
+                            <span class="col-sm-4"> INR {{Contract.ContractValue |number:2}}</span>
+                            <!--<span class="col-sm-4 text-success">  Total Billed: {{BilledAmount | number:2 }} </span>
+                            <span class=" col-sm-4 text-danger">
+                                Balance: {{(Contract.ContractValue - BilledAmount) | number:2}}
+                            </span>-->
+                        </div>
+
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-12 table-responsive" ng-if="Contract.ContractId">
+            <h4 style="margin-top:12px;">
+                Quotations
+                <button type="button" class="btn btn-sm btn-success pull-right" ng-click="openNewContractQuotation()">New quotation</button>
+            </h4>
+            <table class="table table-condensed table-bordered">
+                <tr class="headerRow">
+                    <th>Vch#</th>
+                    <th>Party</th>
+                    <th>Date</th>
+                    <th class="text-right">Net</th>
+                    <th class="text-center" style="width:90px;">Status</th>
+                    <th class="text-center" style="width:140px;">Actions</th>
+                </tr>
+                <tr ng-repeat="q in Contract.ContractQuotations">
+                    <td>
+                        {{q.QuotationNumber}}
+                        <span class="label label-info" ng-if="Contract.QuotationId == q.QuotationId">Primary</span>
+                    </td>
+                    <td>{{q.Client}}</td>
+                    <td>{{q.QuotationDate | date:'dd-MM-yyyy'}}</td>
+                    <td class="text-right">{{q.Total | number:2}}</td>
+                    <td class="text-center">
+                        <span class="label label-success" ng-if="isQuotationAlreadyBilled(q)">Billed</span>
+                        <span class="text-muted" ng-if="!isQuotationAlreadyBilled(q)">Open</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="javascript:void(0)" title="Preview" ng-click="previewContractQuotation(q)"><i class="fa fa-eye"></i></a>
+                        &nbsp;
+                        <a href="javascript:void(0)" title="PDF" ng-click="printContractQuotationPdf(q)"><i class="fa fa-download"></i></a>
+                        &nbsp;
+                        <a href="javascript:void(0)" title="Edit" ng-click="editQuotation(q.QuotationId)"><i class="fa fa-pencil"></i></a>
+                    </td>
+                </tr>
+                <tr ng-if="!Contract.ContractQuotations || !Contract.ContractQuotations.length">
+                    <td colspan="6" class="text-muted">No quotations linked yet. Create one or link from contract workflow.</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-12 table-responsive">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="headerRow" style="width:30%;">
+                        Activities
+                        <button class="btn btn-sm btn-primary pull-right" ng-click="addJobDialog()">Add Activity</button>
+                    </th>
+                    <th class="headerRow">Details</th>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="max-height:385px;overflow-y:auto;">
+                            <div class="card" style="" ng-repeat="job in Contract.JobCards">
+                                <div class="card-body" style="display: flex; align-items: flex-end; justify-content: space-between;">
+                                    <div>
+                                        <ul style="list-style: none; padding-left: 0px;">
+                                            <li>
+                                                <strong>Activity:</strong>
+                                                <span ng-if="job.TypeId == 1">Install</span>
+                                                <span ng-if="job.TypeId == 2">Dismantal</span>
+                                                <span ng-if="job.TypeId == 4">Re-Install</span>
+                                                <span ng-if="job.TypeId == 5">Pickup</span>
+                                                <span ng-if="job.TypeId == 3">Others</span>
+                                            </li>
+                                            <li>  <strong>Area Covered:</strong> {{job.AreaCovered}}</li>
+                                            <li><b>Start On</b>: {{job.EstimatedStartDate | date : 'dd/MM/yyyy'}}</li>
+                                            <li>   <b>Remarks </b>: {{job.Remarks }}</li>
+                                        </ul>
+
+
+                                    </div>
+                                    <div>
+                                        <a href="javascript:void()" ng-click="editJobCard(job)" class="card-link">EDIT</a>&nbsp;|
+                                        <a href="javascript:void()" class="card-link" ng-click="viewJobDetails(job)">VIEW</a>
+                                    </div>
+                                </div>
+                                <hr style="margin:5px 0px;" />
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding:0px;">
+
+                        <div>
+                            <ul class="nav nav-pills" role="tablist" style="border-bottom: solid 1px #bdbdbd; padding:5px 0px; background: #e7e7e7; padding-bottom: 5px; display: flex; justify-content: center; align-items: center; ">
+                                <li role="presentation" class="active"><a href="#tabContractSummary" aria-controls="tabContractSummary" role="tab" data-toggle="tab" ng-click="tab = 0; loadContractSummary()">Summary</a></li>
+                                <li role="presentation"><a href="#clientInfo" aria-controls="clientInfo" role="tab" data-toggle="tab" ng-click="tab = 1">Deliveries</a></li>
+                                <li role="presentation"><a href="#tabReturnChallans" aria-controls="tabReturnChallans" role="tab" data-toggle="tab" ng-click="tab = 2">Returns</a></li>
+                                <li role="presentation"><a href="#tabContractInventory" aria-controls="tabContractInventory" role="tab" data-toggle="tab" ng-click="tab = 3">Inventory</a></li>
+                                <li role="presentation"><a href="#tabBilling" aria-controls="tabBilling" role="tab" data-toggle="tab" ng-click="tab = 4">Billing</a></li>
+                                <li role="presentation"><a href="#tabLedger" aria-controls="tabLedger" role="tab" data-toggle="tab" ng-click="tab = 5; loadContractLedger()">Ledger</a></li>
+                                <li role="presentation"><a href="#tabContractDocuments" aria-controls="tabContractDocuments" role="tab" data-toggle="tab" ng-click="tab = 6; loadContractDocuments()">Documents</a></li>
+                            </ul>
+                            <div class="tab-content">
+
+                                <div role="tabpanel" class="tab-pane active table-responsive" id="tabContractSummary" style="padding:5px;">
+                                    <div class="text-center" ng-if="summaryLoading" style="padding:1em;">
+                                        <i class="fa fa-spinner fa-spin fa-2x"></i>
+                                        <p>Loading summary…</p>
+                                    </div>
+                                    <div ng-if="!summaryLoading">
+                                        <div class="text-right" style="margin-bottom:10px;">
+                                            <button type="button" class="btn btn-success" ng-click="printContractSummaryPdf()" ng-disabled="!Contract || !Contract.ContractId || summaryLoading">
+                                                <i class="fa fa-print"></i> Print summary (PDF)
+                                            </button>
+                                        </div>
+                                        <h5 style="margin-top:0;" class="text-bold">Delivery Challans</h5>
+                                        <div ng-if="!Contract.JobCards || Contract.JobCards.length === 0" class="text-muted" style="margin-bottom:1em;">No job cards on this contract.</div>
+                                        <!--<div ng-repeat="sj in summaryByJob" style="margin-bottom:1.25em;">-->
+                                        <!--<strong>{{ summaryActivityLabel(sj.job) }}</strong>-->
+                                        <div class="panel-group" role="tablist" style="margin-top:0.5em;">
+                                            <div class="panel panel-default" ng-repeat="dc in summaryByJob.deliveryChallans">
+                                                <div class="panel-heading" role="tab">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#summaryDelGroup{{dc.WorkOrderId}}" href="#sd-w{{dc.WorkOrderId}}" class="collapsed">
+                                                            {{$index + 1}}. {{dc.ChallanNumber}}, Challan date: {{dc.SentDate | date}}
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="sd-w{{dc.WorkOrderId}}" class="panel-collapse collapse" role="tabpanel">
+                                                    <div class="panel-body" style="padding:0;">
+                                                        <table class="table table-condensed" style="margin:0;">
+                                                            <tr class="headerRow">
+                                                                <td style="width:5%" class="text-center">S.No</td>
+                                                                <th style="width:60%">Product</th>
+                                                                <th style="width:20%" class="text-right">Quantity</th>
+                                                                <th class="text-right">Rate</th>
+                                                            </tr>
+                                                            <tr ng-repeat="row in dc.Items">
+                                                                <td class="text-center">{{$index + 1}}</td>
+                                                                <td>{{row.Product}}</td>
+                                                                <td class="text-right">{{row.SentQty | number:2}}</td>
+                                                                <td class="text-right">{{row.Rate | number:2}}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="alert alert-info" ng-if="!summaryByJob.deliveryChallans || summaryByJob.deliveryChallans.length === 0" style="margin:0.25em 0 0 0;">No delivery challans.</p>
+                                        <!--</div>-->
+
+                                        <h5 class="text-bold">Return Challans</h5>
+                                        <!--<div ng-repeat="sj in summaryByJob" style="margin-bottom:1.25em;">-->
+                                        <!--<strong>{{ summaryActivityLabel(sj.job) }}</strong>-->
+                                        <div class="panel-group" role="tablist" style="margin-top:0.5em;">
+                                            <div class="panel panel-default" ng-repeat="rc in summaryByJob.returnChallans">
+                                                <div class="panel-heading" role="tab">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#summaryRetGroup{{rc.GRNId}}" href="#sr-g{{rc.GRNId}}" class="collapsed">
+                                                            {{$index + 1}}. {{rc.ChallanNumber}}, Challan date: {{rc.ChallanDate | date}}
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="sr-g{{rc.GRNId}}" class="panel-collapse collapse" role="tabpanel">
+                                                    <div class="panel-body" style="padding:0;">
+                                                        <table class="table table-condensed" style="margin:0;">
+                                                            <tr class="headerRow">
+                                                                <td style="width:5%" class="text-center">S.No</td>
+                                                                <th style="width:60%">Product</th>
+                                                                <th style="width:20%" class="text-right">Quantity</th>
+                                                            </tr>
+                                                            <tr ng-repeat="row in rc.Items">
+                                                                <td class="text-center">{{$index + 1}}</td>
+                                                                <td>{{row.Product}}</td>
+                                                                <td class="text-right">{{row.Quantity | number:2}}</td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="alert alert-info" ng-if="!summaryByJob.returnChallans || summaryByJob.returnChallans.length === 0" style="margin:0.25em 0 0 0;">No return challans.</p>
+                                        <!--</div>-->
+
+                                        <h5 class="text-bold">Inventory</h5>
+                                        <table class="table table-condensed" style="margin:0 0 1em 0;">
+                                            <tr class="headerRow">
+                                                <td style="width:5%" class="text-center">Sr.No</td>
+                                                <th style="width:35%">Product</th>
+                                                <th style="width:20%" class="text-right">Sent</th>
+                                                <th style="width:20%" class="text-right">Returned</th>
+                                                <th style="width:20%" class="text-right">Balance</th>
+                                            </tr>
+                                            <tr ng-repeat="item in ContractInventory">
+                                                <td class="text-center">{{$index + 1}}</td>
+                                                <td>{{item.Product}}</td>
+                                                <td class="text-right">{{item.Sent | number:2}}</td>
+                                                <td class="text-right">{{item.Returned | number:2}}</td>
+                                                <td class="text-right">{{item.Balance | number:2}}</td>
+                                            </tr>
+                                        </table>
+                                        <div class="text-center text-muted" ng-if="!ContractInventory || ContractInventory.length <= 0" style="margin-bottom:1em;">No inventory rows.</div>
+
+                                        <div class="row" style="margin-top:0.5em;">
+                                            <div class="col-sm-6" style="padding-right:8px;">
+                                                <h5 class="text-bold">Bills</h5>
+                                                <table class="table table-condensed" style="margin:0;">
+                                                    <tr class="headerRow">
+                                                        <td class="text-center" style="width:8%">#</td>
+                                                        <th>Invoice #</th>
+                                                        <th class="text-right" style="width:28%">Date</th>
+                                                        <th class="text-right" style="width:22%">Total</th>
+                                                    </tr>
+                                                    <tr ng-repeat="b in ContractBills">
+                                                        <td class="text-center">{{$index + 1}}</td>
+                                                        <td>{{b.InvoiceNumber}}</td>
+                                                        <td class="text-right">{{b.InvoiceDate | date}}</td>
+                                                        <td class="text-right">{{b.Total | number:2}}</td>
+                                                    </tr>
+                                                </table>
+                                                <p class="alert alert-info" ng-if="!ContractBills || ContractBills.length === 0">No bills.</p>
+                                            </div>
+                                            <div class="col-sm-6" style="padding-left:8px;">
+                                                <h5 class="text-bold">Payments</h5>
+                                                <table class="table table-condensed" style="margin:0;">
+                                                    <tr class="headerRow">
+                                                        <td class="text-center" style="width:8%">#</td>
+                                                        <th>Receipt #</th>
+                                                        <th style="width:22%">Date</th>
+                                                        <th class="text-right" style="width:22%">Amount</th>
+                                                    </tr>
+                                                    <tr ng-repeat="r in ContractReceipts">
+                                                        <td class="text-center">{{$index + 1}}</td>
+                                                        <td>{{r.ReceiptNumber}}</td>
+                                                        <td>{{r.TransactionDate | date:'dd/MM/yyyy'}}</td>
+                                                        <td class="text-right">{{r.TransactionAmount | number:2}}</td>
+                                                    </tr>
+                                                </table>
+                                                <p class="alert alert-info" ng-if="!ContractReceipts || ContractReceipts.length === 0">No payments.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="well well-sm" style="margin-top:1em; margin-bottom:0;">
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <span class="text-muted">Total billed</span>
+                                                    <strong class="pull-right">{{ BilledAmount | number:2 }}</strong>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <span class="text-muted">Total paid</span>
+                                                    <strong class="pull-right text-success">{{ paymentReceivedTotal | number:2 }}</strong>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <span class="text-muted">Balance (billed − paid)</span>
+                                                    <strong class="pull-right" ng-class="summaryBillsVsPaymentsBalance > 0 ? 'text-danger' : 'text-success'">{{ summaryBillsVsPaymentsBalance | number:2 }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane table-responsive" id="clientInfo" style="padding:5px;">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="text-right">
+
+                                                <button class="btn btn-primary" style="margin-bottom:10px;" ng-if="SelectedJob"
+                                                        ng-click="createDelChallan()">
+                                                    Create Challan
+                                                </button>
+
+                                                <button class="btn btn-success" style="margin-bottom:10px;" ng-if="SelectedJob"
+                                                        ng-click="PrintAllDeliveryChallans()">
+                                                    Print All Challans
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+
+
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                <div class="panel panel-default" ng-repeat="item in DeliveryChallans">
+                                                    <div class="panel-heading" role="tab" id="heading{{item.ChallanNumber}}">
+
+                                                        <h4 class="panel-title" style="position:relative;">
+
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               ng-click="toggleDeliveryChallans(item.ChallanNumber)" href="javascript:void()" aria-expanded="true"
+                                                               aria-controls="{{item.ChallanNumber}}">
+                                                                {{$index + 1}}.  {{item.ChallanNumber}}, Challan Date: {{item.SentDate | date}}
+                                                            </a>
+                                                            <!--    <span class="print-contractjob" href="javascript:void()" ng-click="PrintDeliveryChallan(item.WorkOrderId)"><i class="fa fa-print fa-2x"></i> </span>-->
+
+                                                        </h4>
+                                                        <div style="position: relative; right: 40px; top: -13px; display: flex; justify-content: space-around; width: 76px;float:right; ">
+                                                            <a href="#" addeditcompany ng-click="editDeliveryChallan(item);" stop="true"><i class="fa fa-edit text-primary fa-2x"></i></a>
+                                                            <a href="#" ng-click="PrintDeliveryChallan(item.WorkOrderId);" stop="true"><i class="fa fa-print text-success fa-2x"></i></a>
+                                                            <a href="#" ng-click="deleteDeliveryChallan(item);" stop="true"><i class="fa fa-trash text-danger fa-2x"></i></a>
+
+                                                        </div>
+                                                    </div>
+                                                    <div id="{{item.ChallanNumber}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{item.ChallanNumber}}">
+                                                        <div class="panel-body">
+                                                            <table class="table table-condenced" id="{{item.ChallanNumber}}" style="margin:0;">
+                                                                <tr class="headerRow">
+                                                                    <td style="width:5%" class="text-center">S.No</td>
+                                                                    <th style="width:60%">Product</th>
+                                                                    <th style="width:20%" class="text-right">Quantity</th>
+                                                                    <th class="text-right">Rate</th>
+                                                                    <!--<th class="text-center">Actions</th>-->
+                                                                </tr>
+                                                                <tr ng-repeat="item in item.Items">
+                                                                    <td class="text-center">{{$index+1}}</td>
+                                                                    <td>{{item.Product}}</td>
+                                                                    <td class="text-right">{{item.SentQty | number:2}}</td>
+                                                                    <td class="text-right">{{item.Rate | number:2}}</td>
+
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="text-center" ng-if="!SelectedJob.Items || SelectedJob.Items.length <= 0">
+                                        <img src="../img/no-data.png" style="width:110px;" />
+                                        <p>No Records Found</p>
+                                        <h5 ng-if="!SelectedJob">Please click view link on job card to see details.</h5>
+
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane table-responsive" id="tabReturnChallans" style="padding:5px;">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="text-right">
+                                                <button class="btn btn-primary" style="margin-bottom:10px;" ng-if="SelectedJob"
+                                                        ng-click="createReturnChallan()">
+                                                    Create Return Challan
+                                                </button>
+                                                <button class="btn btn-success" style="margin-bottom:10px;" ng-if="SelectedJob"
+                                                        ng-click="PrintAllReturnChallans()">
+                                                    Print All Challans
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+
+
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                <div class="panel panel-default" ng-repeat="item in ReturnChallans">
+                                                    <div class="panel-heading" role="tab" id="heading{{item.ChallanNumber}}">
+
+                                                        <h4 class="panel-title" style="position:relative;">
+
+                                                            <a data-toggle="collapse" data-parent="#accordion"
+                                                               ng-click="toggleRetDeliveryChallans(item.ChallanNumber)" href="javascript:void()" aria-expanded="true"
+                                                               aria-controls="{{item.ChallanNumber}}">
+                                                                {{$index + 1}}.  {{item.ChallanNumber}}, Challan Date: {{item.ChallanDate | date}}
+                                                            </a>
+                                                            <!--<span class="print-contractjob" href="javascript:void()" ng-click="PrintReturnChallan(item.GRNId)"><i class="fa fa-print fa-2x"></i> </span>-->
+
+                                                        </h4>
+                                                        <div style="position: relative; right: 40px; top: -13px; display: flex; justify-content: space-around; width: 76px;float:right; ">
+                                                            <a href="#" addeditcompany ng-click="editReturnChallan(item);" stop="true"><i class="fa fa-edit text-primary fa-2x"></i></a>
+                                                            <a href="#" ng-click="PrintReturnChallan(item.GRNId);" stop="true"><i class="fa fa-print text-success fa-2x"></i></a>
+                                                            <a href="#" ng-click="deleteReturnChallan(item);" stop="true"><i class="fa fa-trash text-danger fa-2x"></i></a>
+
+                                                        </div>
+                                                    </div>
+                                                    <div id="{{item.ChallanNumber}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{item.ChallanNumber}}">
+                                                        <div class="panel-body">
+                                                            <table class="table table-condenced" id="{{item.ChallanNumber}}" style="margin:0;">
+                                                                <tr class="headerRow">
+                                                                    <td style="width:5%" class="text-center">S.No</td>
+                                                                    <th style="width:60%">Product</th>
+                                                                    <th style="width:20%" class="text-right">Quantity</th>
+
+
+                                                                </tr>
+                                                                <tr ng-repeat="item in item.Items">
+                                                                    <td class="text-center">{{index+1}}</td>
+                                                                    <td>{{item.Product}}</td>
+                                                                    <td class="text-right">{{item.Quantity|number:2}}</td>
+
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="text-center" ng-if="!SelectedJob.Items || SelectedJob.Items.length <= 0">
+                                        <img src="../img/no-data.png" style="width:110px;" />
+                                        <p>No Records Found</p>
+                                        <h5 ng-if="!SelectedJob">Please click view link on job card to see details.</h5>
+
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane table-responsive" id="tabContractInventory" style="padding:5px;">
+                                    <div class="row">
+
+                                        <div class="col-sm-12">
+
+
+
+                                            <table class="table table-condenced" tyle="margin:0;">
+                                                <tr class="headerRow">
+                                                    <td style="width:5%" class="text-center">Sr.No</td>
+                                                    <th style="width:35%">Product</th>
+                                                    <th style="width:20%" class="text-right">Sent</th>
+                                                    <th style="width:20%" class="text-right">Returned</th>
+                                                    <th style="width:20%" class="text-right">Balance</th>
+
+                                                </tr>
+                                                <tr ng-repeat="item in ContractInventory">
+                                                    <td class="text-center">{{$index+1}}</td>
+                                                    <td>{{item.Product}}</td>
+                                                    <td class="text-right">{{item.Sent |number:2}}</td>
+                                                    <td class="text-right">{{item.Returned |number:2}}</td>
+                                                    <td class="text-right">{{item.Balance |number:2}}</td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="text-center" ng-if=" ContractInventory.length <= 0">
+                                        <img src="../img/no-data.png" style="width:110px;" />
+                                        <p>No Records Found</p>
+
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane table-responsive" id="tabBilling" style="padding:5px;">
+                                    <div class="row">
+                                        <div class="col-sm-12 text-right">
+                                            <!--<button class="btn btn-success" style="margin-bottom:10px;"
+                                                    ng-click="PrintAllBills()">
+                                                Print All Bills
+                                            </button>-->
+
+                                            <button class="btn btn-primary" style="margin-bottom:10px;"
+                                                    ng-click="billContract()">
+                                                Generate Bill
+                                            </button>
+
+
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <table class="table table-condenced" tyle="margin:0;">
+                                                <tr class="headerRow">
+                                                    <td style="width:5%" class="text-center">Sr.No</td>
+                                                    <th style="width:35%">Invoice #</th>
+                                                    <th style="width:20%" class="text-right">Invoice Date</th>
+                                                    <th style="width:20%" class="text-right">Total</th>
+                                                    <th style="width:20%" class="text-center">Print</th>
+
+
+                                                </tr>
+                                                <tr ng-repeat="item in ContractBills">
+                                                    <td class="text-center">{{$index+1}}</td>
+                                                    <td>{{item.InvoiceNumber}}</td>
+                                                    <td class="text-right">{{item.InvoiceDate |date }}</td>
+                                                    <td class="text-right">{{item.Total |number:2}}</td>
+                                                    <td class="text-center">
+                                                        <a href="javascript:void()" ng-click="printBill(item)">
+                                                            <i class="fa fa-print fa-2x"></i>
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="text-center" ng-if=" ContractInventory.length <= 0">
+                                        <img src="../img/no-data.png" style="width:110px;" />
+                                        <p>No Records Found</p>
+
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane table-responsive" id="tabLedger" style="padding:5px;">
+                                    <div class="row" ng-if="Contract.ContractId">
+                                        <div class="col-sm-12 text-right" style="margin-bottom:10px;">
+                                            <span class="text-muted">Payment received:</span>
+                                            <strong>{{ paymentReceivedTotal | number:2 }}</strong>
+                                            <span class="text-muted" style="margin-left:1.5em;">Amount receivable:</span>
+                                            <strong>{{ amountReceivable | number:2 }}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 text-right">
+                                            <button class="btn btn-primary" style="margin-bottom:10px;"
+                                                    ng-click="openReceivePaymentModal()"
+                                                    ng-disabled="!Contract.LedgerId">
+                                                Receive Payment
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <table class="table table-condenced" style="margin:0;">
+                                                <tr class="headerRow">
+                                                    <td style="width:5%" class="text-center">Sr.No</td>
+                                                    <th style="width:18%">Receipt #</th>
+                                                    <th style="width:15%">Date</th>
+                                                    <th>Site</th>
+                                                    <th class="text-right" style="width:12%">Amount</th>
+                                                    <th style="width:12%">Mode</th>
+                                                    <th>Remarks</th>
+                                                </tr>
+                                                <tr ng-repeat="r in ContractReceipts">
+                                                    <td class="text-center">{{$index+1}}</td>
+                                                    <td>{{r.ReceiptNumber}}</td>
+                                                    <td>{{r.TransactionDate | date:'dd/MM/yyyy'}}</td>
+                                                    <td>{{r.Site}}</td>
+                                                    <td class="text-right">{{r.TransactionAmount | number:2}}</td>
+                                                    <td>{{ (StaicData.PAYMENT_MODES | filter:{Id:r.TransactionMode})[0] ? (StaicData.PAYMENT_MODES | filter:{Id:r.TransactionMode})[0].Name : r.TransactionMode }}</td>
+                                                    <td>{{r.Narration}}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="text-center" ng-if="!ContractReceipts || ContractReceipts.length <= 0">
+                                        <img src="../img/no-data.png" style="width:110px;" />
+                                        <p>No payments recorded for this contract yet.</p>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane table-responsive" id="tabContractDocuments" style="padding:5px;">
+                                    <h5 style="margin-top:0;">Contract documents</h5>
+                                    <table class="table table-condensed" ng-if="ContractHeaderDocuments.length > 0">
+                                        <tr class="headerRow">
+                                            <td class="text-center" style="width:5%">#</td>
+                                            <th style="width:25%">Document</th>
+                                            <th>File</th>
+                                            <th style="width:20%">Actions</th>
+                                        </tr>
+                                        <tr ng-repeat="doc in ContractHeaderDocuments">
+                                            <td class="text-center">{{$index + 1}}</td>
+                                            <td>{{ doc.label }}</td>
+                                            <td>{{ doc.fileName }}</td>
+                                            <td>
+                                                <!--<a ng-href="{{ doc.url }}" target="_blank" rel="noopener">View</a>
+                                                &nbsp;|&nbsp;-->
+                                                <a href="javascript:void(0)" ng-click="downloadContractDoc(doc)">Download</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="text-muted" ng-if="ContractHeaderDocuments.length === 0" style="margin-bottom:1em;">
+                                        No contract documents attached.
+                                    </div>
+
+                                    <h5>Activity documents</h5>
+                                    <div class="text-center" ng-if="contractDocumentsLoading" style="padding:1em;">
+                                        <i class="fa fa-spinner fa-spin fa-2x"></i>
+                                        <p>Loading documents…</p>
+                                    </div>
+                                    <div ng-if="!contractDocumentsLoading">
+                                        <table class="table table-condensed" ng-if="ContractDocuments && ContractDocuments.length > 0">
+                                            <tr class="headerRow">
+                                                <td class="text-center" style="width:5%">#</td>
+                                                <th style="width:22%">Type</th>
+                                                <th style="width:12%">Job card</th>
+                                                <th style="width:18%">Uploaded</th>
+                                                <th style="width:15%">Content type</th>
+                                                <th>Preview / open</th>
+                                            </tr>
+                                            <tr ng-repeat="doc in ContractDocuments">
+                                                <td class="text-center">{{$index + 1}}</td>
+                                                <td>
+                                                    <span ng-if="doc.DocumentType === 'InstallActivityImage'">Install photo</span>
+                                                    <span ng-if="doc.DocumentType !== 'InstallActivityImage'">{{ doc.DocumentType }}</span>
+                                                </td>
+                                                <td>{{ doc.JobCardId || '—' }}</td>
+                                                <td>{{ doc.CreatedOn | date:'dd/MM/yyyy HH:mm' }}</td>
+                                                <td>{{ doc.ContentType || '—' }}</td>
+                                                <td>
+                                                    <a ng-href="{{ documentFileUrl(doc) }}" target="_blank" rel="noopener">Open</a>
+                                                    <div ng-if="doc.ContentType && doc.ContentType.indexOf('image/') === 0" style="margin-top:6px;">
+                                                        <img ng-src="{{ documentFileUrl(doc) }}" alt="" style="max-width:200px;max-height:120px;border:1px solid #ddd;" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="text-center text-muted" ng-if="!ContractDocuments || ContractDocuments.length === 0">
+                                            <p>No activity documents uploaded for this contract yet.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <div class="modal fade" id="contractQuickReceiptModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:92%;max-width:1100px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Receive payment</h4>
+                </div>
+                <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                    <div ng-if="quickReceiptModalOpen" ng-controller="ContractQuickReceiptController">
+                        <div ng-include="'templ/quickReceipt.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="contractBillQuotationPickerModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Select quotations for billing</h4>
+                </div>
+                <div class="modal-body" ng-if="billQuotationPickerOpen">
+                    <p class="text-muted small">Choose one or more quotations. Already billed quotations cannot be selected again.</p>
+                    <table class="table table-condensed table-bordered">
+                        <tr class="headerRow">
+                            <th style="width:40px;" class="text-center">
+                                <input type="checkbox" ng-model="billQuotationPickerSelectAll" ng-change="toggleBillQuotationPickerAll()" />
+                            </th>
+                            <th>Vch#</th>
+                            <th>Party</th>
+                            <th>Date</th>
+                            <th class="text-right">Net</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                        <tr ng-repeat="row in billQuotationPickerRows">
+                            <td class="text-center">
+                                <input type="checkbox" ng-model="row.selected" ng-disabled="isQuotationAlreadyBilled(row.quotation)" ng-change="onBillQuotationRowToggle()" />
+                            </td>
+                            <td>
+                                {{row.quotation.QuotationNumber}}
+                                <span class="label label-info" ng-if="Contract.QuotationId == row.quotation.QuotationId">Primary</span>
+                            </td>
+                            <td>{{row.quotation.Client}}</td>
+                            <td>{{row.quotation.QuotationDate | date:'dd-MM-yyyy'}}</td>
+                            <td class="text-right">{{row.quotation.Total | number:2}}</td>
+                            <td class="text-center">
+                                <span class="label label-success" ng-if="isQuotationAlreadyBilled(row.quotation)">Billed</span>
+                                <span class="text-muted" ng-if="!isQuotationAlreadyBilled(row.quotation)">Open</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" ng-click="confirmBillQuotationPicker()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="contractMeasureBillModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:92%;max-width:1100px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        Bill contract
+                        <small ng-if="billQuotationSummary" class="text-muted"> — {{billQuotationSummary}}</small>
+                    </h4>
+                </div>
+                <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                    <div ng-if="measureBillModalOpen && measureBillSessionKey" ng-controller="ContractMeasureBillModalController">
+                        <div ng-include="'templ/billing/measurebill.html?d={{_currentDate}}'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="contractDeliveryChallanModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:92%;max-width:1100px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Create delivery challan</h4>
+                </div>
+                <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                    <div ng-if="deliveryChallanModalOpen" ng-controller="ContractDeliveryChallanModalController">
+                        <div ng-include="'templ/issueChallan.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="contractReturnChallanModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:92%;max-width:1100px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Create return challan</h4>
+                </div>
+                <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                    <div ng-if="returnChallanModalOpen" ng-controller="ContractReturnChallanModalController">
+                        <div ng-include="'templ/inv_grn.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="contractEditQuotationModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:95%;max-width:1200px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Edit quotation</h4>
+                </div>
+                <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                    <div ng-if="editQuotationModalOpen" ng-controller="ContractEditQuotationModalController">
+                        <div ng-include="'templ/quotationentry.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="contractNewQuotationModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:95%;max-width:1200px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">New quotation</h4>
+                </div>
+                <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                    <div ng-if="newQuotationModalOpen" ng-controller="ContractNewQuotationModalController">
+                        <div ng-include="'templ/quotationentry.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal right fade" id="contractQuotationPreviewDialog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="width:50%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Quotation preview</h4>
+                </div>
+                <div class="modal-body" style="padding-bottom:0px;">
+                    <loadingcircle ng-show="Preview == 1"></loadingcircle>
+                    <div class="row">
+                        <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="editContractQuotationFromPreview()">Edit</button>
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="printContractQuotationPdf()">Download PDF</button>
+                        </div>
+                    </div>
+                    <div id="contractQuotationRpt" style="zoom: 0.8; overflow-y: auto; max-height: 93vh;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addJobDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Add Activity</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <form name="fromWoJobCard" id="fromWoJobCard">
+                            <!--<div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-4">Job Number</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="jobNumber" maxlength="20" class="form-control" ng-model="JobCard.JobNumber" />
+                                    </div>
+                                </div>
+                            </div>-->
+                            <!--<div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Days</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="days" maxlength="3" nodecimal class="form-control maskednumber " ng-model="JobCard.Days" />
+                                    </div>
+                                </div>
+                            </div>-->
+                            <!--<div class="col-sm-12  mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Quantity</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="3" nodecimal name="quantity" class="form-control maskednumber" ng-model="JobCard.Quantity" />
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4">
+                                        Activity Type
+
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <searchableselect ng-name="activityType" ng-id="activityType"
+                                                          data-field="ActivityTypes" ng-model="JobCard.TypeId"
+                                                          data-val="Id" data-text="Name"></searchableselect>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4">
+                                    Employee(s)
+
+                                </label>
+                                <div class="col-sm-8">-->
+                            <!--<searchableselect ng-name="employee" ng-id="employee"
+                            data-field="Employees" ng-model="JobCard.EmployeeId"
+                            data-val="EmployeeId" data-text="Name"></searchableselect>-->
+                            <!--<multiselectcheckbox data="Employees" text="Name" text2="Name" key="EmployeeId"
+                                                             selecteddata="selectedEmployees"></multiselectcheckbox>
+                                        <span>Select your employee for this job</span>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <!--<div class="col-sm-12  mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Client Contact Name</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="30" name="clientContactName" class="form-control" ng-model="JobCard.ContactName" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Client Contact No</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="10" name="clientContactMobile maskednumber" phoneformat="true" class="form-control" ng-model="JobCard.ContactNo" />
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-sm-12  mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Area Covered</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="30" name="clientContactName" class="form-control maskednumber" ng-model="JobCard.AreaCovered" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="col-sm-12  mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Area Covered</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="30" name="clientContactName" class="form-control maskednumber" ng-model="JobCard.AreaCovered" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12  mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Rate/Sqft</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="30" name="clientContactName maskednumber" class="form-control" ng-model="JobCard.UnitAreaRate" />
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Estimated Start Date</label>
+                                    <div class="col-sm-8">
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="JobCard.EstimatedStartDate" name="estimatedStartDate" id="estimatedStartDate" tabindex="2" type="text" class="form-control" />
+                                        </datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Estimated End Date</label>
+                                    <div class="col-sm-8">
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="JobCard.EstimatedEndDate" name="estimatedEndDate" id="estimatedEndDate" tabindex="2" type="text" class="form-control" />
+                                        </datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12  mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Remarks</label>
+                                    <div class="col-sm-8">
+                                        <textarea maxlength="500" class="form-control" ng-model="JobCard.Remarks" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary btn-sm" ng-click="SaveJobCard();">Send To OPS</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!---start of contract extend dialog-->
+    <div class="modal fade" id="extendConractDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:36%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Extend Contract</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <form name="frmExtendConract" id="frmExtendConract">
+
+
+                            <div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Extend Up To</label>
+                                    <div class="col-sm-5">
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="ContractExt.ValidTill" name="val_extendDate" id="val_extendDate" tabindex="2" type="text" class="form-control" />
+                                        </datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Remarks</label>
+                                    <div class="col-sm-8">
+                                        <textarea name="val_extRemarks" class="form-control" maxlength="500"
+                                                  ng-model="ContractExt.Remarks" style="height:100px"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary btn-sm" ng-click="ExtendContract();">Save</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of contract extend dialog-->
+</div>
+
+<script lang="javascript">
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+    $('table').click(function (e) {
+
+        e.preventDefault();
+
+    });
+</script>

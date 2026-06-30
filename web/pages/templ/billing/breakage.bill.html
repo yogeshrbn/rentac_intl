@@ -1,0 +1,226 @@
+<div class="">
+
+    <!--<pageheader heading="Issue Items" />-->
+    <div class="alert alert-success hide" ng-show="Ledgers.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>
+    <div class="col-sm-12">
+
+        <div id="workOrderInfo" style="margin-top:10px;">
+            <form id="frmPurchase" name="frmPurchase" method="post" class="">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Party</label>
+                        <searchableselect ng-name="val_party" ng-id="val_party" tabindex="2" data-field="SundryDebtors"
+                                          ng-model="Billing.LedgerId" data-primarytext="TradeName" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Site</label>
+                        <searchableselect id="Searchableselect1" ng-model="Billing.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                          data-text="SiteAddress"></searchableselect>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Bill Date</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Billing.InvoiceDate" tabindex="2" type="text" class="form-control" name="val_partyBillDate" />
+                        </datepicker>
+
+                    </div>
+                    <div class="col-sm-3">
+
+
+                        <label>Invoice #</label>
+
+                        <label ng-if="Config.allowEditBillNo == false">{{Billing.InvoiceNumber}}</label>
+                        <div class="input-group" ng-if="Config.allowEditBillNo == true">
+                            <!--<span class="input-group-addon" id="basic-addon1" ng-if="Billing.InvoiceId == 0"> {{Config.billPrefix}}</span>-->
+                            <input type="text" class="form-control" validateprefix ng-if="Config.allowEditBillNo == true" tabindex="6" ng-model="Billing.InvoiceNumber" maxlength="20" />
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-12">
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="row addWithTable" style="height: 290px; overflow-y: auto;border: solid 1px #a5b0b5 ">
+
+                        <!--<div class="col-sm-12 addItemBox">
+                            <div class="col-sm-3">
+                                <label>
+                                    Product
+                                </label>
+                                <searchabletext ng-id="itemSelect" local-data="AllSizes" title-field="Name" name="Name" search-fields="Name,Code"
+                                                selected-object="selectedProduct" data-entry="1"> </searchabletext>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>
+                                    Quantity
+                                </label>
+                                <input type="number" class="form-control" tabindex="6" ng-model="TransItem.Quantity"
+                                       max="999999999" />
+                            </div>
+                            <div class="col-sm-3">
+                                <label>
+                                    Rate
+                                </label>
+                                <input type="number" class="form-control" tabindex="7" ng-model="TransItem.Rate" max="999999999" />
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="col-sm-12">&nbsp; </label>-->
+                        <!--<input type="button" class="btn btn-primary" tabindex="8" value="Add" ng-click="addItem();" ng-show="AccessData.Add" />-->
+                        <!--<button class="btn btn-primary" value="Add" ng-keydown="addItem($event);" stopfocus="true" ng-click="addItem();" ng-show="AccessData.Add">Add</button>
+
+                            </div>
+                        </div>-->
+                        <table class="table table-condensed table-responsive tableInput" med-key ng-delete="DeleteItem(index)">
+
+                            <tr class="headerRow">
+                                <th style="width: 50px;" class="text-center">#</th>
+                                <th>Item</th>
+
+                                <!--     <th>Size</th>-->
+                                <th style="width:100px" class="text-center">Qty</th>
+                                <!--<th style="width:100px" class="text-right">Rate</th>-->
+                                <!--<th>Tax</th>-->
+                                <!--<th>Total</th>-->
+                                <th width="100px" class="text-right">Amount</th>
+                            </tr>
+                            <tr ng-repeat="item in Billing.Items" ng-delete="DeleteItem(index);">
+                                <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">
+                                    {{$index+1}}
+                                </td>
+                                <td>
+                                    {{item.Item}}
+                                </td>
+
+                                <td class="text-center">
+                                    {{item.Quantity}}
+
+                                </td>
+                                <!--<td>
+                                    <input type="text" class="form-control maskednumber" ng-model="item.Rate" maxlength="10" />
+                                </td>-->
+                                <!--<td> {{item.TaxName}}</td>-->
+                                <td class="text-right">
+                                    {{item.Amount |number:2  }}
+
+                                </td>
+                            </tr>
+                            <tr ng-if="!Billing.Items || Billing.Items.length==0">
+                                <td colspan="5" class="text-center text-info"><h5>No Items added.</h5></td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-7 siteBox">
+                            <div class="col-sm-12 form-group">
+                                <div ng-if="Billing.BreakageDamageDetails && Billing.BreakageDamageDetails.length"
+                                     style="margin-top:12px;max-height:200px;overflow-y:auto">
+                                    <label class="text-muted" style="font-size:12px;">Damage components (from receipts)</label>
+                                    <table class="table table-condensed table-bordered" style="margin-bottom:0;">
+                                        <tr class="headerRow">
+                                            <th>Item</th>
+                                            <th>Challan</th>
+                                            <th>Component</th>
+                                            <th class="text-right">Qty</th>
+                                            <th class="text-right">Rate</th>
+                                            <th class="text-right">Cost</th>
+                                            <!--<th class="text-center">Rcvd</th>-->
+                                        </tr>
+                                        <tr ng-repeat="dd in Billing.BreakageDamageDetails">
+                                            <td>{{dd.ParentItem}}</td>
+                                            <td>{{dd.GRN}}</td>
+                                            <td>{{dd.ComponentName}}</td>
+                                            <td class="text-right">{{dd.Quantity | number:2}}</td>
+                                            <td class="text-right">{{dd.Rate | number:2}}</td>
+                                            <td class="text-right">{{dd.Cost | number:2}}</td>
+                                            <!--<td class="text-center">{{dd.ReceivingDate | formatDate}}</td>-->
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="4" class="text-right"><strong>Total</strong></td>
+                                            <td class="text-right"><strong>{{ (Billing.BreakageDamageDetails | sum:'Cost') | number:2 }}</strong></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 mt-1">
+                                <input type="button" style="width: 100px;" class="btn btn-default" ui-sref="billList" value="Cancel" />
+
+                                <input type="button" style="width: 100px;" class="btn btn-primary ml-1" ng-show="AccessData.Add ? true : false " value="Save" ng-click="Save();" />
+
+                            </div>
+                        </div>
+                        <div class="col-sm-5 nopadding">
+                            <table class="table  table-responsive text-bold">
+                                <tr>
+                                    <td class="text-right">SubTotal</td>
+                                    <td class="text-right" width="80px">
+                                        {{ SubTotal(0) | number:2 }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Discount (%)</td>
+                                    <td class="text-right">
+                                        <input type="text" class="form-control maskednumber" ng-model="Billing.DiscountPercent" maxlength="6" ng-blur="onDiscountPercentChange()" placeholder="0.00" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Discount</td>
+                                    <td class="text-right">
+                                        <input type="text" class="form-control maskednumber" ng-model="Billing.Discount" maxlength="10" ng-blur="onDiscountChange()" placeholder="0.00" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Taxable value</td>
+                                    <td class="text-right">{{ Billing.Taxable | number:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        IGST
+                                    </td>
+                                    <td class="text-right">{{ Billing.IGST | number:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        CGST
+                                    </td>
+                                    <td class="text-right">{{ Billing.CGST | number:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        SGST
+                                    </td>
+                                    <td class="text-right">{{ Billing.SGST | number:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-bold">
+                                        <label class="control-label">
+                                            Total
+                                        </label>
+                                    </td>
+                                    <td class="text-right" width="150px">
+                                        {{ Billing.Total | number:2 }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <script lang="ja">
+        $('.tabContainer a').click(function (e) {
+            e.preventDefault();
+        });
+
+    </script>
+</div>

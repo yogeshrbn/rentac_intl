@@ -1,0 +1,32 @@
+-- Line-level GST component rates on QuotationItems (percent values, e.g. 9, 9, 18).
+-- Run DDL from PreRun/table049_QuotationItems_GstRates.sql via DbUp first.
+--
+-- Full procedure bodies are not versioned in this repo. Export current definitions from SQL Server:
+--   SELECT OBJECT_DEFINITION(OBJECT_ID('dbo.p_QuotationItems_ins'));
+--   SELECT OBJECT_DEFINITION(OBJECT_ID('dbo.p_getQuotationItems'));
+-- Merge the changes below into those scripts, then deploy (CREATE OR ALTER).
+--
+-- =============================================================================
+-- p_QuotationItems_ins
+--   Add parameters (defaults keep existing callers/tools working until app ships):
+--     @IGSTRate  DECIMAL(9, 4) = NULL
+--     @CGSTRate  DECIMAL(9, 4) = NULL
+--     @SGSTRate  DECIMAL(9, 4) = NULL
+--   INSERT into dbo.QuotationItems must set:
+--     IGSTRate, CGSTRate, SGSTRate
+--   Use ISNULL(@IGSTRate, 0) (or persist NULL) per your convention.
+--
+-- BAL/DAL/BillingDAL.cs AddQuotationItem passes @IGSTRate, @CGSTRate, @SGSTRate
+-- immediately after @SGST and before @Total.
+--
+-- p_getQuotationItems
+--   Add to the line-item SELECT (alias to match consumers):
+--     ISNULL(qi.IGSTRate, 0)  AS IGSTRate,
+--     ISNULL(qi.CGSTRate, 0)  AS CGSTRate,
+--     ISNULL(qi.SGSTRate, 0)  AS SGSTRate
+--   (adjust table alias if not `qi`.)
+--
+-- Dapper loads quotation lines into QuotationItemDTO; reports use the same proc.
+-- =============================================================================
+USE [$AppDb$]
+GO

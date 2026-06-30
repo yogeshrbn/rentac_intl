@@ -1,0 +1,70 @@
+<div class="form-group">
+
+    <!--     <pageheader heading="Product List" />-->
+
+    <div class="clearfix">&nbsp;</div>
+
+    <div class="col-lg-12">
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <div class="d-flex mb-1 mr-1">
+                <input type="text" class="form-control mr-1" placeholder="Find by name" ng-model="Search.Name" />
+
+                <input type="button" value="Find" class="btn btn-primary  mr-1" ng-click="find();" />
+
+                <a href="" class="btn btn-primary" ng-show="AccessData.Add" ng-click="goNewProduct($event)">New Item</a>
+            </div>
+            <div>
+                <export data="Products" url="'products.html'"></export>
+            </div>
+        </div>
+        <div id="productListTableWrap" class="table-responsive" style="margin-top:7px">
+            <table class="table table-condense" med-key>
+
+                <tr class="headerRow">
+                    <th class="text-center" style="width:50px;">Sr.No</th>
+                    <th sort-header="Products" sort-field="Name">Name</th>
+                    <th sort-header="Products" sort-field="Code">Code</th>
+
+                    <th sort-header="Products" sort-field="Category">Category</th>
+                    <th sort-header="Products" sort-field="SortOrder">SortOrder</th>
+                    <th>Actions</th>
+
+                </tr>
+                <tr id="product-row-{{item.ProductId}}" dir-paginate="item in Products | itemsPerPage: PAGE_SIZE  |filter: search:strict" pagination-id="productList" current-page="CurrentPage">
+                    <!--<tr ng-repeat="item in Products">-->
+                    <td class="text-center"> {{((CurrentPage - 1) * PAGE_SIZE) + $index + 1 }}</td>
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <img style="width:30px; margin-right:5px;" ng-src="{{getProductImage(item)}}" />
+                            <span>
+                                {{item.Name}}
+                            </span>
+                        </div>
+
+                    </td>
+                    <td>
+                        {{item.Code}}
+                    </td>
+
+                    <td>{{item.Category==1012?'Rented':'Consumeables'}}</td>
+                    <td>
+                        {{item.SortOrder}}
+                    </td>
+                    <td>
+                        <a href="" ng-show="AccessData.Edit" ng-click="goEditProduct($event, item.ProductId)"><span class="fa fa-edit text-primary"></span></a>&nbsp;&nbsp;
+                        <a href="javascript:void()" ng-show="{{item.StatusId}} != 2" ng-click="Delete( item.ProductId);"><span class="fa fa-trash text-danger"></span></a>
+                        <a ng-show="{{item.StatusId}}==2" ng-click="Activate(1,item.ProductId);"><span class="fa fa-check text-primary"></span></a>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+      
+        <div class="flex-between" style="margin-top:8px;">
+            <!--<div class="text-muted small" ng-if="Register.length > 0">Showing {{(CurrentPage - 1) * PAGE_SIZE + 1}} - {{(CurrentPage - 1) * PAGE_SIZE + Register.length}} of {{TotalItems}}</div>-->
+            <dir-pagination-controls pagination-id="productList" on-page-change="onProductPageChange(newPageNumber)"></dir-pagination-controls>
+        </div>
+
+    </div>
+
+</div>

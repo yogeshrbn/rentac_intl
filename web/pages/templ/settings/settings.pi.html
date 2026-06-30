@@ -1,0 +1,166 @@
+
+
+<ul class="piSettingsTab nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#piOsettings" ng-click="javascript:void()" aria-controls="settings" role="tab" data-toggle="tab">Settings</a>
+    </li>
+    <li role="presentation">
+        <a href="#piOotherInfo" aria-controls="otherInfo" role="tab"
+           data-toggle="tab">Other Info</a>
+    </li>
+</ul>
+<div class="tab-content" style="border: solid 1px #c0c0c0;padding:8px; ">
+    <div role="tabpanel" class="tab-pane active" id="piOsettings">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-4 control-label">Proforma invoice prefix</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" maxlength="20" ng-model="prefix" validateprefix>
+                </div>
+            </div>
+        </div><div class="clearfix"></div>
+        <div class="col-sm-12 mt-1">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-4 control-label">Proforma invoice # start from</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" maxlength="4" ng-model="numberstart">
+                </div>
+            </div>
+        </div><div class="clearfix"></div>
+        <div class="col-sm-12  mt-1">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-4 control-label">Allow editing proforma invoice number</label>
+                <div class="col-sm-2">
+                    <input type="checkbox" class="checkbox" ng-model="editnumber">
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="clearfix"></div>
+        <div class="col-sm-12 mt-1">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Default contract line total</label>
+                <div class="col-sm-8" style="padding-top:7px;">
+                    <label class="radio-inline">
+                        <input type="radio" ng-model="contractLineTotalMode" value="quantity" /> Rent (Qty × Rate × Days)
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" ng-model="contractLineTotalMode" value="area" /> Area-wise (Qty × Area × Rate)
+                    </label>
+                    <p class="text-muted" style="font-size:12px;margin-top:6px;">Default for new contract proforma invoices; each document can override on the entry screen.</p>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-4 control-label">Attach rate sheet on print</label>
+                <div class="col-sm-2">
+                    <input type="checkbox" class="checkbox" ng-value="1" ng-model="attachRateSheet">
+                </div>
+
+
+            </div>
+            <div class="col-sm-offset-4 col-sm-8">
+                <input type="button" class="btn btn-primary" style="margin-top:20px;" value="Save" ng-click="saveSettings()" />
+
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="piOotherInfo">
+        <ul class="piOtherInfoTab nav nav nav-pills" style="margin-bottom:10px;">
+            <li role="presentation" class="active"><a href="#piTabRent" role="tab" data-toggle="tab" ng-click="javascript:void()">Rent</a></li>
+            <li role="presentation"><a href="#piTabContract" role="tab" data-toggle="tab" ng-click="javascript:void()">Contract</a></li>
+            <li role="presentation"><a href="#piTabSales" role="tab" data-toggle="tab" ng-click="javascript:void()">Sales</a></li>
+        </ul>
+       
+        <div class="tab-content" style="padding:8px; ">
+            <div role="tabpanel" class="tab-pane active mb-1" id="piTabRent">
+                <div>
+                    <h3>Additional information</h3>
+                    <textarea ckeditor="editorOptions" ng-model="quotation" data-ck-editor style="height:100px;"></textarea>
+                </div>
+
+                <div>
+
+                    <h3>Terms and Conditions</h3>
+                    <textarea ckeditor="editorOptions" ng-model="tnc" data-ck-editor style="height:100px;"></textarea>
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-sm-8">
+                    <input type="button" class="btn btn-primary" style="margin-top:20px;" value="Save" ng-click="save()" />
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="piTabContract">
+                <div class="col-sm-12" style="margin-bottom:15px;">
+                    <div class="form-group">
+                        <label class="control-label">Contract line total calculation</label>
+                        <div>
+                            <label class="radio-inline">
+                                <input type="radio" ng-model="contractLineTotalMode" value="quantity" /> Rent (Qty × Rate × Days)
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" ng-model="contractLineTotalMode" value="area" /> Area-wise (Qty × Area × Rate)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3>Additional information</h3>
+                    <textarea ckeditor="editorOptions" ng-model="contractAddInfo" data-ck-editor style="height:100px;"></textarea>
+                </div>
+
+                <div>
+
+                    <h3>Terms and Conditions</h3>
+                    <textarea ckeditor="editorOptions" ng-model="contracttnc" data-ck-editor style="height:100px;"></textarea>
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-sm-8">
+                    <input type="button" class="btn btn-primary" style="margin-top:20px;" value="Save" ng-click="saveContractInfo()" />
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="piTabSales">
+                <div>
+                    <h3>Additional information</h3>
+                    <textarea ckeditor="editorOptions" ng-model="saleAddInfo" data-ck-editor style="height:100px;"></textarea>
+                </div>
+
+                <div>
+
+                    <h3>Terms and Conditions</h3>
+                    <textarea ckeditor="editorOptions" ng-model="saletnc" data-ck-editor style="height:100px;"></textarea>
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-sm-8">
+                    <input type="button" class="btn btn-primary" style="margin-top:20px;" value="Save" ng-click="saveSaleInfo()" />
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+
+
+
+<script lang="ja">
+    $('.piSettingsTab a').click(function (e) {
+        e.preventDefault();
+    });
+    $('.piOtherInfoTab a').click(function (e) {
+        e.preventDefault();
+    });
+</script>

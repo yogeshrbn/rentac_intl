@@ -1,0 +1,356 @@
+@model ReportViewer.Models.ContractSummaryPrintModel
+@using System.Globalization
+@using System.Linq
+@{
+    Layout = null;
+    var c = Model.Contract;
+    var comp = c?.Company;
+    var party = c?.Ledger;
+    var partyName = !string.IsNullOrEmpty(party?.Name) ? party.Name : (c?.Client ?? string.Empty);
+    var printedOn = DateTime.Now;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Contract summary@(c != null && !string.IsNullOrEmpty(c.Title) ? " — " + c.Title : "")</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            color: #222;
+            margin: 12px;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0 0 8px 0;
+        }
+
+        h2 {
+            font-size: 13pt;
+            margin: 14px 0 6px 0;
+            padding-bottom: 2px;
+        }
+
+        h3 {
+            font-size: 12pt;
+            margin: 10px 0 4px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+        }
+
+        th, td {
+            border: 1px solid #bbb;
+            padding: 4px 6px;
+            text-align: left;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .num {
+            text-align: right;
+        }
+
+        .muted {
+            color: #555;
+        }
+
+        .footer {
+            margin-top: 12px;
+            padding: 8px;
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+        }
+
+        .two-col {
+            width: 100%;
+        }
+
+            .two-col > tbody > tr > td {
+                width: 50%;
+                vertical-align: top;
+                border: none;
+                padding: 0 8px 0 0;
+            }
+
+                .two-col > tbody > tr > td + td {
+                    padding: 0 0 0 8px;
+                }
+
+        .subhead {
+            font-size: 11pt;
+            margin-bottom: 6px;
+        }
+
+        .header-outer td {
+            border: none;
+            vertical-align: top;
+            padding: 0 10px 0 0;
+        }
+
+        .headerUL {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+            .headerUL li {
+                padding-bottom: 8px;
+                padding-top: 0;
+                margin: 0;
+                line-height: 20px;
+            }
+
+        .company-name {
+            margin: 0;
+            padding: 0;
+            font-size: 18pt;
+        }
+
+        .client-site-header {
+            background-color: #f3f3f3;
+            font-weight: bold;
+            padding: 8px 5px;
+            margin-top: 12px;
+            margin-bottom: 8px;
+        }
+
+        .title-row {
+            text-align: center;
+            border: none;
+        }
+
+            .title-row td {
+                border: none;
+            }
+
+        .ledger-detail {
+            font-weight: normal;
+            font-size: 10px;
+            color: #333;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .logo-cell {
+            width: 100px;
+            text-align: center;
+            vertical-align: top;
+        }
+
+            .logo-cell img {
+                max-height: 64px;
+                max-width: 100px;
+            }
+    </style>
+</head>
+<body>
+    @if (comp != null)
+    {
+        <table class="header-outer" style="width:100%; margin-bottom:4px;">
+            <tr>
+                @if (!string.IsNullOrEmpty(comp.Logo))
+                {
+                    <td class="logo-cell"><img src="@comp.Logo" alt="" /></td>
+                }
+                <td style="width:100%;">
+                    <ul class="headerUL">
+                        <li><h2 class="company-name">@comp.Name</h2></li>
+                        <li>
+                            @(comp.Address1 ?? "")
+                            @if (!string.IsNullOrEmpty(comp.Address2))
+                            {<text> </text>@comp.Address2}
+                            @if (!string.IsNullOrEmpty(comp.City))
+                            {<text> </text>@comp.City}
+                            {<text> </text>@comp.ZipCode}
+                            @if (!string.IsNullOrEmpty(comp.State))
+                            {<text> </text>@comp.State}
+                        </li>
+                        <li>
+                            @if (!string.IsNullOrEmpty(comp.GSTNo))
+                            {<text>
+                                    <b>GST:</b> @comp.GSTNo</text>}
+                        </li>
+                        @if (!string.IsNullOrEmpty(comp.GSTNo) || !string.IsNullOrEmpty(comp.Email))
+                        {
+                            
+                            <li>
+                              
+                                @if (!string.IsNullOrEmpty(comp.Phone1))
+                                {<text>
+                                        <b>Phone No:</b> @(comp.Phone1 ?? "") , </text>}
+                            
+                                @if (!string.IsNullOrEmpty(comp.Email))
+                                {<text>
+                                        <b>Email:</b> @comp.Email</text>}
+                            </li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    }
+
+    <table style="width:100%;">
+        <tr class="title-row">
+            <td>
+                <strong>Contract summary</strong>
+                <span>  Date: @printedOn.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</span>
+                <hr style="border-color:#000; margin:8px 0;" />
+            </td>
+        </tr>
+    </table>
+
+    @if (c != null)
+    {
+        <div class="client-site-header">
+            <strong>Party</strong>: @partyName
+            @if (!string.IsNullOrEmpty(c.SiteAddress))
+            {<span>
+                    <text> | </text><strong>Site</strong>: @c.SiteAddress
+                </span>
+
+            }
+
+        </div>
+        if (party != null)
+        {
+            var addr = string.Join(" ", new[] { party.Address1, party.Address2, party.City, party.State, party.ZipCode }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            if (!string.IsNullOrWhiteSpace(addr) || !string.IsNullOrEmpty(party.GSTNo))
+            {
+                <div class="ledger-detail">
+                    @if (!string.IsNullOrWhiteSpace(addr))
+                    {<text>@addr</text>}
+                    @if (!string.IsNullOrWhiteSpace(addr) && !string.IsNullOrEmpty(party.GSTNo))
+                    {<text><br /></text>}
+                    @if (!string.IsNullOrEmpty(party.GSTNo))
+                    {<text><b>GSTIN:</b> @party.GSTNo</text>}
+                    @if (!string.IsNullOrEmpty(party.Phone1))
+                    {<text> · <b>Phone:</b> @party.Phone1</text>}
+                </div>
+            }
+        }
+        <div class="subhead" style="margin-top:10px;">
+            <strong>@c.Title</strong>
+        </div>
+        <table>
+            <tr><th style="width:18%">Contract value</th><td class="num" style="text-align:left;">@c.ContractValue.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+            <tr><th>Effective</th><td>@c.EffectiveFrom.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) To @c.ValidTill.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</td></tr>
+        </table>
+    }
+
+    <h2>Delivery challans</h2>
+
+    @foreach (var job in Model.JobSections ?? Enumerable.Empty<ReportViewer.Models.ContractSummaryJobSection>())
+    {
+        <h3>@job.ActivityLabel</h3>
+        if (job.DeliveryChallans == null || !job.DeliveryChallans.Any())
+        {
+            <p class="muted">No delivery challans.</p>
+        }
+        foreach (var ch in job.DeliveryChallans ?? Enumerable.Empty<ReportViewer.Models.ContractSummaryChallanDelivery>())
+        {
+            <p><strong>@ch.ChallanNumber</strong> <span class="muted"> @ch.SentDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</span></p>
+            <table>
+                <tr><th style="width:5%">#</th><th>Product</th><th class="num" style="width:18%">Qty</th><th class="num" style="width:14%">Rate</th></tr>
+                @for (var ii = 0; ii < ch.Items.Count; ii++)
+                {
+                    var row = ch.Items[ii];
+                    <tr><td class="num">@(ii + 1)</td><td>@row.Product</td><td class="num">@row.SentQty.ToString("N2", CultureInfo.InvariantCulture)</td><td class="num">@row.Rate.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+                }
+            </table>
+        }
+    }
+
+    <h2>Return challans</h2>
+    @foreach (var job in Model.JobSections ?? Enumerable.Empty<ReportViewer.Models.ContractSummaryJobSection>())
+    {
+        <h3>@job.ActivityLabel</h3>
+        if (job.ReturnChallans == null || !job.ReturnChallans.Any())
+        {
+            <p class="muted">No return challans.</p>
+        }
+        foreach (var ch in job.ReturnChallans ?? Enumerable.Empty<ReportViewer.Models.ContractSummaryChallanReturn>())
+        {
+            <p><strong>@ch.ChallanNumber</strong> <span class="muted"> @ch.ChallanDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</span></p>
+            <table>
+                <tr><th style="width:5%">#</th><th>Product</th><th class="num" style="width:18%">Qty</th></tr>
+                @for (var jj = 0; jj < ch.Items.Count; jj++)
+                {
+                    var row = ch.Items[jj];
+                    <tr><td class="num">@(jj + 1)</td><td>@row.Product</td><td class="num">@row.Quantity.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+                }
+            </table>
+        }
+    }
+
+    <h2>Inventory</h2>
+    @if (Model.Inventory == null || !Model.Inventory.Any())
+    {
+        <p class="muted">No inventory rows.</p>
+    }
+    else
+    {
+        <table>
+            <tr><th style="width:5%">#</th><th>Product</th><th class="num" style="width:18%">Sent</th><th class="num" style="width:18%">Returned</th><th class="num" style="width:18%">Balance</th></tr>
+            @for (var kk = 0; kk < Model.Inventory.Count; kk++)
+            {
+                var row = Model.Inventory[kk];
+                <tr><td class="num">@(kk + 1)</td><td>@row.Product</td><td class="num">@row.Sent.ToString("N2", CultureInfo.InvariantCulture)</td><td class="num">@row.Returned.ToString("N2", CultureInfo.InvariantCulture)</td><td class="num">@row.Balance.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+            }
+        </table>
+    }
+
+    <h2>Bills and payments</h2>
+    <table class="two-col">
+        <tr>
+            <td>
+                <strong>Bills</strong>
+                <table>
+                    <tr><th style="width:8%">#</th><th>Invoice #</th><th class="num">Date</th><th class="num">Total</th></tr>
+                    @{
+                        var billsList = (Model.Bills ?? Enumerable.Empty<BAL.DTO.BillingDTO>()).ToList();
+                    }
+                    @for (var bi = 0; bi < billsList.Count; bi++)
+                    {
+                        var bill = billsList[bi];
+                        <tr><td class="num">@(bi + 1)</td><td>@bill.InvoiceNumber</td><td class="num">@bill.InvoiceDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</td><td class="num">@bill.Total.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+                    }
+                </table>
+            </td>
+            <td>
+                <strong>Payments</strong>
+                <table>
+                    <tr><th style="width:8%">#</th><th>Receipt #</th><th>Date</th><th class="num">Amount</th></tr>
+                    @{
+                        var paysList = (Model.Payments ?? Enumerable.Empty<BAL.DTO.LedgerTransactionDTO>()).ToList();
+                    }
+                    @for (var pi = 0; pi < paysList.Count; pi++)
+                    {
+                        var r = paysList[pi];
+                        <tr><td class="num">@(pi + 1)</td><td>@r.ReceiptNumber</td><td>@r.TransactionDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)</td><td class="num">@r.TransactionAmount.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        <table style="border:none;">
+            <tr>
+                <td style="border:none;width:33%;"><strong>Total Billed</strong><br /><span class="num" style="font-size:14pt;">@Model.BilledTotal.ToString("N2", CultureInfo.InvariantCulture)</span></td>
+                <td style="border:none;width:33%;"><strong>Total Paid</strong><br /><span class="num" style="font-size: 14pt;">@Model.PaidTotal.ToString("N2", CultureInfo.InvariantCulture)</span></td>
+                <td style="border:none;width:34%;"><strong>Balance</strong><br /><span class="num" style="font-size: 14pt;">@Model.BalanceBilledVsPaid.ToString("N2", CultureInfo.InvariantCulture)</span></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

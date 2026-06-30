@@ -1,0 +1,249 @@
+<div class="col-sm-12" style="background: #caedff; border: solid 1px #60cbff;">
+    <div class="col-sm-2">
+        <label class="vcenter">Bill Type</label>
+
+    </div>
+    <div class="col-sm-8 vcenter">
+        <input type="radio" name="challanType" ng-model="Billing.InvoiceType" value="1" />
+        Period - Days (Rent)
+             <input type="radio" name="challanType" ng-model="Billing.InvoiceType" style="margin-left: 20px;" value="3" />
+        Fixed - Manual
+        <input type="radio" name="challanType" ng-model="Billing.InvoiceType" style="margin-left: 20px;" value="4" />
+        Amount Only
+    </div>
+</div>
+<div class="col-sm-12">
+    <div class="col-sm-3">
+        <label>Choose Party</label>
+        <searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code" data-primarytext="TradeName"
+                        selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>
+
+        <!--<searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Billing.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>-->
+    </div>
+    <div class="col-sm-3" ng-show="!AddFromSite">
+        <label>Choose Site</label>
+        <searchableselect id="ddlSite" ng-model="Billing.WorkOrderId" data-field="Site" tab-index="1" data-val="WorkOrderId"
+            data-text="JobNumber" description-field="Site"></searchableselect>
+    </div>
+
+    <div class="col-sm-2">
+
+        <label>Date</label>
+
+        <datepicker date-format="dd/MM/yyyy">
+      <input ng-model="Billing.InvoiceDate" tabindex="3" type="text" class="form-control" />
+    </datepicker>
+    </div>
+    <div class="col-sm-2">
+        <label>Bill#</label>
+        <input type="text" class="form-control" tabindex="6" ng-model="Billing.InvoiceNumber" />
+    </div>
+</div>
+<div class="col-sm-12">
+    <div class="col-sm-3">
+        <label>Category</label>
+        <input type="text" class="form-control" tabindex="6" ng-model="Billing.Category" />
+    </div>
+    <div class="col-sm-3">
+        <label>Branch Code</label>
+        <input type="text" class="form-control" tabindex="6" ng-model="Billing.BranchCode" />
+    </div>
+    <div class="col-sm-2">
+        <label>Contractor Code</label>
+        <input type="text" class="form-control" tabindex="6" ng-model="Billing.ContractorCode" />
+    </div>
+</div>
+<div class="col-sm-12">
+    <div class="col-sm-6">
+        <label>Site Address</label>
+        <input type="text" ng-model="Billing.SiteAddress" class="form-control" />
+    </div>
+</div>
+<div class="clearfix">&nbsp;</div>
+
+
+
+<div class="col-sm-12">
+    <div class="col-sm-12">
+
+        <div class="col-sm-12 addItemBox">
+
+            <div class="col-sm-3">
+                <label>
+                    Product
+                </label>
+                <!--<searchabletext ng-id="itemSelect" tab-index="5" data-item="Product" selected-object="selectedProduct"> </searchabletext>-->
+                <searchableselect ng-id="product" name="val_product[]" tabindex="2" data-field="ProductRates" on-itemselected="itemSelected(itemId)" ng-model="IssueItem.ProductId" data-val="ProductId" data-text="Product"></searchableselect>
+            </div>
+            <div class="col-sm-2">
+                <label>
+                    Size
+                </label>
+                <searchableselect ng-id="itemSize" name="itemSize[]" tab-index="5" data-field="ProductSizes" ng-model="IssueItem.ProductSizeId" data-val="ProductSizeId" data-text="Size"> </searchableselect>
+            </div>
+            <div class="col-sm-2" ng-if="Billing.InvoiceType==1">
+                <label>
+                    From
+                </label>
+                <!--  <input ng-model="IssueItem.From" tabindex="3" type="date" class="form-control" />-->
+                <datepicker date-format="dd/MM/yyyy">
+      <input ng-model="IssueItem.From" tabindex="3" type="text" class="form-control" />
+    </datepicker>
+            </div>
+            <div class="col-sm-2" ng-if="Billing.InvoiceType==1">
+                <label>
+                    To
+                </label>
+                <!-- <input ng-model="IssueItem.To" tabindex="3" type="date" class="form-control" />-->
+                <datepicker date-format="dd/MM/yyyy">
+      <input ng-model="IssueItem.To" tabindex="3" type="text" class="form-control" />
+    </datepicker>
+            </div>
+            <div class="col-sm-1" ng-if="Billing.InvoiceType != 4">
+                <label>
+                    Quantity
+                </label>
+                <input type="text" class="form-control" tabindex="6" ng-model="IssueItem.Quantity" />
+            </div>
+            <div class="col-sm-1" ng-if="Billing.InvoiceType != 4">
+                <label>
+                    Rate
+                </label>
+                <input type="text" class="form-control" tabindex="7" ng-model="IssueItem.Rate" />
+            </div>
+            <div class="col-sm-1" ng-if="Billing.InvoiceType==4">
+                <label>
+                    Amount
+                </label>
+                <input type="number" class="form-control" tabindex="7" ng-model="IssueItem.Amount" />
+            </div>
+            <div class="col-sm-1">
+                <label class="col-sm-12">&nbsp; </label>
+                <input type="button" class="btn btn-primary" tabindex="8" value="Add" ng-click="addItem();" ng-show="AccessData.Add" />
+            </div>
+        </div>
+        <div class="addWithTable" style="height: 240px; overflow-y: auto;">
+            <table class="table table-condensed table-responsive tableInput" med-key ng-delete="DeleteItem(index)">
+
+                <tr class="headerRow">
+                    <th>Item</th>
+                    <th>Size</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Days</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Rate</th>
+                    <th class="text-right" style="width: 286px;">Amount</th>
+                </tr>
+                <tr ng-repeat="b in Billing.Items" ng-delete="DeleteItem(index);">
+                    <td>{{b.Product}}</td>
+                    <td>{{b.Size}}</td>
+                    <td>{{b.From}}</td>
+                    <td>{{b.To}}</td>
+                    <td>
+                        <input type="number" class="form-control" ng-model="b.Days" ng-if="b.From" />
+                    </td>
+                    <td class="text-center">{{b.Quantity}}</td>
+                    <td class="text-center">{{b.Rate |number:2}}</td>
+                    <td class="text-right">{{b.Amount |number:2}}</td>
+                </tr>
+
+
+
+
+            </table>
+        </div>
+        <div class="">
+            <div class="col-sm-8 taxes_box">
+                <div ng-repeat="tax in Billing.Taxes" class="col-sm-4 nopadding">
+
+                    <div class="col-sm-12 nopadding normalfont">
+                        <input type="checkbox" class="col-sm-1" ng-model="tax.Applicable" ng-change="ApplyTax(this)" />
+                        <span class="col-sm-11 nopadding" ng-click="showTaxItems()" style="padding-left: 5px !important; font-style: normal;">{{tax.Name}}({{tax.DefaultRate  |number:2 }}%) {{ tax.TaxAmount|| 0 |number:2}} |</span>
+                        <!-- <span class="text-right">{{ tax.TaxAmount|| 0 |number:2}}</span>-->
+                    </div>
+
+
+                    <!--<td class="text-right" width="100px">{{tax.Applicable && (Billing.Total1  * tax.Rate/100.00) || 0 |number:2}}</td>-->
+
+
+                </div>
+                <div class="col-sm-4 nopadding">
+                    <div class="col-sm-12 nopadding normalfont" style="margin-top: 8px !important">
+
+                        <input type="checkbox" class="col-sm-1" ng-model="Billing.RoundOffTaxes" ng-change="RoundOffTaxes(this)" />
+                        <span class="col-sm-11 nopadding" style="padding-left: 5px !important; font-style: normal;">Round Off Taxes</span>
+
+                        <!-- <span class="text-right">{{ tax.TaxAmount|| 0 |number:2}}</span>-->
+                    </div>
+                </div>
+                <div class="col-sm-4 nopadding">
+                    <div class="col-sm-12 nopadding normalfont" style="margin-top: 8px !important">
+
+                        <input type="checkbox" class="col-sm-1" ng-model="Billing.RoundOff" />
+                        <span class="col-sm-11 nopadding" style="padding-left: 5px !important; font-style: normal;">Round Off Gross</span>
+
+                        <!-- <span class="text-right">{{ tax.TaxAmount|| 0 |number:2}}</span>-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 nopadding text-right">
+                <table class="table  table-responsive text-bold">
+                    <tr class="tblFooter" style="padding: 2px 8px 2px 8px;">
+
+                        <td><b>Total</b></td>
+                        <td class="text-right"><b>{{ CalculateSum()  | number :2}}</b></td>
+                    </tr>
+                    <tr style="padding: 2px 8px 2px 8px;">
+
+                        <td class="text-right">Freight</td>
+                        <td class="text-right" width="100px">
+                            <input type="text" class="form-control maskednumber text-right" ng-model="Billing.Freight" />
+                        </td>
+                    </tr>
+
+
+                    <!--   <tr style="padding:2px 8px 2px 8px;">
+
+                        <td class="text-right">SubTotal</td>
+                        <td class="text-right">{{Billing.Total1 |number:2}}</td>
+                    </tr>-->
+
+
+                    <tr>
+
+                        <td class="text-right">FreightTax</td>
+                        <td class="text-right">{{Billing.FreightTax|number:2}}</td>
+                    </tr>
+                    <!-- <tr>
+
+                        <td class="text-right">Round Off Taxes</td>
+                        <td class="text-right"></td>
+                    </tr>
+                    <tr>
+
+                        <td class="text-right">Round Off Gross</td>
+                        <td class="text-right">
+                            <input type="checkbox" ng-model="Billing.RoundOff" />
+                        </td>
+                    </tr>-->
+                    <tr>
+
+                        <td class="text-right">Total</td>
+                        <td class="text-right">{{CalSubTotal()|number:2}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-10">
+    </div>
+    <div class="col-sm-2">
+
+        <input type="button" ng-show="Billing.Items.length>0 && AccessData.Add" id="btnSave" class="btn btn-primary" value="Save Bill" ng-click="SaveBill();" />
+    </div>
+
+
+
+</div>

@@ -1,0 +1,31 @@
+-- Material adjustment: AdjType on WorkOrder and GRN (Rent=1, Hire=2).
+-- Run DDL from PreRun/table036_WorkOrder_GRN_AdjType.sql via DbUp first.
+--
+-- Alter existing procedures (script from SSMS) — do not add new procedure names.
+--
+-- =============================================================================
+-- p_WorkOrder_insV1
+--   Add parameter @adjType TINYINT = 1 (or omit default; match app default).
+--   INSERT into WorkOrder must set AdjType column.
+--
+-- p_WorkOrder_upd
+--   Add parameter @adjType TINYINT.
+--   UPDATE WorkOrder SET ... AdjType = @adjType WHERE ...
+--   (Same parameter is sent with the shared header batch in WorkorderDAL.Save.)
+--
+-- p_GRN_insV1
+--   Add parameter @adjType TINYINT = 1.
+--   INSERT into GRN must set AdjType.
+--
+-- p_GRN_upd
+--   Add parameter @adjType TINYINT.
+--   UPDATE GRN SET ... AdjType = @adjType WHERE ...
+--
+-- p_ItemsAdjust_ById
+--   Include AdjType in the SELECT for the work-order header row so edit screen loads radios.
+--
+-- p_ItemsAdjust_ListV1 (optional)
+--   Include AdjType for list display/filter.
+-- =============================================================================
+USE [$AppDb$]
+GO

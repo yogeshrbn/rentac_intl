@@ -1,0 +1,72 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th
+
+        {
+            font-size: 10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th style="width: 80px;">Bill#</th>
+
+            <th style="width: 150px;">Client</th>
+            <th style="width: 70px;">B. Date</th>
+            <th class="text-center" style="width: 150px;">Period</th>
+            <th style="text-align: right; width: 50px;">Amt</th>
+            <th style="text-align: right; width: 70px;">Freight</th>
+            <th style="text-align: right; width: 50px;">Br. Amt</th>
+            <th style="text-align: right; width: 70px;">Loss Amt</th>
+            <th style="text-align: right; width: 50px;">Tax</th>
+            <th style="text-align: right; width: 80px;">Prev Bal</th>
+            <th style="text-align: right; width: 70px;">Net Amt</th>
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>
+                {{item.InvoiceNumber}}
+            </td>
+            <td>
+                {{item.Client}}
+            </td>
+            <td>{{item.InvoiceDate | date: 'dd-MM-yyyy'}}</td>
+            <td class="text-center">{{item.From |formatDate}} To {{item.To |formatDate}}</td>
+            <td style="text-align: right;">{{item.SubTotal |number:2 }}</td>
+            <td style="text-align: right;">{{item.Freight |number:2 }}</td>
+            <td style="text-align: right;">{{item.BreakageAmount |number:2 }}</td>
+            <td style="text-align: right;">{{item.LossCharges |number:2 }}</td>
+            <td style="text-align: right;"><span class="text-primary" ng-click="BillingItemsTax(item);">{{item.TaxAmount |number:2 }}</span> </td>
+            <td style="text-align: right;">
+                <span ng-if="item.OutStandingType == 1"> Dr {{item.OutStanding |number:2 }}</span>
+                <span ng-if="item.OutStandingType == 2"> Cr {{item.OutStanding |number:2 }}</span>
+            </td>
+            <td style="text-align: right;">
+
+                {{(item.Total + item.LossCharges + (item.InvoiceType==1 ? item.BreakageAmount: 0) + (item.OutStandingType==1 ? - item.OutStanding: - item.OutStanding)) |number:2 }}
+
+            </td>
+        </tr>
+    </table>
+</div>

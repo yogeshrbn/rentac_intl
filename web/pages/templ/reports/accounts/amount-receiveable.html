@@ -1,0 +1,105 @@
+<!--<pageheader heading="Daily Transactions" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+        </div>
+        <div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+
+            <label>From</label>
+
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" tabindex="2" type="text" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" tabindex="3" type="text" class="form-control" />
+            </datepicker>
+
+        </div>
+        <div class="col-sm-1">
+            <label>&nbsp;</label>
+            <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="getReport(false);" />
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Print" ng-click="getReport(true);" />
+                <!--<export data="Issued" data2="Received" url="'dailyTrans.html'"></export>-->
+            </div>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+<div class="form-group">
+
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="col-md-12">
+        <div class="table-responsive">
+
+            <table class="table table-condensed">
+                <thead>
+                    <tr class="headerRow">
+                        <th style="width: 400px;">Party</th>
+                        <th style="width: 150px;">Total Bill Amount</th>
+                        <th style="width: 150px;">Total Paid Amount</th>
+                        <th style="width: 150px;">Due Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Group by Client using angular-filter -->
+                    <tr ng-repeat-start="(key,clientGroup) in ReportData | groupBy: 'Client'">
+                        <!-- Client Header -->
+                        <td colspan="4" style="background-color: #f8f9fa; font-weight: bold; padding: 8px;">
+                             {{key}}
+                        </td>
+                    </tr>
+
+                    <!-- Individual bills for this client -->
+                    <tr ng-repeat-end ng-repeat="item in clientGroup  track by $index">
+                        <td style="padding-left: 20px;">
+                             {{item.Site}}
+                        </td>
+                        <td class="text-right" style="width: 150px;">{{item.TotalBillAmount | number:2}}</td>
+                        <td class="text-right" style="width: 150px;">{{item.TotalPaidAmount | number:2}}</td>
+                        <td class="text-right" style="width: 150px;">{{item.DueAmount | number:2}}</td>
+                    </tr>
+
+                    <!-- Client Subtotal -->
+                    <tr style="background-color: #e9ecef; font-weight: bold;">
+                        <td class="text-right">Subtotal for {{clientName}}:</td>
+                        <td class="text-right" style="width: 150px;">{{getClientSubtotal(clientGroup, 'TotalBillAmount') | number:2}}</td>
+                        <td class="text-right" style="width: 150px;">{{getClientSubtotal(clientGroup, 'TotalPaidAmount') | number:2}}</td>
+                        <td class="text-right" style="width: 150px;">{{getClientSubtotal(clientGroup, 'DueAmount') | number:2}}</td>
+                    </tr>
+
+                    <!-- Spacer between groups -->
+                    <tr>
+                        <td colspan="4" style="height: 15px; background-color: white;"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </div>
+</div>
+

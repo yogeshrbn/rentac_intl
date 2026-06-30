@@ -1,0 +1,133 @@
+﻿<div class="col-sm-12">
+
+
+    <!-- Form Horizontal Start -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#ledgerInfo" aria-controls="ledgerInfo" role="tab" data-toggle="tab">Ledger Information</a></li>
+        <li role="presentation"><a href="#ledgerContact" aria-controls="ledgerContact" role="tab" data-toggle="tab">Contact Details</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="ledgerInfo">
+            <form id="form-ledger" method="post" class="form-horizontal form-bordered">
+
+                <div class="col-sm-6">
+                    <label>L.Code</label>
+                    <input type="text" id="val_ledgerCode" autofocus="autofocus" name="val_ledgerCode" ng-model="Ledger.Props.Code" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Ledger Name</label>
+                    <input type="text" id="val_ledgerName" autofocus="autofocus" name="val_ledgerName" ng-model="Ledger.Props.Name" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Ledger Group</label>
+                    <searchableselect name="val_ledgerGroup" data-field="AccGroups" ng-model="Ledger.Props.Group" data-val="AccountGroupId" data-text="Name"></searchableselect>
+                </div>
+                <div class="col-sm-6">
+                    <label>Opening Balance</label>
+                    <input type="number" autofocus="autofocus" name="val_ledgeOpBal" ng-model="Ledger.Props.OpeningBalance" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>D.L. No.</label>
+                    <input type="text" id="Text19" autofocus="autofocus" name="val_ledgerDLN" ng-model="Ledger.Props.DLNo" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>PAN No.</label>
+                    <input type="text" id="Text20" autofocus="autofocus" name="val_ledgerPAN" ng-model="Ledger.Props.PAN" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>D.L Exp.</label>
+                    <input type="text" id="txtDLExpDate" autofocus="autofocus"   name="val_ledgerDLExp" ng-model="Ledger.Props.DLExpDate" class="form-control dateControl" />
+                </div>
+                <div class="col-sm-6">
+                    <label>S.T. No.</label>
+                    <input type="text" id="Text23" autofocus="autofocus" name="val_ledgerSTNo" ng-model="Ledger.Props.STNo" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Exp.</label>
+                    <input type="text" id="Text24" autofocus="autofocus"  name="val_ledgerSTExp" ng-model="Ledger.Props.STExpDate" class="form-control dateControl" />
+                </div>
+
+            </form>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="ledgerContact">
+
+            <form id="form-ledgerContact" method="post" class="form-horizontal form-bordered">
+                <div class="col-sm-12 alert alert-warning" ng-show="Ledger.Props.LedgerId==0">
+                  Error: Save the ledger information before adding address.
+                </div>
+            
+                <div class="col-sm-6">
+                    <label>Address1</label>
+                    <input type="text" id="Text6" autofocus="autofocus" name="val_ledgerAddr1" ng-model="Ledger.Props.Address1" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Address2</label>
+                    <input type="text" id="Text7" autofocus="autofocus" ng-model="Ledger.Props.Address2" class="form-control" />
+                </div>
+
+
+                <div class="col-sm-6">
+                    <label>State</label>
+                    <searchableselect name="val_ledgerState" on-itemselected="onStateSelect" data-field="States" ng-model="Ledger.Props.State" data-val="StateId" data-text="StateName"></searchableselect>
+                </div>
+                <div class="col-sm-6">
+                    <label>City</label>
+                    <searchableselect name="val_ledgerCity" data-field="Cities" ng-model="Ledger.Props.City" data-val="CityId" data-text="CityName"></searchableselect>
+                </div>
+
+                <div class="col-sm-6">
+                    <label>Zip Code</label>
+                    <input type="text" id="Text10" autofocus="autofocus" name="val_ledgerZipCode" ng-model="Ledger.Props.ZipCode" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    &nbsp;
+                </div>
+
+                <div class="col-sm-6">
+                    <label>Email</label>
+                    <input type="email" id="Text11" autofocus="autofocus" name="val_ledgerEmail" ng-model="Ledger.Props.Email" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Website</label>
+                    <input type="url" id="Text12" autofocus="autofocus" ng-model="Ledger.Props.Website" class="form-control" />
+                </div>
+
+                <div class="col-sm-6">
+                    <label>Off. Phone</label>
+                    <input type="tel" id="Text13" autofocus="autofocus" name="val_ledgeroffPhone" ng-model="Ledger.Props.OffPhone" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Fax</label>
+                    <input type="tel" id="Text14" autofocus="autofocus" ng-model="Ledger.Props.Fax" class="form-control" />
+                </div>
+
+                <div class="col-sm-6">
+                    <label>Contact Person Name</label>
+                    <input type="text" id="Text15" autofocus="autofocus" name="val_ledgerContactPerson" ng-model="Ledger.Props.ContactPersonName" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                    <label>Designation</label>
+                    <input type="text" id="Text16" autofocus="autofocus" ng-model="Ledger.Props.ContactPersonDesignation" class="form-control" />
+                </div>
+ 
+                <div class="col-sm-6">
+                    <label>Mobile</label>
+                    <input type="tel" id="Text18" autofocus="autofocus" ng-model="Ledger.Props.Name" class="form-control" />
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+
+
+
+
+    <script lang="ja">
+
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+
+</div>

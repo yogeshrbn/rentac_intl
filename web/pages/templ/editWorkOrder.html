@@ -1,0 +1,59 @@
+﻿<md-dialog aria-label="List dialog">
+  <md-dialog-content>
+<div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">WorkOrder#:</label>
+                <input type="text" class="form-control"  ng-model="workOrder.Number" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="pwd">Client:</label>
+                <!--<searchabletext ng-id="client" data-item="Client" local-data="ClientList" search-field="Name" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>-->
+                    <searchableselect id="ddlClient" ng-model="workOrder.ClientId" data-field="ClientList" data-val="ClientId" data-text="Name"></searchableselect>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Company</label>
+                
+                 <searchableselect id="ddlCompany" ng-model="workOrder.CompanyId" data-field="Companies" data-val="CompanyId" data-text="Name"></searchableselect>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="pwd">WorkOrder Date.</label>
+                   <input type="date" class="form-control" id="Date1" ng-model="workOrder.WorkOrderDate"/>
+            </div>
+        </div>
+    </div>
+     <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Amount</label>
+                <input type="text" class="form-control maskednumber" id="Text1" ng-model="workOrder.ClientAmount"/>
+            </div>
+        </div>
+         
+    </div>
+      
+    
+    <hr />
+  <md-dialog-actions>
+    <md-button ng-click="updateWorkOrder()" class="md-primary">Update</md-button> 
+    <md-button ng-click="closeDialog()" class="md-primary">Close</md-button>
+  </md-dialog-actions></div>
+</md-dialog-content>
+
+</md-dialog>
+
+

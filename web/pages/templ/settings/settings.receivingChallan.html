@@ -1,0 +1,354 @@
+<div class="col-sm-12"></div>
+<ul class="qutoationSettingsTab nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#recSettings" ng-click="javascript:void()" aria-controls="recSettings" role="tab" data-toggle="tab">Settings</a>
+    </li>
+    <li role="presentation">
+        <a href="#recOtherInfo" aria-controls="recOtherInfo" role="tab"
+           data-toggle="tab">Other Info</a>
+    </li>
+    <li role="presentation">
+        <a href="#recPrintSettings" aria-controls="recPrintSettings" role="tab"
+           data-toggle="tab">Print Settings</a>
+    </li>
+</ul>
+<div class="tab-content" style="border: solid 1px #c0c0c0;padding:8px; ">
+    <div role="tabpanel" class="tab-pane active" id="recSettings">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-6 control-label">Keep same prefix for each type of challan?</label>
+                <div class="col-sm-6">
+                    <div class="radio-inline">
+                        <input type="radio" name="rdoSamePrefix" ng-value="true" ng-model="samePrefix"> Yes
+
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" name="rdoSamePrefix" ng-value="false" ng-model="samePrefix"> No
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table table-condensed" ng-if="samePrefix == false ">
+
+                            <tr class="headerRow">
+                                <th></th>
+                                <th>Rent / Transfer</th>
+                                <th>Contract</th>
+                                <!--<th>Transfer</th>-->
+                                <th>Adjust</th>
+                                <th>Hire</th>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    Prefix
+                                </td>
+                                <td><input type="text" class="form-control" maxlength="20" validateprefix ng-model="number.rentPrefix" /></td>
+                                <td><input type="text" class="form-control" maxlength="20" validateprefix ng-model="number.contractPrefix" /></td>
+                                <!--<td><input type="text" class="form-control" maxlength="20" validateprefix ng-model="number.matPrefix" /></td>-->
+                                <td><input type="text" class="form-control" maxlength="20" validateprefix ng-model="number.adjPrefix" /></td>
+                                <td><input type="text" class="form-control" maxlength="20" validateprefix ng-model="number.hirePrefix" /></td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    Start
+                                </td>
+                                <td><input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="8" ng-model="number.rentStart" /></td>
+                                <td><input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="8" ng-model="number.contractStart" /></td>
+                                <!--<td><input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="8" ng-model="number.matStart" /></td>-->
+                                <td><input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="8" ng-model="number.adjStart" /></td>
+                                <td><input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="8" ng-model="number.hireStart" /></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-if="samePrefix == true ">
+                <label for="inputEmail3" class="col-sm-3 control-label">Challan Prefix</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" validateprefix ng-model="number.billPrefix" maxlength="20">
+                </div>
+            </div>
+            <div class="form-group" ng-if="samePrefix == true ">
+                <label for="inputEmail3" class="col-sm-3 control-label">Challan Start At</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control maskednumber" nodecimal maxlength="8" ng-model="number.start">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <tr class="headerRow">
+                                <th></th>
+                                <th>Rent / Transfer</th>
+                                <th>Contract</th>
+                                <th>Sales</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Returnable Text
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" maxlength="100" ng-model="returnableTextRental" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" maxlength="100" ng-model="returnableTextContract" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" maxlength="100" ng-model="returnableTextSales" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label"> Delivery Challan Text</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" maxlength="100" ng-model="diveryChallanText" />
+                </div>
+            </div>-->
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Allow Negative Receiving</label>
+                <div class="col-sm-5">
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdoRec" ng-value="true" ng-model="negativeReceiving" />
+                            Yes
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdoRec" ng-value="false" ng-model="negativeReceiving" />
+                            No
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Enable preview</label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="enableRecvdListPreview" />
+                        Items Received Register — show receipt preview (eye icon and Preview in actions menu)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Allow Editing Challan Number</label>
+                <div class="col-sm-5">
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdoallowEditChallanNumber" ng-value="true" ng-model="allowEditChallanNumber" />
+                            Yes
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdoallowEditChallanNumber" ng-value="false" ng-model="allowEditChallanNumber" />
+                            No
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Show Rate</label>
+                <div class="col-sm-5">
+                    <div class="checkbox-inline">
+                        <label for="exampleInputName2">
+                            <input type="checkbox" name="showRate" ng-value="true" ng-model="showRate" />
+
+                        </label>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Show Excess Quantity</label>
+                <div class="col-sm-5">
+                    <div class="checkbox-inline">
+                        <label for="exampleInputName2">
+                            <input type="checkbox" name="showAccessQuantity" ng-model="showAccessQuantity" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Disable Excess</label>
+                <div class="col-sm-5">
+                    <div class="checkbox-inline">
+                        <label for="exampleInputName2">
+                            <input type="checkbox" name="disableExcess" ng-model="disableExcess" />
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-4 text-muted" style="padding-top:7px;">
+                    When enabled, hire/receive GRN will not allow excess quantity (over balance is clamped to balance).
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Apply Rate</label>
+                <div class="col-sm-5">
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdorateType" ng-value="0" ng-model="rateType" />
+                            None
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdorateType" ng-value="1" ng-model="rateType" />
+                            Sale Rate
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdorateType" ng-value="2" ng-model="rateType" />
+                            Rent Rate
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="rdorateType" ng-value="3" ng-model="rateType" />
+                            Loss Rate
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <h4> Display Rates Settings </h4>
+            <div class="form-group">
+
+                <div class="col-sm-offset-3 col-sm-9">
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="showRateOf" ng-value="1" ng-model="showRateOf" />
+                            Finished Good/Item
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="showRateOf" ng-value="2" ng-model="showRateOf" />
+                            BOM Components
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label for="exampleInputName2">
+                            <input type="radio" name="showRateOf" ng-value="3" ng-model="showRateOf" />
+                           All Items (Including Components)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <input type="button" class="btn btn-primary" value="Save" ng-click="saveConfig ();" />
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="recOtherInfo" style="padding-bottom:30px;">
+        <form>
+            <div class="form-group">
+                <div>
+                    <h3>Additional Information</h3>
+                    <textarea ckeditor="editorOptions" ng-model="addInfo" data-ck-editor style="height:100px;"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <h3>Terms &amp; Conditions</h3>
+                    <textarea ckeditor="editorOptions" ng-model="tnc" data-ck-editor style="height:100px;"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <input type="button" class="btn btn-primary" value="Save" ng-click="saveOtherConfig ();" />
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="recPrintSettings">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Show Breakage Charges</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="printShowBreakageCharges" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Contact No</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="printShowContactNo" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Cartage</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="printShowCartage" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Time</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="printShowTime" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Show Client GSTIN</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="printShowClientGSTIN" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Add Breakage Quantity in Quantity Column</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="printAddBreakageQtyInQuantityColumn" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-6 control-label">Prompt for type of header (Original / Duplicate)</label>
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="promptHeaderOriginalDuplicate" />
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <input type="button" class="btn btn-primary" value="Save" ng-click="saveConfig();" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script lang="ja">
+    $('.qutoationSettingsTab a').click(function (e) {
+        e.preventDefault();
+    });
+    $('.otherInfoTab a').click(function (e) {
+        e.preventDefault();
+    });
+</script>

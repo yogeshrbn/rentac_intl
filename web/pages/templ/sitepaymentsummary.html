@@ -1,0 +1,75 @@
+﻿<div class="col-sm-12">
+    <div class="col-sm-4 col-lg-4  col-md-4 ">
+
+
+        <label>Site</label>
+        <!-- <input type="text" id="val_productName" name="val_productName" ng-model="Report.Site" class="form-control" />-->
+        <searchableselect id="ddlSite" ng-model="Report.Site" data-field="Site" data-val="Site" data-text="Site"></searchableselect>
+
+    </div>
+    <div class="col-sm-4 col-lg-4  col-md-4 hide ">
+        <label>Job Number</label>
+
+        <input type="text" id="Text1" name="val_productName" ng-model="Report.JobNumber" class="form-control" />
+
+    </div>
+    <div class="col-sm-2 col-lg-2  col-md-2 hide ">
+        <div class="col-sm-12">
+
+            <label>Report Type </label>
+        </div>
+        <label>Summary</label>
+        <input type="radio" value="1" title="Summary" name="report" ng-model="ReportType" />
+        <label>Detail</label>
+        <input type="radio" value="2" title="Detail" name="report" ng-model="ReportType" />
+    </div>
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+        <label class="col-sm-12">&nbsp;</label>
+        <input type="button" value="Show Report" class="btn btn-primary" ng-click="SitePaymentSummary();" />
+    </div>
+
+</div>
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+
+    <table class="table table-condensed table-responsive">
+
+        <tr class="headerRow">
+            <th>Site</th>
+            <th>Job#</th>
+            <th>Amount Due</th>
+            <th>Amount Received</th>
+
+        </tr>
+        <tr ng-repeat="item in Report.SitePayments">
+            <td>{{item.Site}}</td>
+            <td>{{item.JobNumber}}</td>
+            <td>{{item.Amount}}</td>
+            <td>{{item.AmountReceived}}</td>
+            <!--<td>{{item.SentQty - item.ReceivingQty}}</td>-->
+        </tr>
+
+    </table>
+</div>
+
+<div class="col-sm-12" ng-show="ReportType==2">
+    <table class="table table-condensed table-responsive">
+
+        <tr class="headerRow">
+            <th>Site</th>
+            <th>Job#</th>
+            <th>Item</th>
+            <th>ReceivedDate</th>
+            <th>GRN</th>
+            <th>Received Qty</th>
+        </tr>
+        <tr ng-repeat="item in SiteWiseDetailInventory">
+            <td>{{item.Site}}</td>
+            <td>{{item.JobNumber}}</td>
+            <td>{{item.Product}}</td>
+            <td>{{item.ReceivingDate}}</td>
+            <td>{{item.GRN}}</td>
+            <td>{{item.ReceivingQty}}</td>
+
+        </tr>
+</div>

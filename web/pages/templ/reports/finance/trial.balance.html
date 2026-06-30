@@ -1,0 +1,217 @@
+<div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-10">
+        <form id="frmGstr1">
+            <div class="col-sm-12">
+
+
+                <div class="col-sm-4 text-center">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 text-left">As Of</label>
+                        <div class="col-sm-8">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.To" type="text" tabindex="2" class="form-control" />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            Format
+                        </label>
+                        <div class="col-sm-9 ">
+                            <!--<input type="text" class="form-control" value="Cash" disabled />-->
+                            <div class="radio-inline">
+                                <label for="exampleInputName2" class=" flex-center">
+
+                                    <input type="radio" name="txnMode" ng-model="Filter.Format" ng-value="1" />
+                                    Closing Balance
+                                </label>
+
+                            </div>
+                            <div class="radio-inline">
+                                <label for="exampleInputName2" class=" flex-center">
+                                    <input type="radio" name="txnMode" ng-model="Filter.Format" ng-value="2" />
+                                    Detailed
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-12 mt-2">
+                <div class="col-sm-6">
+                    <!--<div class="checkbox-inline">
+                        <label for="exampleInputName2" class="flex-center">
+                            <input type="checkbox" class="checkbox" ng-model="Filter.ShowGroup">
+                            Show Group Wise
+                        </label>
+
+                    </div>-->
+                    <div class="checkbox-inline">
+                        <label for="exampleInputName2" class="flex-center">
+                            <input type="checkbox" class="checkbox" ng-model="Filter.IncludeZeroBalance">
+                            Include Zero Balance Accounts
+                        </label>
+
+                    </div>
+
+
+                </div>
+                <div class="col-sm-4 pl-0">
+                    <div class="form-group">
+
+
+                        <button type="button" class="btn btn-primary" ng-click="show();"><i class="fa fa-eye"></i> Show</button>
+
+                        <button type="button" class="btn btn-primary" ng-click="exportToExcel();"><i class="fa fa-file-excel-o"></i> Excel</button>
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </form>
+
+
+
+    </div>
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <table class="table table-condensed " med-key ng-if="Filter.Format==1">
+
+                <tr class="headerRow">
+
+                    <th style="width:50px" colspan="2">Total Record:- {{ReportData.length}}</th>
+                   
+
+
+                    <th class="text-right" style="width:100px" colspan="2">Closing Balance</th>
+
+                    <th style="width: 150px"></th>
+
+
+                </tr>
+                <tr class="headerRow">
+
+                    <th style="width:50px">Code</th>
+                    <th>Account</th>
+
+
+                    <th class="text-right" style="width:100px">Debit</th>
+                    <th class="text-right" style="width:100px">Credit</th>
+                    <th style="width: 150px">Group</th>
+
+
+                </tr>
+                <tr ng-repeat="item in ReportData">
+
+                    <td>
+                        {{item.Code}}
+                    </td>
+                    <td>
+                        {{item.Name}}
+                    </td>
+
+                    <td class="text-right" style="background-color: #d2d9f5;"> {{item.CBDebit | number:2}} </td>
+                    <td class="text-right" style="background-color: #d2d9f5;">  {{item.CBCredit  | number:2}} </td>
+                    <td>
+                        {{item.Group}}
+                    </td>
+
+
+                </tr>
+
+                <tr class="headerRow">
+                    <th class="text-right" colspan="2">Total</th>
+                    <th class="text-right">{{ReportData  | sum:'CBDebit'| number:2}}</th>
+                    <th class="text-right">{{ReportData  | sum:'CBCredit'| number:2}}</th>
+                    <th></th>
+
+                </tr>
+
+                <tr ng-if="ReportData.length == 0">
+                    <td colspan="5" class="text-center">
+                        <div class="alert-info">No records found.</div>
+                    </td>
+                </tr>
+            </table>
+            <table class="table table-condensed " med-key ng-if="Filter.Format==2">
+
+                <tr class="headerRow">
+
+                    <th style="width:50px" colspan="2">Total Record:- {{ReportData.length}}</th>
+                 
+                    <th colspan="2" class="text-center">Opening Balance</th>
+                    <th class="text-right"></th>
+                    <th class="text-right"></th>
+                    <th class="text-right" style="width:100px" colspan="2">Closing Balance</th>
+
+                    <th style="width: 150px"></th>
+
+
+                </tr>
+                <tr class="headerRow">
+
+                    <th style="width:50px">Code</th>
+                    <th>Account</th>
+                    <th class="text-right" style="width:100px">Debit</th>
+                    <th class="text-right" style="width:100px">Credit</th>
+                    <th class="text-right">Debit</th>
+                    <th class="text-right">Credit</th>
+                    <th class="text-right" style="width:100px">Debit</th>
+                    <th class="text-right" style="width:100px">Credit</th>
+                    <th style="width:150px">Group</th>
+
+
+                </tr>
+                <tr ng-repeat="item in ReportData">
+
+                    <td>
+                        {{item.Code}}
+                    </td>
+                    <td>
+                        {{item.Name}}
+                    </td>
+                    <td ng-if="Filter.Format==2" class="text-right" style="background-color: #b6edd7">
+                        {{(item.OBType == 1 ? item.OpeningBalance :0)   | number:2}}
+                    </td>
+                    <td ng-if="Filter.Format==2" class="text-right" style="background-color: #b6edd7">
+                        {{(item.OBType == 2 ? item.OpeningBalance :0 ) | number:2}}
+                    </td>
+                    <td class="text-right">
+                        {{item.Debit  | number:2}}
+                    </td>
+                    <td class="text-right">  {{item.Credit  | number:2}} </td>
+                    <td class="text-right" style="background-color: #d2d9f5;"> {{item.CBDebit   | number:2}} </td>
+                    <td class="text-right" style="background-color: #d2d9f5;">  {{item.CBCredit   | number:2}} </td>
+                    <td>
+                        {{item.Group}}
+                    </td>
+
+
+                </tr>
+
+                <tr class="headerRow">
+                    <th class="text-right" colspan="4">Total</th>
+                    <th class="text-right">{{ReportData  | sum:'Debit'| number:2}}</th>
+                    <th class="text-right">{{ReportData  | sum:'Credit'| number:2}}</th>
+                    <th class="text-right">{{ReportData  | sum:'CBDebit'| number:2}}</th>
+                    <th class="text-right">{{ReportData  | sum:'CBCredit'| number:2}}</th>
+                    <th></th>
+
+                </tr>
+
+                <tr ng-if="ReportData.length == 0">
+                    <td colspan="5" class="text-center">
+                        <div class="alert-info">No records found.</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

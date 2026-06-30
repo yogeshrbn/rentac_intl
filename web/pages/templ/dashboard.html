@@ -1,0 +1,282 @@
+﻿<div  style="margin-top:10px;">
+    <div class="col-md-12">
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row dashboard">
+                    <div class="col-md-3">
+                        <div class="mt-1">
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default">Fin Year</button>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <!--<button type="button" class="btn btn-default">F.Y. - 2023-2024</button>-->
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {{selectedYear}} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li ng-repeat="f in FinYear"><a href="javascript:void(0)" ng-click="selectYear(f);">{{f.FinYear}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-md-6">
+                                <form>
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <label for="inputEmail3" class="control-label">Date From</label>
+                                        <input type="date" ng-model="dBFilter.dateFrom" disabled class="form-control" id="exampleInputName2" placeholder="Jane Doe">
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <form>
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <label for="inputEmail3" class="control-label">Date To</label>
+                                        <input type="date" ng-model="dBFilter.dateTo" disabled class="form-control" id="exampleInputName2" placeholder="Jane Doe">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="clearfix">&nbsp;</div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="panel panel-default dbbox">
+
+                            <div class="panel-body" style="background-color: #4bc0c054;">
+                                <label>Sites</label>
+                                <div class="form-inline mt-1">
+                                    <div class="form-group">
+                                        <label for=""></label>
+                                        <label style="font-size:18px;"><i class="fa fa-2x fa-truck text-info"></i> {{summary.stats.Sites}}</label>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="panel panel-default dbbox">
+
+                            <div class="panel-body" style=" background: #ffce5685; ">
+
+                                <label for="">D. Challans</label>
+                                <div class="form-inline mt-1">
+                                    <div class="form-group">
+                                        <label for=""></label>
+                                        <label style="font-size:18px;"><i class="fa fa-2x fa-line-chart text-success"></i>  {{summary.stats.Challans}}</label>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="panel panel-default dbbox">
+
+                            <div class="panel-body" style=" background: #ffce5685; ">
+
+                                <label for="">R. Challans</label>
+                                <div class="form-inline mt-1">
+                                    <div class="form-group">
+                                        <label for=""></label>
+                                        <label style="font-size:18px;"><i class="fa fa-2x fa-line-chart text-success"></i>  {{summary.stats.ReturnChallans}}</label>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default dbbox">
+
+                            <div class="panel-body" style=" background: #56b4ff7d; ">
+                                <label>Sales</label>
+                                <div class="form-inline mt-1">
+                                    <div class="form-group">
+                                        <label for=""></label>
+                                        <label style="font-size:18px;"><i class="fa fa-2x fa-bar-chart text-warning"></i> {{summary.stats.Sales}}</label>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <loadingcircle ng-show="summary == null"></loadingcircle>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="row dashboard">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><label><span class="subheading">Contract</span> Summary</label>  </div>
+                            <div class="panel-body">
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <th class="headerRow" style="width:50%;">Active Contracts</th>
+                                        <th>{{summary.stats.ActiveContracts}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="headerRow" style="width:50%;">Delayed Install</th>
+                                        <th>{{summary.stats.DelayedInstall}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="headerRow" style="width:50%;">Delayed Dismantle</th>
+                                        <th>{{summary.stats.DelayedDismantle}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="headerRow" style="width:50%;">Sales</th>
+                                        <th>{{summary.stats.ContractSale | number:2}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="headerRow" style="width:50%;">Delivery Challans</th>
+                                        <th>{{summary.stats.ContractDelieryChallans}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="headerRow" style="width:50%;">Return Challans</th>
+                                        <th>{{summary.stats.ContractReturnChallans}}</th>
+                                    </tr>
+                                </table>
+                                <loadingcircle ng-show="summary == null"></loadingcircle>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><label><span class="subheading">Billing</span> Summary</label>  </div>
+                            <div class="panel-body">
+                                <canvas id="_billingChart"></canvas>
+                                <loadingcircle ng-show="summary == null"></loadingcircle>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><label><span class="subheading">New</span> Clients</label>  </div>
+                            <div class="panel-body">
+                                <canvas id="myChart"></canvas>
+                                <loadingcircle ng-show="newCustomerData == null"></loadingcircle>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="row dashboard">
+                    <!--<div class="col-md-4">
+        <div class="panel panel-default dbbox">
+            <div class="panel-heading"><label>Due Bills</label></div>
+            <div class="panel-body">
+                <table class="table table-bordered dbbox">
+                    <tr>
+                        <td class="bg-info">Bank Balance</td>
+                        <td class="text-right">{{summary.fundSummary.BankBalance |number:2
+                                            }}</td>
+</tr>
+                    <tr>
+                        <td class="bg-info">Cash Balance</td>
+                        <td class="text-right">{{summary.fundSummary.CashBalance |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-info">Cash Payment</td>
+                        <td class="text-right">{{summary.fundSummary.CashPayment |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-info">Bank Payment</td>
+                        <td class="text-right">{{summary.fundSummary.BankPayment |number:2}}</td>
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
+
+
+    </div>-->
+                    <!--<div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading"><label><span class="subheading">Stock</span> Summary</label></div>
+            <div class="panel-body">-->
+                    <!--<div id="stocksummary" style="height:255px;"></div>-->
+                    <!--<div id="stocksummary" style="width: 100%; height: 200px;"></div>
+            </div>
+        </div>
+    </div>-->
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <label><span class="subheading">Due</span> Amount</label>
+                                <div class="btn-group pull-right" style="top:-6px" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-default" ng-click="overdueSummary(0)">0-7 Days</button>
+                                    <button type="button" class="btn btn-default" ng-click="overdueSummary(15)">15 Days</button>
+                                    <button type="button" class="btn btn-default" ng-click="overdueSummary(30)">30 Days</button>
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false" ng-click="overdueSummary(45)">
+                                        45 +
+                                    </button>
+
+                                </div>
+                            </div>
+                            <div class="panel-body" style="height: 271px; overflow: auto; width: 100%;">
+
+
+                                <table class="table table-bordered">
+                                    <tr ng-repeat="d in overDueSummary">
+                                        <td class="bg-info">{{d.ClientName}}</td>
+                                        <td>{{d.DueFrom}} Days</td>
+
+                                        <td class="text-right"> {{d.Amount |number:2 }} {{d.BalanceType}}</td>
+                                    </tr>
+
+                                    <tr ng-show="overDueSummary.length==0">
+                                        <td colspan="3">
+                                            <div class="alert alert-success">
+                                                {{Message.NoCompaniesFound}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <loadingcircle ng-show="overDueSummary == null"></loadingcircle>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><label><span class="subheading"> Top Rented </span>Products</label></div>
+                            <div class="panel-body">
+                                <canvas id="topRatedItems"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="col-md-4">
+        <div class="panel panel-default dbbox">
+            <div class="panel-heading"><label>Avg. Rent/day</label></div>
+            <div class="panel-body">
+                <canvas id="issueChart"></canvas>
+            </div>
+        </div>
+    </div>-->
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <!--<div class="col-md-2" style=" height: calc(100vh - 43px); background: #ffeeb794; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+
+    </div>-->
+</div>

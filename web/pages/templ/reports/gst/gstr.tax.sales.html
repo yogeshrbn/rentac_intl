@@ -1,0 +1,101 @@
+<div>
+    <div class="col-sm-10">
+        <form id="frmGstr1">
+            <div class="col-sm-3 text-center">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">From</label>
+                    <div class="col-sm-9">
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+                        </datepicker>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3 text-center">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">To</label>
+                    <div class="col-sm-9">
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+                        </datepicker>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="col-sm-4 pl-0">
+                <div class="form-group">
+                    <div class="col-sm-10">
+
+                        <button type="button" class="btn btn-primary" ng-click="show();"><i class="fa fa-eye"></i> Show</button>
+
+                        <button type="button" class="btn btn-primary" ng-click="exportToExcel();"><i class="fa fa-file-excel-o"></i> Excel</button>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+
+
+
+    </div>
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <table class="table table-condensed " med-key>
+
+                <tr class="headerRow">
+                    <th>Bill#</th>
+                    <th>Date</th>
+                    <th>Party</th>
+                    <th>Billing Address</th>
+                    <th>GSTIN</th>
+                    <th>Period</th>
+                    <th class="text-right">Invoice Amount</th>
+
+                    <th class="text-right">Taxable Value</th>
+
+                </tr>
+                <tr ng-repeat="item in gstrData">
+
+                    <td>
+                        {{item.InvoiceNumber}}
+                    </td>
+                    <td>
+                        {{item.InvoiceDate | formatDate}}
+                    </td>
+                    <td> {{item.Client}} </td>
+                    <td>  {{item.BillingAddress}} </td>
+                    <td>
+                        {{item.GSTIN}}
+                    </td>
+                    <td>
+                        {{item.From | formatDate}}
+                    </td>
+                    <td class="text-right">
+                        {{item.Total | number:2}}
+                    </td>
+                    <td class="text-right">   {{item.TaxableValue | number:2}}</td>
+
+                </tr>
+                
+                    <tr class="headerRow">
+                        <th colspan="6" class="text-right">Total</th>
+                        <th class="text-right">{{gstrData  | sum:'Total'| number:2}}</th>
+                        <th class="text-right">{{gstrData  | sum:'TaxableValue'| number:2}}</th>
+
+                    </tr>
+                 
+                <tr ng-if="gstrData.length == 0">
+                    <td colspan="10" class="text-center">
+                        <div class="alert-info">No records found.</div>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>

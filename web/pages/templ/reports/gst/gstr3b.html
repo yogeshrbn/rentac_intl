@@ -1,0 +1,231 @@
+<div>
+    <div class="col-sm-12">
+
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-inline">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="txtFrom">From</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="Billing.From" tabindex="3" type="text" class="form-control" id="txtFrom" required />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="txtFrom">To</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="Billing.From" tabindex="3" type="text" class="form-control" id="txtTo" required />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary">Show</button>
+
+
+                </form>
+            </div>
+
+        </div>
+
+        <div class="row  mt-2">
+            <div class="col-md-12">
+                <table class="table table-condensed table-responsive table-hover">
+
+                    <tr class="headerRow">
+                        <th>Description</th>
+                        <th>Count</th>
+                        <th>Taxable</th>
+                        <th>IGST</th>
+                        <th>SGST</th>
+                        <TH>CGST</TH>
+                        <th>Cess</th>
+                        <th>Total Tax</th>
+                        <th>Invoice Value</th>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">B2B</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">B2C (Large) Invoice</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">B2C (Small) Invoice</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">Nill rated</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td>-Nill rated</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td>-Exempted</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">Export Invoices</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">Tax Liability on Advance</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">Set/Off Tax on Advance Of Prior Period</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total">Less Credit/Debit Note & Refund Voucher</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td>-Registered Parites</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td>-UnRegistered Parites</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td>-Refund From Advance</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr rowspan="3">
+                        <td colspan="9">&nbsp;</td>
+
+                    </tr>
+                    <tr class="tblFooter">
+                        <td>Total</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-10">
+                <button type="button" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Excel</button>
+             &nbsp;
+                <button type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Pdf</button>
+            </div>
+            <!--<div class="col-md-2">
+                <button type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Pdf</button>
+            </div>-->
+        </div>
+    </div>
+
+</div>

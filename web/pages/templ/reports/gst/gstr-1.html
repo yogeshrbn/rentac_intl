@@ -1,0 +1,391 @@
+﻿<div>
+    <div class="col-sm-12">
+
+        <div class="row">
+            <div class="col-md-12">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="txtFrom">Year</label>
+
+                                <year ng-model="filter.year"></year>
+
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="txtFrom">Month</label>
+
+                                <month ng-model="filter.month"></month>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label for="txtFrom">&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-primary" ng-click="show()">Show</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="row  mt-2">
+            <div class="col-md-12">
+                <table class="table table-condensed table-responsive table-hover">
+
+                    <tr class="headerRow">
+                        <th>Description</th>
+                        <th class="text-center">Count</th>
+                        <th class="text-right">Taxable</th>
+                        <th class="text-right">IGST</th>
+                        <th class="text-right">SGST</th>
+                        <TH class="text-right">CGST</TH>
+                        <th class="text-right">Cess</th>
+                        <th class="text-right">Total Tax</th>
+                        <th class="text-right">Invoice Value</th>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.b2b.Details)">B2B</td>
+                        <td class="text-center">{{gstrData.b2b.Vouchers}}</td>
+                        <td class="text-right">{{gstrData.b2b.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2b.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2b.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2b.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.b2b.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2b.TaxAbleAmount + gstrData.b2b.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.b2c_largeInvoice.Details)">B2C (Large) Invoice</td>
+                        <td class="text-center">{{gstrData.b2c_largeInvoice.Vouchers}}</td>
+                        <td class="text-right">{{gstrData.b2c_largeInvoice.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_largeInvoice.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_largeInvoice.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_largeInvoice.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.b2c_largeInvoice.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_largeInvoice.TaxAbleAmount + gstrData.b2c_largeInvoice.TaxAmount  |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.b2c_smallInvoice.Details)">B2C (Small) Invoice</td>
+                        <td class="text-center">{{gstrData.b2c_smallInvoice.Vouchers}}</td>
+                        <td class="text-right">{{gstrData.b2c_smallInvoice.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_smallInvoice.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_smallInvoice.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_smallInvoice.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.b2c_smallInvoice.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.b2c_smallInvoice.TaxAbleAmount + gstrData.b2c_smallInvoice.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.nillRated.Details)">Nill rated</td>
+                        <td class="text-center">
+                            {{gstrData.nillRated.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAbleAmount + gstrData.nillRated.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td ng-click="showDetails(gstrData.nillRated.Details)">-Nill rated</td>
+                        <td class="text-center">
+                            {{gstrData.nillRated.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAmount}}</td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAbleAmount + gstrData.nillRated.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr class="text-info">
+                        <td ng-click="showDetails(gstrData.nillRated.Details)">-Exempted</td>
+                        <td class="text-center">
+                            {{gstrData.nillRated.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.nillRated.TaxAbleAmount + gstrData.nillRated.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.exportInvoices.Details)">Export Invoices</td>
+                        <td class="text-center">
+                            {{gstrData.exportInvoices.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.exportInvoices.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.exportInvoices.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.exportInvoices.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.exportInvoices.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.exportInvoices.TaxAmount}}</td>
+                        <td class="text-right">{{gstrData.exportInvoices.TaxAbleAmount + gstrData.exportInvoices.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.advanceReceived.Details)">Tax Liability on Advance</td>
+                        <td class="text-center">
+                            {{gstrData.advanceReceived.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.advanceReceived.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceReceived.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceReceived.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceReceived.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.advanceReceived.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceReceived.TaxAbleAmount + gstrData.advanceReceived.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.advanceAdjustment.Details)">Set/Off Tax on Advance Of Prior Period</td>
+                        <td class="text-center">
+                            {{gstrData.advanceAdjustment.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.advanceAdjustment.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceAdjustment.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceAdjustment.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceAdjustment.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.advanceAdjustment.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.advanceAdjustment.TaxAbleAmount + gstrData.advanceAdjustment.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.notesRegistered.Details)">Credit/Debit Note (Registered)</td>
+                        <td class="text-center">
+                            {{gstrData.notesRegistered.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.notesRegistered.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesRegistered.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesRegistered.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesRegistered.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.notesRegistered.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesRegistered.TaxAbleAmount + gstrData.notesRegistered.TaxAmount |number:2}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="sub-total" ng-click="showDetails(gstrData.notesUnRegistered.Details)">Credit/Debit Note (Un-Registered)</td>
+                        <td class="text-center">
+                            {{gstrData.notesUnRegistered.Vouchers}}
+                        </td>
+                        <td class="text-right">{{gstrData.notesUnRegistered.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesUnRegistered.IGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesUnRegistered.SGSTAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesUnRegistered.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right">{{gstrData.notesUnRegistered.TaxAmount |number:2}}</td>
+                        <td class="text-right">{{gstrData.notesUnRegistered.TaxAbleAmount + gstrData.notesUnRegistered.TaxAmount |number:2}}</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-total" ng-click="showHSNDetails(gstrData.hsnSummary)">HSN Summary - 12 (B2B - B2C Supplies)</td>
+                        <td class="text-center">
+                          
+                        </td>
+                        <td class="text-right"> </td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-center">-</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                    </tr>
+                    <tr rowspan="3">
+                        <td colspan="9">&nbsp;</td>
+                    </tr>
+                    <tr class="tblFooter">
+                        <td class="sub-total">Total</td>
+                        <td class="sub-total text-center">
+                            {{gstrData.total.Vouchers}}
+                        </td>
+                        <td class="text-right sub-total">{{gstrData.total.TaxAbleAmount |number:2}}</td>
+                        <td class="text-right sub-total">{{gstrData.total.IGSTAmount |number:2}}</td>
+                        <td class="text-right sub-total">{{gstrData.total.SGSTAmount |number:2}}</td>
+                        <td class="text-right sub-total">{{gstrData.total.CGSTAmount |number:2}}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-right sub-total">{{gstrData.total.TaxAmount |number:2}}</td>
+                        <td class="text-right sub-total">{{gstrData.total.TaxAbleAmount + gstrData.total.TaxAmount |number:2}}</td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <button type="button" class="btn btn-primary" ng-click="exportToExcel();"><i class="fa fa-file-excel-o"></i> Excel</button>
+
+            </div>
+            <!--<div class="col-md-2">
+                <button type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i> Pdf</button>
+            </div>-->
+        </div>
+    </div>
+    <div class="modal fade" id="gstrDetialDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:70%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Details</h4>
+                </div>
+                <div class="modal-body" style="overflow-y:auto;height:85%">
+                    <table class="table table-condensed table-responsive table-hover">
+
+                        <tr class="headerRow">
+                            <th style="width:200px;">Particular</th>
+                            <th style="width:50px;">GSTIN</th>
+                            <th class="text-left">Voucher</th>
+                            <th class="text-right">Taxable</th>
+                            <th class="text-right">IGST</th>
+                            <th class="text-right">SGST</th>
+                            <TH class="text-right">CGST</TH>
+                            <th class="text-center">Cess</th>
+                            <th class="text-right">Total Tax</th>
+                            <th class="text-right">Invoice Value</th>
+                        </tr>
+                        <tr ng-repeat="item in details">
+                            <td>{{item.Party}}</td>
+                            <td>{{item.PartyGST}}</td>
+                            <td class="text-left">{{item.VoucherNumber}}</td>
+                            <td class="text-right">{{item.TaxAbleAmount  |number:2}}</td>
+                            <td class="text-right">{{item.IGSTAmount  |number:2}}</td>
+                            <td class="text-right">{{item.SGSTAmount  |number:2}}</td>
+                            <td class="text-right">{{item.CGSTAmount  |number:2}}</td>
+                            <td class="text-center">-</td>
+                            <td class="text-right">{{item.TaxAmount  |number:2}}</td>
+                            <td class="text-right">{{item.TaxAmount + item.TaxAbleAmount  |number:2}}</td>
+                        </tr>
+                        <tr ng-if="!details || details.length == 0">
+                            <td colspan="10" class="text-center">
+                                <div class="alert alert-warning">No records available</div>
+                            </td>
+                        </tr>
+                        <tr class="tblFooter" ng-if="details && details.length > 0">
+                            <td colspan="3" class="text-right">Total</td>
+
+                            <td class="text-right">{{details | sum: 'TaxAbleAmount' | number:2}}</td>
+                            <td class="text-right">{{details | sum: 'IGSTAmount'  | number:2}}</td>
+                            <td class="text-right">{{details | sum: 'SGSTAmount'  | number:2}}</td>
+                            <td class="text-right">{{details | sum: 'CGSTAmount'  | number:2}}</td>
+
+                            <td class="text-center">-</td>
+                            <td class="text-right">{{details | sum: 'TaxAmount'  | number:2}}</td>
+                            <td class="text-right">{{(details | sum: 'TaxAbleAmount') + (details | sum: 'TaxAmount') | number:2  }}</td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- hsn summary modal -->
+    <div class="modal fade" id="gstrHSNSummaryDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:70%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">HSN/SAC Summary</h4>
+                </div>
+                <div class="modal-body" style="overflow-y:auto;max-height:500px;">
+                    <h4>B2B Supplies</h4>
+                    <table class="table table-condensed table-responsive table-hover">
+
+                        <tr class="headerRow">
+                            <th style="width:80px;"  class="text-center">HSN/SAC</th>
+                            <th style="width:180px;">Description</th>
+                            <th class="text-center">UQC</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Tax Rate</th>
+                            <th class="text-right">Taxable Amount</th>
+                            <th class="text-right">IGST</th>
+                            <th class="text-right">SGST</th>
+                            <TH class="text-right">CGST</TH>
+                            <th class="text-center">Cess</th>
+                            <th class="text-right">Total Tax</th>
+                            <th class="text-right">Invoice Value</th>
+                        </tr>
+                        <tr ng-repeat="item in hsnSummary_b2b">
+                            <td  class="text-center">{{item.HSNCode}}</td>
+                            <td></td>
+                            <td class="text-center">{{item.Unit}}</td>
+                            <td class="text-center">{{item.Quantity}}</td>
+                            <td class="text-center">{{item.TaxRate}}%</td>
+                            <td class="text-right">{{item.TaxAbleAmount  |number:2}}</td>
+                            <td class="text-right">{{item.IGSTAmount  |number:2}}</td>
+                            <td class="text-right">{{item.SGSTAmount  |number:2}}</td>
+                            <td class="text-right">{{item.CGSTAmount  |number:2}}</td>
+                            <td class="text-center">-</td>
+                            <td class="text-right">{{item.TaxAmount  |number:2}}</td>
+                            <td class="text-right">{{item.TaxAbleAmount + item.TaxAmount  |number:2}}</td>
+                        </tr>
+                        <tr ng-if="!hsnSummary_b2b || hsnSummary_b2b.length == 0">
+                            <td colspan="12" class="text-center">
+                                <div class="alert alert-warning">No records available</div>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <h4>B2C Supplies</h4>
+                    <table class="table table-condensed table-responsive table-hover">
+
+                        <tr class="headerRow">
+                            <th style="width:80px;"  class="text-center">HSN/SAC</th>
+                            <th style="width:180px;">Description</th>
+                            <th class="text-center">UQC</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Tax Rate</th>
+                            <th class="text-right">Taxable Amount</th>
+                            <th class="text-right">IGST</th>
+                            <th class="text-right">SGST</th>
+                            <TH class="text-right">CGST</TH>
+                            <th class="text-center">Cess</th>
+                            <th class="text-right">Total Tax</th>
+                            <th class="text-right">Invoice Value</th>
+                        </tr>
+                        <tr ng-repeat="item in hsnSummary_b2c">
+                            <td  class="text-center">{{item.HSNCode}}</td>
+                            <td></td>
+                            <td class="text-center">{{item.Unit}}</td>
+                            <td class="text-center">{{item.Quantity}}</td>
+                            <td class="text-center">{{item.TaxRate}}%</td>
+                            <td class="text-right">{{item.TaxAbleAmount  |number:2}}</td>
+                            <td class="text-right">{{item.IGSTAmount  |number:2}}</td>
+                            <td class="text-right">{{item.SGSTAmount  |number:2}}</td>
+                            <td class="text-right">{{item.CGSTAmount  |number:2}}</td>
+                            <td class="text-center">-</td>
+                            <td class="text-right">{{item.TaxAmount  |number:2}}</td>
+                            <td class="text-right">{{item.TaxAbleAmount + item.TaxAmount  |number:2}}</td>
+                        </tr>
+                        <tr ng-if="!hsnSummary_b2c || hsnSummary_b2c.length == 0">
+                            <td colspan="12" class="text-center">
+                                <div class="alert alert-warning">No records available</div>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

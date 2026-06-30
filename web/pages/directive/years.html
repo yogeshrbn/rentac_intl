@@ -1,0 +1,8 @@
+﻿<div>
+    <div class="page-header-text" ng-if="headingText">{{headingText}}</div>
+    <select class="form-control" ng-model="selectedYear"
+            ng-change="updateModel()"
+            ng-options="year for year in years">
+        <option value="">Select Year</option>
+    </select>
+</div>

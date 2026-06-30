@@ -1,0 +1,52 @@
+<md-dialog aria-label="Bill settings" style="width:400px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Settings</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="closeBillTaxSettingsDialog()" aria-label="Close">
+                <span class="fa fa-times"></span>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content" style="min-width: 320px; padding-top: 16px;" ng-init="Billing.IsCashBill && (Billing.applyTax = false)">
+            <div class="form-group row">
+                <label class="col-sm-6 control-label">Apply Tax</label>
+                <div class="col-sm-6">
+                    <input type="checkbox" ng-model="Billing.applyTax" ng-disabled="Billing.IsCashBill" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-6 control-label">Cash bill</label>
+                <div class="col-sm-6">
+                    <input type="checkbox" ng-model="Billing.IsCashBill" ng-change="Billing.IsCashBill && (Billing.applyTax = false)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-6 control-label">Apply Discount On</label>
+                <div class="col-sm-6">
+                    <select class="form-control" ng-model="Config.discount_type">
+                        <option value="itemlevel">Item Level (Before GST)</option>
+                        <option value="invoicelevel">Invoice Level</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-6 control-label">Bill by PO</label>
+                <div class="col-sm-6">
+                    <input type="checkbox" ng-model="Billing.FilterChallansByPO" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-6 control-label">Print all PO of the billed challans</label>
+                <div class="col-sm-6">
+                    <input type="checkbox" ng-model="Billing.PrintAllPO" />
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="end center">
+        <button type="button" class="btn btn-default" ng-click="closeBillTaxSettingsDialog()">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="confirmBillTaxSettings()">OK</button>
+    </md-dialog-actions>
+</md-dialog>

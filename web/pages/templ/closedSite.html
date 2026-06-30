@@ -1,0 +1,46 @@
+﻿<div class="col-sm-12">
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+
+
+        <label>Close Date From</label>
+        <!-- <input type="text" id="val_productName" name="val_productName" ng-model="Report.Site" class="form-control" />-->
+        <input type="date" class="form-control" ng-model="Report.FromDate" />
+
+    </div>
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+        <label>To</label>
+
+        <input type="date" class="form-control" ng-model="Report.ToDate" />
+
+    </div>
+
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+        <label class="col-sm-12">&nbsp;</label>
+        <input type="button" value="Show Report" class="btn btn-primary" ng-click="ClosedSites();" />
+
+    </div>
+
+</div>
+<div class="clearfix">&nbsp;</div>
+
+<div class="col-sm-12">
+    <table class="table table-condensed table-responsive">
+
+        <tr class="headerRow">
+            <th>Site</th>
+            <th>Job#</th>
+
+            <th>Closed On</th>
+            <th>Closed By</th>
+
+        </tr>
+        <tr ng-repeat="item in ClosedSites">
+            <td>{{item.Site}}</td>
+            <td>{{item.JobNumber}}</td>
+
+            <td>{{item.ClosedDate}}</td>
+            <td>{{item.ClosedBy}}</td>
+
+
+        </tr>
+</div>

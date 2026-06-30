@@ -1,0 +1,133 @@
+<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+    <!-- <pageheader heading="Company List" />-->
+    <!--<div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>-->
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                     <!--Party Field--> 
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Choose Party</label>
+                            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                              ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                        </div>
+                    </div>
+                     <!--Site Field--> 
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Choose Site</label>
+                            <searchableselect ng-id="val_site" ng-name="val_site" ng-model="Filter.LedgerSiteId"
+                                              data-field="LedgerSites" tabindex="1" data-val="LedgerSiteId"
+                                              data-text="SiteAddress"></searchableselect>
+                        </div>
+                    </div>
+                    <!-- Vehicle -->
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>Transporter</label>
+                            <searchableselect ng-id="val_transporter" ng-name="val_transporter" ng-model="Filter.TransporterId"
+                                              data-field="Transporters" tabindex="1" data-val="TransporterId"
+                                              data-text="Name"></searchableselect>
+                        </div>
+                    </div>
+                    <!-- From Date -->
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>From</label>
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+                            </datepicker>
+                        </div>
+                    </div>
+
+                    <!-- To Date -->
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label>To</label>
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.To" type="text" class="form-control" tabindex="3" />
+                            </datepicker>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group" style="padding-top:22px;">
+
+                            <div class="btn-group" role="group">
+                                <input type="button" class="btn btn-primary" tabindex="4" value="Show" ng-click="getReport();" />
+
+                                <!--<button class="btn btn-default" tabindex="5" ng-click="Print();">
+                                    <i class="fa fa-print"></i> Print
+                                </button>-->
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-condensed table-responsive " med-key>
+
+                <tr class="headerRow">
+                    <th style="width:30px" class="text-center">S.No.</th>
+                    <th style="width:200px">Transporter</th>
+
+                    <th style="width:80px">Vehicle</th>
+                    <th style="width:120px">Challan Number</th>
+                    <th style="width:100px">Challan Date</th>
+
+                    <th>Pickup</th>
+                    <th>Drop</th>
+                    <th style="width:100px">Driver</th>
+                    <th style="width:80px">Freight</th>
+
+
+                </tr>
+                <tr ng-repeat="item in ReprotData">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        {{item.Transporter}}
+                    </td>
+                    <td>
+                        {{item.Vehicle}}
+                    </td>
+                    <td>
+                        {{item.ChallanNumber}}
+                    </td>
+                    <td>
+                        {{item.WorkOrderDate | formatDate: 'dd-MM-yyyy'}}
+                    </td>
+                    <td>{{item.PicLocation}}</td>
+                    <td>{{item.DropLocation}}</td>
+                    <td>{{item.Driver}}</td>
+                    <td class="text-right">{{item.Freight | number: 2}}</td>
+                </tr>
+
+                <tr class="tblFooter">
+                    <td colspan="8" class="text-right">Total Freight</td>
+                    <td class="text-right">
+                        {{ReprotData | sum: 'Freight' | number: 2}}
+                    </td>
+                </tr>
+
+
+                <tr ng-if="ReprotData.length == 0">
+                    <td colspan="8" class="text-center">
+                        No data found.
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>

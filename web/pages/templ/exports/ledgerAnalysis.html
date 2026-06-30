@@ -1,0 +1,56 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th
+
+        {
+            font-size: 10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th style="width: 8%">Code</th>
+            <th style="width: 15%;">Name</th>
+            <th style="width: 8%;">Date</th>
+            <!--<th style="width: 20%;">Type</th>-->
+            <th style="width: 13%;">Narration</th>
+            <th style="width: 8%;">Opening Balance</th>
+            <th style="width: 8%;">Debit</th>
+            <th style="width: 8%;">Credit</th>
+            <th style="width: 8%;">Closing Balance</th>
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>{{item.Code }}</td>
+            <td>{{item.Name }}</td>
+            <td>{{item.TransactionDate | formatDate}}</td>
+            <!--<td>{{item.EntryTypeName}}</td>-->
+            <td>{{item.Narration }}</td>
+            <td>{{item.OpBalance}}</td>
+            <td>{{item.TransactionType == 1 ? item.TransactionAmount : ''  | number:2 }}</td>
+            <td>{{ item.TransactionType == 2 ? item.TransactionAmount : '' | number:2}}</td>
+            <td>{{item.Closingbalance |number:2 }} {{item.TransactionTypeName}}</td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,147 @@
+<!--  <pageheader heading="Bill register" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-2" >
+    <label>Party</label>
+    <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                      ng-id="client_value" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+    <!--<searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code"
+                    selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>-->
+    <!--<searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Billing.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>-->
+
+</div>
+<div class="col-sm-2">
+    <label>Site</label>
+    <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                      data-text="SiteAddress"></searchableselect>
+
+</div>
+
+
+<div class="col-sm-1" >
+
+    <label>From</label>
+
+    <datepicker date-format="dd/MM/yyyy">
+        <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+    </datepicker>
+</div>
+<div class="col-sm-1">
+
+    <label>To</label>
+    <datepicker date-format="dd/MM/yyyy">
+        <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+    </datepicker>
+
+</div>
+
+<div class="col-sm-5 col-xs-12">
+    <label class="hidden-xs">&nbsp;</label>
+    <div class="d-flex" style="align-items:center;justify-content:space-between;">
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="find();" />
+            <a href="#lossentry" class="btn btn-primary" ng-show="AccessData.Add">New Entry</a>
+        </div>
+        <div>
+            <export data="Bills" url="'billList.html'"></export>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="clearfix"></div>
+    <div class="col-lg-12">
+        <div class="table-responsive" style="margin-top:7px;">
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+                    <th style="width:50px;" class="text-center">S.No</th>
+                    <th style="width: 80px;">Vch#</th>
+
+                    <th style="width: 150px;">Client</th>
+                    <th style="width: 150px;">Site</th>
+
+                    <th style="width: 70px;"> Entry Date</th>
+
+                    <th style="text-align: right; width: 30px;">Actions</th>
+
+                </tr>
+                <tr ng-repeat="item in Data">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        {{item.Number}}
+                    </td>
+                    <td>
+                        {{item.Client}}
+                    </td>
+                    <td>
+                        {{item.SiteAddress}}
+                    </td>
+                    <td>{{item.EntryDate | date: 'dd-MM-yyyy'}}</td>
+
+
+                    <td style="text-align: center;">
+
+                        <a href="javascript:void()"><i class="fa fa-eye  fa-2x" ng-click="preview(item)"></i> </a>
+
+                        <!--<a href="javascript:void()" ng-click="edit(item)" title="Edit" style="padding-right:10px;"> <i class="fa fa-edit fa-2x " aria-haspopup="true" aria-expanded="false"></i></a>
+        <a href="javascript:void()" ng-click="delete(item)" title="Print" style="padding-right:20px;"> <i class="fa fa-print fa-2x" aria-haspopup="true" aria-expanded="false"></i></a>
+
+        <a href="javascript:void()" ng-click="delete(item)" title="Delete"> <i class="fa fa-trash fa-2x text-danger" aria-haspopup="true" aria-expanded="false"></i></a>-->
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+    </div>
+    <script lang="ja">
+        $('table a').click(function (e) {
+            alert(e);
+            e.preventDefault();
+
+        });
+    </script>
+</div>
+<div class="modal right fade" id="previewDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:50%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Preview</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0px;">
+                <loadingcircle ng-show="Preview == 1"></loadingcircle>
+                <div class="row">
+                    <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                        <div class="d-flex" style=" justify-content: space-between; flex-direction: row;">
+                            <button class="btn btn-primary btn-sm" ng-click="edit(SelectedItem)">Edit Entry</button>
+                            <button class="btn btn-primary btn-sm" ng-click="printPdf()">Download PDF</button>
+                            <button class="btn btn-danger btn-sm" ng-click="delete(SelectedItem)">Delete</button>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="rpt" style="zoom: 0.8; overflow-y: auto; max-height: 93vh;">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" ng-click="printPdf()">Print</button>
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

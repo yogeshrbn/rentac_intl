@@ -1,0 +1,115 @@
+﻿<div class="form-group">
+
+    <div class="col-lg-12">
+        <h3>Work Orders</h3>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="alert alert-success" ng-show="Salts.length==null">
+    </div>
+    <div class="col-lg-12">
+
+        <table class="table table-condensed table-responsive" id="workOrderTable">
+            <tr class="filterRow hidden-xs">
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by job#" ng-model="search.Number" />
+                </th>
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by site" ng-model="search.Site" />
+                </th>
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by client" ng-model="search.Client" /></th>
+                <th>
+                    <input type="button" value="Find" class="btn btn-primary" ng-click="Find();" />
+
+                </th>
+
+                <th colspan="4"></th>
+            </tr>
+            <tr class="headerRow">
+                <th>W#</th>
+                <th>Client</th>
+                <th>Site</th>
+                <th>Company</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Actions</th>
+
+            </tr>
+          
+               <!--<tr dir-paginate="item in WorkOrders | itemsPerPage: PAGE_SIZE |filter: search:strict">-->
+            <tr ng-repeat-start="item in WorkOrders" >
+
+                <td style="width: 100px"><i class="fa fa-plus" ng-click="LoadSites($index);"></i>&nbsp;{{item.Number}} 
+                    
+                </td>
+                <td>{{item.Client}}
+                </td>
+                <td class="overflow-td" style="max-width: 120px;">{{item.Site}} 
+                </td>
+                <td>{{item.Company}}
+                </td>
+                <td>{{item.WorkOrderDate | formatDate}}</td>
+                <td>{{item.SubTotal}}
+                </td>
+                <td>
+                    <i class="fa fa-edit" ng-click="editWorOrder($index);"></i>&nbsp;&nbsp;
+                    <a href="#woInfo?wId={{item.WorkOrderId}}"><span class="fa fa-info-circle text-primary"></span></a>&nbsp;&nbsp;
+                 
+                </td>
+            </tr>
+            <tr ng-repeat-end class="childRows collapse" id="{{item.WorkOrderId}}">
+                <td colspan="7">
+
+                    <div class="col-sm-12">
+                        <table class="table table-condensed table-responsive">
+                            <tr class="headerRow">
+                                <th>Site</th>
+                                <th>Date</th>
+                                <th>Job#</th>
+                                <th>Challan#</th>
+                                <th>SubTotal</th>
+                                <th>Tax</th>
+                                <th>Freight</th>
+                                <th>Total</th>
+                                <th>Pending</th>
+                                <th>Recevied</th>
+                                <th width="40px"></th>
+                            </tr>
+                            <tr id="tr{{site.SiteId}}" ng-repeat="site in WorkOrders[$index].Sites" ng-class="{true:'closedSite'}[site.Closed]">
+                                <td>{{site.Site}}</td>
+                                <td>{{site.StartDate | formatDate}}</td>
+                                <td>{{site.JobNumber}}</td>
+                                <td>{{site.ChallanNumber}}</td>
+                                <td>{{site.SubTotal}}</td>
+                                <td>{{site.TaxAmount}}</td>
+                                <td>{{site.Freight}}</td>
+                                <td>{{site.Total}}</td>
+                                <td>{{site.Pending}}</td>
+                                <td>{{site.Received}}</td>
+                                <td>
+                                    <i class="fa fa-edit" ng-click="editSite($index);"></i>
+                                    <div class="btn-group">
+                                        <i class="fa fa-chevron-down" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li><a href="#" preventdefault ng-click="CloseSite($index,$event); $event.stopPropagation();">Close Site</a></li>
+                                            <li><a href="#" preventdefault ng-click="CloseSitePayment($index ,$event);">Close Payment</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </td>
+            </tr>
+
+
+        </table>
+           <dir-pagination-controls></dir-pagination-controls>
+    </div>
+    <script lang="ja">
+       
+
+    </script>
+</div>

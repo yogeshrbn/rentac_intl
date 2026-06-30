@@ -1,0 +1,136 @@
+<!--<pageheader heading="Daily Transactions" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Reports.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+        </div>
+        <div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Reports.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+
+            <label>From</label>
+
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Reports.From" tabindex="2" type="text" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Reports.To" tabindex="3" type="text" class="form-control" />
+            </datepicker>
+
+        </div>
+        <div class="col-sm-1">
+            <label>&nbsp;</label>
+            <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="GetTransactions();" />
+                <export data="Issued" data2="Received" url="'dailyTrans.html'"></export>
+            </div>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+<div class="form-group">
+
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="col-md-12">
+        <div class="col-md-12 nopadding dailyTranBox">
+            <div class="col-md-6 nopadding dailyTranBoxLeft">
+
+                <table class="table table-condensed table-responsive">
+
+                    <tr class="headerRow">
+                        <th style="width: 80px;">Date</th>
+                        <th style="width: 80px;">Vch</th>
+                        <th style="width: 120px;">Pary</th>
+                        <th style="width: 160px;">Item</th>
+                        <th style="text-align: right; width: 70px;">Qty</th>
+
+
+                    </tr>
+                    <tr ng-repeat="item in Issued">
+                        <td>{{item.StartDate |date: 'dd-MM-yyyy'}}</td>
+                        <td>
+                            {{item.ChallanNumber}}
+                        </td>
+                        <td class="overflow-td">
+                            {{item.Client}}
+                        </td>
+                        <td>{{item.Product }}</td>
+
+
+                        <td style="text-align: right;">{{item.Quantity |number:2 }}</td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+            <div class="col-md-6 nopadding dailyTranBoxRight">
+                <!-- <h4>Received Items</h4>-->
+
+
+                <table class="table table-condensed table-responsive">
+
+                    <tr class="headerRow">
+                        <th style="width: 100px;">Date</th>
+                        <th style="width: 130px;">Vch</th>
+                        <th style="width: 120px;">Pary</th>
+                        <th style="width: 150px;">Item</th>
+                        <th style="text-align: right; width: 80px;">R|B.Qty</th>
+                        <!--<th style="text-align: right; width: 80px;">Br.Qty</th>-->
+                        <th style="text-align: right; width: 80px;">Total</th>
+
+
+                    </tr>
+                    <tr ng-repeat="item in Received">
+                        <td style="width: 100px;">{{item.StartDate |date: 'dd-MM-yyyy'}}</td>
+                        <td>
+                            {{item.ChallanNumber}}
+                        </td>
+                        <td class="overflow-td">
+                            {{item.Client}}
+                        </td>
+                        <td>{{item.Product }}</td>
+                        <td style="text-align: right;">{{item.Quantity |number:2 }}|{{item.Breakage |number:2 }}</td>
+                        <!--<td style="text-align: right;">{{item.Breakage |number:2 }}</td>-->
+                        <td style="text-align: right;">{{item.Quantity + item.Breakage |number:2 }}</td>
+                    </tr>
+
+                </table>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-12 nopadding" ng-if="DailyData">
+            <div class="col-md-6">
+                <label class="col-md-10 text-right">Total</label>
+                <label class="col-md-2 text-right">{{Issued |sum:'Quantity'| number :2}}</label>
+            </div>
+            <div class="col-md-6">
+                <label class="col-md-10 text-right">Total</label>
+                <label class="col-md-2 text-right">{{(Received |sum:'Quantity')+(Received |sum:'Breakage')| number :2}}</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+

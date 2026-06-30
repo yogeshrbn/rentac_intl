@@ -1,0 +1,89 @@
+<div class="content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding:10px 10px 10px;">
+                <div class="row" style="margin-bottom:8px;">
+                    <div class="col-sm-8">
+                        <h2 style="margin-top:0;">Operations Dashboard</h2>
+                        <p class="text-muted" style="margin-bottom:0;">Site status overview for your company.</p>
+                    </div>
+                    <div class="col-sm-4 text-right" style="padding-top:8px;">
+                        <button type="button" class="btn btn-default btn-sm" ng-click="reloadAll()" ng-disabled="siteKpisLoading">
+                            <i class="fa fa-refresh" ng-class="{'fa-spin': siteKpisLoading}"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="alert alert-warning" ng-if="siteKpisError" style="margin-bottom:14px;">
+                    {{siteKpisError}}
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-6 col-md-3" ng-repeat="w in siteWidgets track by w.key">
+                        <div class="ceo-dashboard-widget operations-dashboard-widget" ng-class="w.panelClass" style="margin-bottom:14px; padding:14px 12px; border:1px solid #ddd; border-radius:4px;">
+                                <div class="operations-dashboard-widget-head">
+                                    <div class="operations-dashboard-widget-icon"><i class="fa" ng-class="w.icon"></i></div>
+                                    <div class="operations-dashboard-widget-meta">
+                                        <div class="operations-dashboard-widget-title">{{w.title}}</div>
+                                        <div class="operations-dashboard-widget-hint text-muted" ng-if="w.hint">{{w.hint}}</div>
+                                    </div>
+                                </div>
+                                <div class="operations-dashboard-widget-value">{{w.value}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; padding:12px; border:1px solid #ddd; border-radius:4px; background:#fff;">
+                    <h3 style="margin:0 0 12px; font-size:16px;">Weekly Operations Activity</h3>
+                    <div class="row" style="margin-bottom:10px;">
+                        <div class="col-sm-8">
+                            <label style="margin-right:6px;">Week Date Range</label>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="moveWeek(-1)" title="Previous Week">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <input type="date" ng-model="chartRange.from" ng-change="onWeekFromDateChange()" class="form-control" style="width:150px; display:inline-block;" />
+                            <span style="margin:0 8px;">to</span>
+                            <input type="date" ng-model="chartRange.to" class="form-control" style="width:150px; display:inline-block;" readonly />
+                            <button type="button" class="btn btn-default btn-sm" ng-click="moveWeek(1)" title="Next Week" style="margin-left:4px;">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                          
+                            <button type="button" class="btn btn-default btn-sm" style="margin-left:8px;" ng-click="applyWeekRange()">Apply</button>
+                        </div>
+                        <div class="col-sm-4 text-right" style="padding-top:6px;">
+                            <span class="text-muted">{{weekRangeText}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h4 style="margin:0 0 8px; font-size:14px;">Installation Per Team</h4>
+                            <div style="height:300px; margin-bottom:14px;">
+                                <canvas id="operationsInstallationTeamChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <h4 style="margin:0 0 8px; font-size:14px;">Dismantling Per Day (Weekly)</h4>
+                            <div style="height:300px;">
+                                <canvas id="operationsDismantlingChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; padding:12px; border:1px solid #ddd; border-radius:4px; background:#fff;">
+                    <h3 style="margin:0 0 12px; font-size:16px;">Inventory Summary</h3>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-4" ng-repeat="w in inventoryWidgets track by w.key">
+                            <div class="ceo-dashboard-widget operations-dashboard-widget" ng-class="w.panelClass" style="margin-bottom:12px; padding:14px 12px; border:1px solid #ddd; border-radius:4px;">
+                                <div class="operations-dashboard-widget-head">
+                                    <div class="operations-dashboard-widget-icon"><i class="fa" ng-class="w.icon"></i></div>
+                                    <div class="operations-dashboard-widget-meta">
+                                        <div class="operations-dashboard-widget-title">{{w.title}}</div>
+                                        <div class="operations-dashboard-widget-hint" ng-if="w.hint">{{w.hint}}</div>
+                                    </div>
+                                </div>
+                                <div class="operations-dashboard-widget-value">{{w.value}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

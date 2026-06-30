@@ -1,0 +1,46 @@
+<md-dialog  id="dialog1">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Filter</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="closeDialog()">
+
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout="row" layout-wrap layout-margin layout-align="center">
+        <form id="form-employee" method="post" class="form-horizontal form-bordered">
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label>Party</label>
+                    <input type="text" id="val_party" name="val_party" class="form-control" ng-model="Employee.Name" />
+                </div>
+                <div class="col-sm-6">
+                    <label>From Date</label>
+                    <input type="text" class="form-control dateControl" id="val_empCode" name="val_empCode"   
+                           ng-model="Employee.EmployeeCode" />
+                </div>
+                <div class="col-sm-6">
+                    <label>End Date</label>
+                    <datepicker datepicker-toggle="false"  date-format="dd/MM/yyyy">
+                        <input ng-model="WorkOrder.WorkOrderDate" tabindex="2" type="text" class="form-control" id="val_workOrderDate" name="val_workOrderDate" />
+                    </datepicker>
+                </div>
+                <div class="col-sm-6">
+                    <label>Voucher</label>
+                    <input type="text" class="form-control" name="val_aadhar" ng-model="Employee.Aadhar" />
+                </div>
+                
+
+
+            </div>
+        </form>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="pull-right">
+            <button ng-click="OkButtonClick()" class="btn btn-primary" value="Print">Save <i class="fa fa-spinner fa-spin hide" style="color:#fff;"></i></button>
+            <span flex></span>
+            <button ng-click="closeDialog()" class="btn btn-danger" value="Close">Close</button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

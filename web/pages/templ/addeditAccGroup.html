@@ -1,0 +1,62 @@
+﻿<div class="form-group">
+    <div class="col-lg-12">
+        <h3>Account Groups</h3>
+    </div>
+    <form id="form-salt" method="post" class="form-horizontal form-bordered">
+        <!-- Form Horizontal Start -->
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Group Name</label>
+                                <input type="text" id="val_saltName" name="val_saltName" ng-model="AccGroup.Props.Name" class="form-control" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Group Code</label>
+                                <input type="text" id="Text2" ng-model="AccGroup.Props.GroupCode" class="form-control" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Parent Group</label>
+                                <searchableselect name="val_parentGroups" data-field="AccGroups" ng-model="AccGroup.Props.ParentGroup" data-val="AccountGroupId" data-text="Name"></searchableselect>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-6">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- End -->
+    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+</div>

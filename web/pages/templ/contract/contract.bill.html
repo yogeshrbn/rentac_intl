@@ -1,0 +1,102 @@
+﻿<!--  <pageheader heading="Bill register" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <style type="text/css">
+        .headerTable {
+            td
+
+        {
+            vertical-align: middle !important;
+            border: solid 1px #b9b9b9;
+            padding: 3px;
+        }
+        }
+    </style>
+
+    <div class="table-responsive">
+        <table class="headerTable" style="width:100%;" cellpadding="10px">
+            <tr>
+                <td class="bg-info" style="width:18%;"><label class="control-label">Party</label> </td>
+                <td colspan="3">
+                    {{Contract.Client}}
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-info"><label class="control-label">Site</label> </td>
+                <td>
+                    {{Contract.SiteAddress}}
+                </td>
+                <td class="bg-info" style="width:20%;"><label class="control-label">Last Bill Date</label> </td>
+                <td>
+                    {{ Contract.LastBilledDate| date}}
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-info"><label class="control-label">Effective From</label> </td>
+                <td>
+                    {{Contract.EffectiveFrom | date}}
+                </td>
+                <td class="bg-info" style="width:20%;"><label class="control-label">Last Bill Amount</label> </td>
+                <td>
+                    {{ Contract.LastBillAmount| number:2}}
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-info"><label class="control-label">Contract Value</label> </td>
+                <td>
+                    {{Contract.ContractValue | number:2}}
+                </td>
+                <td class="bg-info" style="width:20%;"><label class="control-label">Contract Balance</label> </td>
+                <td>
+                    {{Contract.ContractValue - Contract.BilledAmount| number:2}}
+                </td>
+            </tr>
+
+        </table>
+        <h4 style="margin-top:30px;">
+            <i class="fa fa-credit-card"></i>
+            Billing
+        </h4>
+        <div class="row" style="margin-top:20px;">
+            <form id="frmContractBill" method="post" class="form-horizontal">
+                <div class="form-group col-sm-12">
+
+                    <div class="col-sm-2">  <label>Enter the Bill Amount</label></div>
+                    <div class="col-sm-3">  <input type="text" class="form-control maskednumber" name="val_amount" ng-model="Contract.SubTotal" /></div>
+                </div>
+                <div class="form-group col-sm-12 mt-1">
+                    <div class="col-sm-2">  <label>IGST ({{Contract.IGSTRate}}%)</label></div>
+                    <div class="col-sm-3">  <input type="text" class="form-control maskednumber" disabled ng-model="Contract.IGST"/></div>
+                </div>
+                <div class="form-group col-sm-12 mt-1">
+                    <div class="col-sm-2">  <label>CGST ({{Contract.CGSTRate}}%)</label></div>
+                    <div class="col-sm-3">  <input type="text" class="form-control maskednumber" disabled  ng-model="Contract.CGST"/></div>
+                </div>
+                <div class="form-group col-sm-12 mt-1">
+                    <div class="col-sm-2">  <label>SGST ({{Contract.SGSTRate}}%)</label></div>
+                    <div class="col-sm-3">  <input type="text" class="form-control maskednumber" disabled  ng-model="Contract.SGST"/></div>
+                </div>
+                <div class="form-group col-sm-12 mt-1">
+                    <div class="col-sm-2">  <label>Bill Amount</label></div>
+                    <div class="col-sm-3">  <input type="text" class="form-control maskednumber" disabled  ng-model="Contract.Total"/></div>
+                </div>
+                <div class="form-group col-sm-12 mt-1">
+                    <div class="col-sm-2">  <label>Remarks</label></div>
+                    <div class="col-sm-3">  <textarea ng-model="Contract.Remarks" style="height:50px;" class="form-control" name="val_remarks"/></div>
+                </div>
+                <div class="form-group col-sm-12" style="margin-top:50px;">
+
+                    <div class="col-sm-offset-2 col-sm-3">
+                        <button type="button" class="btn btn-primary" ng-click="generateBill()">Generate Bill</button>
+                        <button type="button" class="btn btn-default" ui-sref="billList">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+

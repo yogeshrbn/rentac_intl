@@ -1,0 +1,70 @@
+﻿<md-dialog aria-label="List dialog">
+  <md-dialog-content>
+      <div>
+    <div class="clearfix">&nbsp;</div>
+      <div class="col-sm-12">
+          <div class="col-sm-6">
+              <label class="col-sm-12">Challan#</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.ChallanNumber"  />
+              </div>
+          </div>
+       <div class="col-sm-6">
+              <label class="col-sm-12">Invoice#</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.InvoiceNumber"/>
+              </div>
+          </div>
+      </div>
+          <!-- -->
+           <div class="col-sm-12">
+          <div class="col-sm-6">
+              <label class="col-sm-12">Cheque#</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.ChequeNumber"/>
+              </div>
+          </div>
+       <div class="col-sm-6">
+              <label class="col-sm-12">Bank#</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.Bank" />
+              </div>
+          </div>
+      </div>
+            <div class="col-sm-12">
+          <div class="col-sm-6">
+              <label class="col-sm-12">Trans#</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.TransactionId"/>
+              </div>
+          </div>
+       <div class="col-sm-6">
+              <label class="col-sm-12">Amount#</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.Amount"/>
+              </div>
+          </div>
+      </div>
+            <div class="col-sm-12">
+                  <div class="col-sm-6">
+              <label class="col-sm-12">Date</label>
+              <div class="col-sm-12">
+                  <input type="date" class="form-control" ng-model="Pay.EntryDate"/>
+              </div>
+          </div>
+          <div class="col-sm-6">
+              <label class="col-sm-12">Remarks</label>
+              <div class="col-sm-12">
+                  <input type="text" class="form-control" ng-model="Pay.Remarks"/>
+              </div>
+          </div>
+       
+      </div>
+          <!-- -->
+          </div>
+      <md-dialog-actions>
+    <md-button ng-click="createEntry()" class="md-primary">Update</md-button> 
+    <md-button ng-click="closeDialog()" class="md-primary">Close</md-button>
+  </md-dialog-actions>
+  </md-dialog-content>
+ </md-dialog>

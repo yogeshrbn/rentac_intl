@@ -1,0 +1,92 @@
+﻿<md-dialog style="width:50%;">
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Add/Edit User</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+                <md-icon aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <form class="form-horizontal" id="frmUser">
+                <div class="col-sm-12">
+                    <table class="table table-condensed table-responsive no-border">
+
+                        <tr>
+                            <td class="headingCol">Full Name</td>
+                            <td colspan="3">
+                                <input type="text" name="full_name" maxlength="50"
+                                       tabindex="1" class="form-control" ng-model="User.FullName" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="headingCol">Email</td>
+                            <td><input type="text" class="form-control" name="email" maxlength="50" tabindex="2" ng-model="User.Email" /></td>
+                            <td class="headingCol">Phone</td>
+                            <td><input type="text" class="form-control" formFormat="true" name="phone" maxlength="10" tabindex="3" ng-model="User.Phone" /></td>
+                        </tr>
+
+                        <!--<tr>
+                            <td class="headingCol">Login Name</td>
+                            <td colspan="3"><input type="text" class="form-control" ng-disabled="{{User.UserId > 0}}" tabindex="4" ng-model="User.UserName"/></td>
+                        </tr>-->
+                        <tr>
+                            <td style="width:20%;" class="headingCol">Password</td>
+                            <td><input type="password" class="form-control" name="password" maxlength="20" ng-disabled="{{User.UserId > 0}}" tabindex="5" ng-model="User.Password" /></td>
+                            <td class="headingCol">Confirm Password</td>
+                            <td><input type="password" class="form-control" name="confirmPassword" maxlength="20" ng-disabled="{{User.UserId > 0}}" tabindex="6" /></td>
+                        </tr>
+                        <tr>
+                        </tr>
+                        <tr>
+                            <td class="headingCol">Company</td>
+                            <td colspan="3">
+                                <!--<searchableselect id="ddlCompany" tab-index="7"
+                                data-field="Companies" ng-multiple="true"
+                                ng-model="User.Companies" on-ItemSelected="onCompanySelected($event)"
+                                data-val="CompanyId" data-text="Name"></searchableselect>-->
+
+                                <tags-input ng-model="User.Companies" add-on-paste="true"
+                                            keyProperty="CompanyId"
+                                            displayProperty="Name">
+                                    <auto-complete source="TagsCompanies"></auto-complete>
+                                </tags-input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="headingCol">Allow Company Switching</td>
+                            <td>
+                                <input type="radio" name="comp" ng-model="User.AllowSwitchCompany" ng-value="1" />Yes
+                                <input type="radio" name="comp" ng-model="User.AllowSwitchCompany" ng-value="0" />No
+                            </td>
+                            <td class="headingCol">Role</td>
+                            <td>
+                                <!-- <input type="radio" name="userRole" ng-model="User.RoleId" ng-value="1"  />Manager
+                                <input type="radio" name="userRole" ng-model="User.RoleId" ng-value="2"/>Operator-->
+                                <searchableselect ng-name="roleId" ng-id="roleId" tab-index="7"
+                                                  data-field="Roles" ng-model="User.RoleId"
+                                                  data-val="RoleId" data-text="Name"></searchableselect>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+
+        <span flex></span>
+        <md-button ng-click="closeMe()">
+            Cancel
+        </md-button>
+        <md-button ng-click="Save()">
+            Save
+        </md-button>
+    </md-dialog-actions>
+
+</md-dialog>

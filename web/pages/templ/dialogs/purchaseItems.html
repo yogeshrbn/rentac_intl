@@ -1,0 +1,41 @@
+﻿<md-dialog aria-label="List dialog">
+  <md-dialog-content>
+<div >
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-12">
+         <div class="panel panel-primary">
+            <div class="panel-heading">
+            Items
+             </div>
+          
+         <table class="table table-condensed table-responsive">
+             <tr>
+
+                 <th>#</th>
+                 <th>Item</th>
+                 <th class="text-right"> Qty</th>
+                 <th class="text-right">Rate</th>
+                 <th class="text-right">Amount</th>
+             </tr>
+              <tr ng-repeat="site in Items">
+                <td>{{$index+1}}</td>
+                <td >{{site.Item}}</td>
+                  <td class="text-right">{{site.Quantity | number: 2}}</td>
+                  <td class="text-right">{{site.Rate | number: 2}}</td>
+                  <td class="text-right">{{site.SubTotal | number: 2}}</td>
+            </tr>
+        </table>
+                <md-progress-circular id="loadersite" md-mode="indeterminate" style="margin:auto;"></md-progress-circular>
+                </div>
+       </div>
+    <hr />
+</div>
+      </md-dialog-content>
+      <md-dialog-actions>
+          <div class="col-sm-2">
+      &nbsp;</div> <div class="col-sm-2">
+    <input type="button" ng-click="closeDialog()" class="btn btn-danger" value="Close" />
+         </div>
+  </md-dialog-actions>
+
+</md-dialog>

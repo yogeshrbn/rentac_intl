@@ -1,0 +1,48 @@
+﻿
+
+#printArea {
+    font-family: Arial;
+    position: relative;
+    min-height: 93vh;
+    padding:10px;
+}
+
+.border-row, td, th {
+    border: solid 1px;
+    font-size: 12px;
+    vertical-align: center;
+    padding: 5px;
+    text-align: left;
+    line-height: 20px;
+}
+
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.noborder {
+    border: none !important;
+}
+
+h5 {
+    line-height: 15pt;
+    margin: 0px;
+    font-size: 16px
+}
+
+footer {
+    
+    text-align: center;
+    color: #000000;
+    width: 100%;
+    bottom: -60px;
+}
+.subHeading1 {
+    font-size: 16px;
+    font-weight: bold;
+}

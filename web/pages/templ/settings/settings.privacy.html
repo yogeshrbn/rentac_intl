@@ -1,0 +1,128 @@
+﻿
+ 
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-horizontal" id="frmChangePwd" ng-controller="ChnagePasswordController">
+                    <div class="form-group">
+                        <h3 class="col-sm-9">Change Password</h3>
+
+                    </div>  <hr />
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-4 control-label">Current Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" name="val_currentPassword"  ng-model="pwd.CurrentPassword" maxlength="20" placeholder="Current Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-4 control-label">New Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" name="val_newPassword"  ng-model="pwd.NewPassword" maxlength="20" placeholder="New Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-4 control-label">Confirm Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" name="val_confirmPassword"  ng-model="pwd.ConfirmPassword" maxlength="20"  placeholder="Confirm Password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button type="submit" class="btn btn-primary" ng-click="changePassword();">Change Password</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+     
+        <form class="form-horizontal" method="post" id="frm-rbnclientprofileSettings"  ng-controller="PrivacySettingsController">
+            <h3 class="mt-0">User Profile Picture</h3>   <hr />
+            <div class="form-group">
+
+            </div>
+            <div class="media">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="mr-3" id="imgProfile" ng-src="{{profilePic}}" style="height: 80px; width: 100px; object-fit:cover;">
+                    </a>
+
+
+                </div>
+                <div class="media-body">
+
+                    You can upload the profile picture from the saved images on your computer or take a headshot from your device's camera.
+
+                    <div class="row">
+                        <div class="col-sm-12">&nbsp;</div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#flipFlop" ng-click="openFileDialog()">Choose Picture</button>
+                        </div>
+                        <div class="col-sm-8">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <style>
+                .webcam-live {
+                    border: solid 2px #15b6ff;
+                }
+            </style>
+
+            <!-- The modal -->
+            <div class="modal fade" id="flipFlop" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="modalLabel">Choose Picture</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-sm-5 text-center" ng-if="showCamera">
+
+                                    <webcam channel="channel" style=""
+                                            on-access-denied="onError(err)"
+                                            on-streaming="onSuccess()">
+                                    </webcam>
+                                    <button class="btn btn-primary" ng-click="makeSnapshot()">Capture From Camera</button>
+                                </div>
+                                <div class="col-sm-2 text-center" style=" line-height: 135px; font-weight: 600;">
+                                    OR
+                                </div>
+                                <div class="col-sm-5 text-center">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <canvas id="snapshot" style="border: solid 2px #15b6ff;" width="180" height="130"></canvas>
+
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-danger col-xs-12" ng-click="browseFile()">Upload From Gallery</button>
+                                            <input type="file" style="display:none;" id="fileProfile" onchange="angular.element(this).scope().onFileBrowse(event)" />
+
+                                        </div>
+                                        </div>
+                                    
+                                    </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary btn-sm" ng-click="changeProfilePic();">Save</button>
+                            <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+ 

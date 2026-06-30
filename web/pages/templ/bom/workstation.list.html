@@ -1,0 +1,71 @@
+﻿<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+    <!-- <pageheader heading="Company List" />-->
+    <!--<div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>-->
+    <div class="col-lg-12">
+
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <div class="d-flex mb-1 mr-1">
+                <input type="text" class="form-control mr-1" placeholder="Find by name" ng-model="Search.Name" />
+
+                <input type="button" value="Find" class="btn btn-primary  mr-1" ng-click="find();" />
+
+                <a ui-sref="addworkstation" class="btn btn-primary" ng-show="AccessData.Add">Add WorkStation</a>
+
+            </div>
+            <div>
+                <export data="Companies" url="'companies.html'"></export>
+            </div>
+        </div>
+        <div class="table-responsive">
+
+            <table class="table table-condensed table-responsive " med-key>
+
+                <tr class="headerRow">
+                    <th style="width:80px" class="text-center">S.No</th>
+                    <th style="width:80px">Code</th>
+                    <th>Work Station Name</th>
+                    <th style="width:150px">Work Station Type</th>
+                    <th style="width:150px">Description</th>
+                    <th style="width:100px">Status</th>
+                    <th style="width:80px" class="text-center">Actions</th>
+
+                </tr>
+                <tr ng-repeat="item in WorkStations">
+
+                    <td class="text-center">
+                        {{$index+1}}
+                    </td>
+                    <td>{{item.Code}}</td>
+                    <td>
+                        {{item.Name}}
+                    </td>
+                    <td>
+                        {{item.WorkStationTypeName}}
+                    </td>
+                    <td>
+                        {{item.Description}}
+                    </td>
+                    <td>{{item.StatusName}}</td>
+                    
+
+                    <td class="text-center">
+                        <a href="javascript:void()" ng-click="edit(item)" ng-show="AccessData.Edit"><span class="fa fa-edit text-primary fa-2x"></span></a>
+
+                    </td>
+                </tr>
+                <tfoot ng-if="WorkStations.length == 0">
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <img src="../img/no-data.png" />
+                            <h4>No Records Found</h4>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th
+
+        {
+            font-size: 10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th style="width: 50px;">Receipt#</th>
+       
+            <th style="width: 100px;">Date</th>
+            <th style="width: 250px;">Party</th>
+
+            <th style="text-align: right; width: 100px;">Amount</th>
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>
+                {{item.ReceiptNumber}}
+            </td>
+            <!-- <td>{{item.TransactionMode}}</td>-->
+
+            <td>{{item.TransactionDate |date: 'dd-MM-yyyy'}}</td>
+            <td>
+                {{item.CrLedger}}
+            </td>
+            <td style="text-align: right;">
+                {{item.TransactionAmount |number:2 }}
+            </td>
+        </tr>
+    </table>
+</div>

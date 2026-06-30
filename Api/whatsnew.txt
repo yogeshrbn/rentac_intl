@@ -1,0 +1,3 @@
+﻿Added freight to sale bill
+Added other charges to sale bill
+Added add Info and TNC to sale bill

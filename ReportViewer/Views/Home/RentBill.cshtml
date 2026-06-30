@@ -1,0 +1,202 @@
+@using ReportViewer.Helpers
+@{
+    Layout = null;
+    var data = ViewBag.BillData;
+
+    var imagepath = data.Tables[0].Rows[0]["CompanyLogo"];
+    var firstRow = data.Tables[0].Rows[0];
+    var taxes = data.Tables[1];
+    var charges = data.Tables[4];
+    var billingConfig = BillingConfigViewHelper.AsEnumerable(ViewBag.ConfigData);
+    var billPeriodText = BillingConfigViewHelper.GetValue(billingConfig, "billPeriodText", "Bill Period");
+
+    var rowsToSpanAtBottom = 8 + charges.Rows.Count;
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RentBill</title>
+    @*<link rel="stylesheet" href="~/Content/print.css" />*@
+    <style>
+       
+        table {
+        }
+
+        td {
+            border: none;
+            padding: 3px;
+        }
+
+        .border {
+            border: solid 1px;
+        }
+
+        .noborder_bl {
+            border-bottom: none;
+            border-left: none;
+        }
+
+        .noborder_b {
+            border-bottom: none;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="printArea">
+        <table border="0" style="width:100%" cellspacing="0">
+            <tr>
+                <td style="width:280px;">
+                    <img src="@imagepath" style="width:180px" />
+                </td>
+                <td colspan="5">
+                    <table style="width:100%;">
+                        <tr>
+                            <td style="text-align:right"> SAC: 997313</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"> PAN:@firstRow["CompanyPAN"]</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"> @firstRow["CompanyEmail"]</td>
+                        </tr>
+                    </table>
+
+
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <table>
+                        <tr><td>@firstRow["Company"]</td></tr>
+                        <tr><td>@firstRow["CompanyAddress1"]</td></tr>
+                        <tr><td>@firstRow["CompanyAddress2"]</td></tr>
+                        <tr><td>Mobile: @firstRow["CompanyPhone"], Email: @firstRow["CompanyEmail"]</td></tr>
+
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" rowspan="2" class="border" style="border-bottom:none;">
+                    <table>
+                        <tr><td>@firstRow["Client"]</td></tr>
+                        <tr><td>@firstRow["SiteAddress"]</td></tr>
+                        <tr><td>Address2</td></tr>
+                        <tr><td>GSTIN: @firstRow["SiteGST"], Mobile: @firstRow["ClientPhone"], Email: @firstRow["ClientEmail"]</td></tr>
+
+                    </table>
+                </td>
+                <td colspan="2" class="border" style="border-left:none;border-bottom:none;">
+                    Bill No:  @firstRow["InvoiceNumber"]
+                </td>
+                <td colspan="2" class="border" style="border-left:none;border-bottom:none;">
+                    Bill Date:   @BAL.Objects.Utils.FormatDate(@firstRow["InvoiceDate"])
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="border " style="border-left:none;border-bottom:none;">
+                    Bill Preiod: @BAL.Objects.Utils.FormatDate(@firstRow["From"]) -  @BAL.Objects.Utils.FormatDate(@firstRow["To"])
+                </td>
+            </tr>
+            <tr>
+                <td class="border noborder_b">Description</td>
+                <td class="border noborder_bl">@billPeriodText</td>
+                <td class="border noborder_bl text-center"> Days</td>
+                <td class="border noborder_bl text-right">Number</td>
+                <td class="border noborder_bl text-right">Rate</td>
+                <td class="border noborder_bl text-right">Amount</td>
+            </tr>
+            @{
+                foreach (var row in data.Tables[0].Rows)
+                {
+                    <tr>
+                        <td class="border noborder_b"> @row["Item"] (Qty: @row["QtyDesc"])</td>
+                        <td class="border noborder_bl">@row["Period"]</td>
+                        <td class="border noborder_bl text-center">@row["Days"]</td>
+                        <td class="border noborder_bl text-right">@row["Quantity"]</td>
+                        <td class="border noborder_bl text-right">@row["Rate"]</td>
+                        <td class="border noborder_bl text-right">@row["SubTotal"]</td>
+                    </tr>
+                }
+            }
+
+            <tr>
+                <td colspan="3" rowspan="@rowsToSpanAtBottom" class="border noborder_b" style="vertical-align:top;padding-top:20px;">
+                    In Words: @BAL.Objects.Utils.ConvertNumbertoWords(@firstRow["Total"].ToString())
+                </td>
+                <td colspan="2" class="border noborder_bl">Sub Total</td>
+                <td class="border noborder_bl text-right">@firstRow["SubTotal"]</td>
+            </tr>
+            @{
+                foreach (var tax in taxes.Rows)
+                {
+                    <tr>
+                        <td colspan="2" class="border noborder_bl">@tax["TaxName"] (@tax["Rate"] %)</td>
+                        <td class="border noborder_bl text-right">@tax["TaxAmount"]</td>
+                    </tr>
+                }
+            }
+
+
+            <tr>
+                <td colspan="2" class="border noborder_bl">Freight</td>
+                <td class="border noborder_bl text-right">@firstRow["Freight"]</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="border noborder_bl">Freight Tax</td>
+                <td class="border noborder_bl text-right">@firstRow["FreightTax"]</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="border noborder_bl">Breakage</td>
+                <td class="border noborder_bl text-right">@firstRow["BreakageAmount"]</td>
+            </tr>
+            @{
+                foreach (var charge in charges.Rows)
+                {
+                    <tr>
+                        <td colspan="2" class="border noborder_bl">@charge["Name"] </td>
+                        <td class="border noborder_bl text-right">@charge["Amount"]</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td colspan="2" class="border noborder_bl">Total</td>
+                <td class="border noborder_bl text-right">@firstRow["Total"]</td>
+            </tr>
+            <tr>
+                <td colspan="6" class="border noborder_b" style="text-align:center">
+                    TERMS AND CONDITIONS
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" class="border noborder_b">
+                    <ul>
+                        <li>The full cost price of UNRETURNED MATERIAL will be charged along with its charges.</li>
+                        <li>Payment is to be made within 7 days on preparation of the bill or interest will be charged at 24% p.a.</li>
+                        <li>This bill has been generated against the rent charges of the material and NOT SALE.</li>
+                    </ul>
+
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" class="border" style="text-align:right;padding-top:30px;">
+                    For @firstRow["Company"]
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

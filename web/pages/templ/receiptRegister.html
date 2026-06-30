@@ -1,0 +1,111 @@
+<!--<pageheader heading="{{TranType==1? 'Quick Receipt Register': 'Quick Payment Register'}}" />-->
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--    <searchabletext ng-id="client" data-item="Client" data-all="true" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+        </div>
+
+        <div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+
+            <label>From</label>
+
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" class="form-control" tabindex="3" />
+            </datepicker>
+
+        </div>
+        <!--<div class="col-sm-2">
+        <label class="col-sm-9">&nbsp;</label>
+        <input type="button" class="btn btn-primary" value="Find" ng-click="GetReceiptRegister();" tabindex="4" />
+
+    </div>-->
+        <div class="col-sm-2">
+            <label class="col-sm-12 hidden-xs">&nbsp;</label>
+            <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+                <div class="d-flex" style="align-items:center;justify-content:space-between;">
+                    <!--<label class="col-sm-12">&nbsp;</label>-->
+                    <input type="button" class="btn btn-primary" value="Find" ng-click="GetReceiptRegister();" tabindex="4" />
+
+                </div>
+                <div>
+                    <export data="Receipts" url="'receiptregister.html'"></export>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="clearfix"></div>
+    <div class="table-responsive" style="margin-top:7px;">
+       
+            <table class="table table-condensed ">
+                <tr class="headerRow">
+                    <th style="width: 50px;">#</th>
+                    <th style="width: 50px;">Receipt#</th>
+                    <!-- <th style="width: 100px;">Mode</th>-->
+                    <th style="width: 100px;">Date</th>
+                    <th style="width: 250px;">Party</th>
+
+                    <th style="text-align: right; width: 100px;">Amount</th>
+                    <th style="width: 50px;">Print</th>
+                </tr>
+                <tr ng-repeat="item in Receipts">
+                    <td>{{$index+1}}</td>
+                    <td>
+                        {{item.ReceiptNumber}}
+                    </td>
+                    <!-- <td>{{item.TransactionMode}}</td>-->
+
+                    <td>{{item.TransactionDate |date: 'dd-MM-yyyy'}}</td>
+                    <td>
+                        {{item.CrLedger}}
+                    </td>
+                    <td style="text-align: right;">
+                        {{item.TransactionAmount |number:2 }}
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="javascript:void()" title="Edit" ng-click="edit(item.LedgerTransactionId)"><i class="fa fa-edit fa-2x"></i></a>&nbsp;
+                        <a href="javascript:void()" title="Download Pdf" ng-click="PrintTransaction(item.LedgerTransactionId)"><i class="fa fa-print fa-2x"></i></a>
+                    
+                        <div class="btn-group">
+
+                            <!--<i class="fa fa-chevron-down" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="#" ng-click="PrintTransaction(item.LedgerTransactionId);" stop="true"><i class="fa fa-print text-primary fa-2x"></i>Print</a></li>
+            <li><a href="#" ng-click="SendReminder(item.LedgerTransactionId,EMAIL_REMINDER);" stop="true"><i class="fa fa-envelope-o text-success fa-2x"></i>Email To Client</a></li>
+            <li><a href="#" ng-click="SendReminder(item.LedgerTransactionId,SMS_REMINDER);" stop="true"><i class="fa fa-comment text-success fa-2x"></i>Send SMS</a></li>
+        </ul>-->
+                        </div>
+                        <!--<span class="fa fa-file-pdf-o fa-2x text-danger" title="Export to pdf" ng-click="PrintTransaction(item.LedgerTransactionId);"></span>
+    <span  title="Email receipt" ng-click="SendReminder(item,EMAIL_REMINDER);"><i class="fa fa-envelope fa-2x text-primary" ></i></span>-->
+
+                    </td>
+
+                </tr>
+                <tr ng-show="Receipts.length > 0">
+                    <td colspan="3"></td>
+                    <td class="total_td">Total</td>
+                    <td class="total_td">{{TotalAmount() | number:2}}</td>
+                    <td></td>
+                </tr>
+            </table>
+        
+    </div>
+</div>
+

@@ -1,0 +1,21 @@
+﻿<table>
+    <thead>
+        <tr>
+            <th>Party</th>
+            <th>Item</th>
+            <th>Rent</th>
+            <th>Loss Rate</th>
+            <th>Breakage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="row in object">
+            <td>{{row.Client}}</td>
+            <td>{{row.Product}}</td>
+            <td>{{row.RentRate | number:2}}</td>
+            <td>{{row.LossRate | number:2}}</td>
+            <td>{{row.DamageRate | number:2}}</td>
+
+        </tr>
+    </tbody>
+</table>

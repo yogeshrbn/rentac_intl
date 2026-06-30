@@ -1,0 +1,158 @@
+<form id="form-receipt" method="post" class="">
+
+    <!--    <pageheader heading="Bank Entry" />-->
+    <div class="col-sm-12">
+
+        <div class="col-sm-2">
+            <label>Date</label>
+            <datepicker date-format="dd/MM/yyyy">
+          <input ng-model="Trans.TransactionDate" type="text" tabindex="1" class="form-control" field-required="true" name="TransactionDate"/>
+        </datepicker>
+        </div>
+
+        <div class="col-sm-3">
+            <label>Bank</label>
+            <searchableselect name="val_bank" on-loaded="bankLoaded();" tabindex="2" data-field="Banks" ng-model="BankId" data-val="LedgerId" data-text="Name"></searchableselect>
+            <!--<searchabletext ng-id="bank" search-fields="Name" data-item="Banks" tab-index="2" data-all="true"  local-data="Banks" name="Name" field-required="true"> </searchabletext>-->
+        </div>
+        <div class="col-sm-3">
+
+            <label>Entry</label>
+            <!--<searchabletext ng-id="entry" search-fields="Name" data-item="EntryTypes" tab-index="2" data-all="true"  local-data="EntryTypes" name="Name" field-required="true"> </searchabletext>-->
+            <searchableselect name="val_entry" tabindex="3" data-field="EntryTypes" ng-model="Trans.EntryType" data-val="EntryTypeId" data-text="Name"></searchableselect>
+
+        </div>
+        <!--<div class="col-sm-4 text-right">
+            <label class="col-sm-12">&nbsp;</label>
+            <button value="New" class="btn btn-primary" ng-click="NewTransaction();" ng-show="AccessData.Add">New</button>
+        </div>-->
+    </div>
+    <div class="clearfix">&nbsp;</div>
+
+</form>
+<div class="form-group addWithTable">
+
+    <div class="col-sm-12 addItemBox">
+
+        <div class="col-sm-3">
+            <label>Account Name</label>
+            <!--<searchabletext ng-id="client" ng-show="Trans.EntryType && BankId" data-item="Client" tab-index="4" data-all="true" selected-object="LedgerSelect" name="Ledger" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2"  data-field="Accounts" ng-model="LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+        </div>
+        <div class="col-sm-3 nopadding">
+            <label>Site</label>
+            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Trans.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+
+
+        <div class="col-sm-1 text-center nopadding">
+
+            <label>Amount</label>
+            <input ng-model="Trans.TransactionAmount" type="text" tabindex="5" class="form-control maskednumber" name="Amount" field-required="true" />
+
+        </div>
+
+
+        <div class="col-sm-1 text-center">
+
+            <label>Bill No</label>
+
+            <input ng-model="Trans.TranRefNumber" type="text" tabindex="6" class="form-control" name="Remarks" field-required="true" />
+
+
+        </div>
+
+
+        <div class="col-sm-1 text-center">
+            <label>Discount</label>
+            <input ng-model="Trans.Discount" type="text" tabindex="9" class="form-control" name="Discount" field-required="true" />
+        </div>
+        <div class="col-sm-1 text-center">
+            <label>TDS</label>
+            <input ng-model="Trans.TDS" type="text" tabindex="10" class="form-control" name="TDS" field-required="true" />
+        </div>
+    </div>
+    <div class="col-sm-12 addItemBox" ng-if="Trans.EntryType == 1 || Trans.EntryType == 3">
+        <div class="col-sm-3">
+            <label>Cheque Number</label>
+            <input ng-model="Trans.ChequeNumber" type="text" tabindex="7" class="form-control" name="Cheque Number" field-required="true" />
+        </div>
+        <div class="col-sm-3">
+            <label>Bank of Cheque</label>
+            <searchableselect name="val_bank" on-loaded="bankLoaded();" tabindex="2" data-field="Banks" ng-model="Trans.ChequeBankId" data-val="LedgerId" data-text="Name"></searchableselect>
+            <!--<searchabletext ng-id="bank" search-fields="Name" data-item="Banks" tab-index="2" data-all="true"  local-data="Banks" name="Name" field-required="true"> </searchabletext>-->
+        </div>
+        <div class="col-sm-1 nopadding">
+            <label>Cheque Date</label>
+            <datepicker date-format="dd/MM/yyyy">
+          <input ng-model="Trans.ChequeDate" type="text" tabindex="1" class="form-control" field-required="true" name="ChequeDate"/>
+        </datepicker>
+        </div>
+    </div>
+    <div class="col-sm-12 addItemBox">
+
+
+        <div class="col-sm-3">
+            <label>Executive Name</label>
+            <input ng-model="Trans.ExecutiveName" type="text" tabindex="11" class="form-control" name="ExecutiveName" field-required="true" />
+        </div>
+        <div class="col-sm-3">
+
+            <label>Remarks</label>
+
+            <input ng-model="Trans.Narration" type="text" tabindex="7" class="form-control" name="Remarks" field-required="true" />
+
+
+        </div>
+        <div class="col-sm-1">
+            <label>&nbsp;</label>
+            <input type="button" class="btn btn-primary" tabindex="8" value="Save Entry" ng-click="CreateTransaction();" ng-show="AccessData.Add" />
+
+        </div>
+
+    </div>
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+        
+    </div>-->
+
+    <table class="table table-condensed table-responsive">
+
+        <tr class="headerRow">
+            <th style="width: 50px;">#</th>
+            <th style="width: 250px;">Party</th>
+            <th style="width: 100px; text-align: center;">Ref No</th>
+            <th style="width: 100px; text-align: center;">Date</th>
+            <th style="width: 100px; text-align: center;">Amount</th>
+
+            <th style="width: 100px; text-align: center;">Rmarks</th>
+            <th style="width: 100px; text-align: center;">Delete</th>
+
+        </tr>
+        <tr ng-repeat="item in TransList" class="{{item.TransactionStatus == 2 ? 'deleted': ''}}">
+            <td>{{$index +1 }}
+            </td>
+            <td style="width: 250px;">{{item.LedgerName}}
+            </td>
+            <td style="width: 100px; text-align: center;">{{item.TranRefNumber}}
+            </td>
+            <td style="width: 100px; text-align: center;">{{item.TransactionDate | formatDate}}
+            </td>
+            <td style="text-align: center;">{{item.TransactionAmount |number:2 }}</td>
+
+            <td style="width: 100px; text-align: center;">{{item.Description}}</td>
+            <td style="width: 100px; text-align: center;"><a ng-click="DeleteTran(item);" ng-show="{{item.TransactionStatus != 2 }}"><span class="fa fa-trash text-danger"></span></a></td>
+        </tr>
+        <tr class="footerRow">
+            <td colspan="4" style="text-align: right" class="total">Total: </td>
+            <td style="text-align: center;" class="total">{{SubTotal() |number:2}}</td>
+            <td colspan="3"></td>
+        </tr>
+    </table>
+
+
+</div>
+<!--<recnav ng-navclick="OnNavClick(index);" />-->

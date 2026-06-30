@@ -1,0 +1,40 @@
+﻿<div class="clearfix">&nbsp;</div>
+
+<div class="col-lg-6">
+    <form class="form-horizontal" id="frmOperation" name="frmOperation">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label col-sm-4">Operation Name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="name" id="name" ng-model="Operation.Name" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label col-sm-4">Parent Operation</label>
+                <div class="col-sm-8">
+                    <searchableselect id="ddlParentOperationId" ng-id="parent_id" ng-name="parent_id"
+                                      tab-index="2" ng-model="Operation.ParentOperationId"
+                                      data-field="Operations" data-val="OperationId" data-text="Name"></searchableselect>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label col-sm-4">Description</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-model="Operation.Description" style="height:50px;width:100%" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button class="btn btn-default" ui-sref="operations">Cancel</button>
+                <button class="btn btn-primary" ng-click="Save()">Save</button>
+                <button class="btn btn-danger pull-right"  ng-show="AccessData.Edit && Operation.OperationId > 0" ng-click="delete()">Delete</button>
+            </div>
+        </div>
+    </form>
+</div>

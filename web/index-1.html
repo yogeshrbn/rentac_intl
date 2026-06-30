@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js lt-ie10"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-js">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <title>Pinaxi</title>
+
+    <meta name="description" content="ProUI is a Responsive Bootstrap Admin Template created by pixelcave and published on Themeforest.">
+    <meta name="author" content="pixelcave">
+    <meta name="robots" content="noindex, nofollow">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
+
+    <!-- Icons -->
+    <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+    <link rel="shortcut icon" href="img/favicon.png">
+    <link rel="apple-touch-icon" href="img/icon57.png" sizes="57x57">
+    <link rel="apple-touch-icon" href="img/icon72.png" sizes="72x72">
+    <link rel="apple-touch-icon" href="img/icon76.png" sizes="76x76">
+    <link rel="apple-touch-icon" href="img/icon114.png" sizes="114x114">
+    <link rel="apple-touch-icon" href="img/icon120.png" sizes="120x120">
+    <link rel="apple-touch-icon" href="img/icon144.png" sizes="144x144">
+    <link rel="apple-touch-icon" href="img/icon152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="img/icon180.png" sizes="180x180">
+    <!-- END Icons -->
+    <script>
+        window.location.href = '/pages/';
+    </script>
+   
+</head>
+<body >
+    <!-- Page Wrapper -->
+    <!-- In the PHP version you can set the following options from inc/config file -->
+    <!--
+            Available classes:
+
+            'page-loading'      enables page preloader
+        -->
+    <div id="page-wrapper">
+        <!-- Preloader -->
+        <!-- Preloader functionality (initialized in dist/js/app.js) - pageLoading() -->
+        <!-- Used only if page preloader is enabled from inc/config (PHP version) or the class 'page-loading' is added in #page-wrapper element (HTML version) -->
+        <div class="preloader themed-background">
+            <h1 class="push-top-bottom text-light text-center"><strong>Pro</strong>UI</h1>
+            <div class="inner">
+                <h3 class="text-light visible-lt-ie9 visible-lt-ie10"><strong>Loading..</strong></h3>
+                <div class="preloader-spinner hidden-lt-ie9 hidden-lt-ie10"></div>
+            </div>
+        </div>
+
+        <div id="page-container" class="sidebar-partial sidebar-visible-lg sidebar-no-animations">
+            <!-- Alternative Sidebar -->
+            <div id="sidebar-alt">
+                <!-- Wrapper for scrolling functionality -->
+                <div id="sidebar-alt-scroll">
+                    <!-- Sidebar Content -->
+                    <div class="sidebar-content">
+                        <!-- Chat -->
+                        <!-- Chat demo functionality initialized in dist/js/app.js -> chatUi() -->
+                        <a href="page_ready_chat.html" class="sidebar-title">
+                            <i class="gi gi-comments pull-right"></i><strong>Chat</strong>UI
+                        </a>
+
+                    </div>
+                    <!-- END Sidebar Content -->
+                </div>
+                <!-- END Wrapper for scrolling functionality -->
+            </div>
+            <!-- END Alternative Sidebar -->
+
+            <!-- Main Sidebar -->
+            <div id="sidebar">
+                <!-- Wrapper for scrolling functionality -->
+                <div id="sidebar-scroll">
+                    <!-- Sidebar Content -->
+                    <div class="sidebar-content">
+                        <!-- Brand -->
+                        <a href="index.html" class="sidebar-brand">
+                            <i class="gi gi-flash"></i><span class="sidebar-nav-mini-hide"><strong>Pin</strong>axi</span>
+                        </a>
+                        <!-- END Brand -->
+
+                        <!-- User Info -->
+                       
+                        <!-- END User Info -->
+
+                        <!-- Theme Colors -->
+                        <!-- Change Color Theme functionality can be found in dist/js/app.js - templateOptions() -->
+
+                        <!-- END Theme Colors -->
+
+                        <!-- Sidebar Navigation -->
+                       
+                        <!-- END Sidebar Navigation -->
+
+                        <!-- Sidebar Notifications -->
+
+                        <!-- END Sidebar Notifications -->
+                    </div>
+                    <!-- END Sidebar Content -->
+                </div>
+                <!-- END Wrapper for scrolling functionality -->
+            </div>
+            <!-- END Main Sidebar -->
+
+            <!-- Main Container -->
+            <div id="main-container">
+                <!-- Header -->
+                <!-- In the PHP version you can set the following options from inc/config file -->
+                <!--
+                        Available header.navbar classes:
+
+                        'navbar-default'            for the default light header
+                        'navbar-inverse'            for an alternative dark header
+
+                        'navbar-fixed-top'          for a top fixed header (fixed sidebars with scroll will be auto initialized, functionality can be found in dist/js/app.js - handleSidebar())
+                            'header-fixed-top'      has to be added on #page-container only if the class 'navbar-fixed-top' was added
+
+                        'navbar-fixed-bottom'       for a bottom fixed header (fixed sidebars with scroll will be auto initialized, functionality can be found in dist/js/app.js - handleSidebar()))
+                            'header-fixed-bottom'   has to be added on #page-container only if the class 'navbar-fixed-bottom' was added
+                    -->
+                <header class="navbar navbar-default hide">
+                    <!-- Left Header Navigation -->
+                    <ul class="nav navbar-nav-custom">
+                        <!-- Main Sidebar Toggle Button -->
+                        <li>
+                            <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');this.blur();">
+                                <i class="fa fa-bars fa-fw"></i>
+                            </a>
+                        </li>
+                        <!-- END Main Sidebar Toggle Button -->
+
+                        <!-- Template Options -->
+                        <!-- Change Options functionality can be found in dist/js/app.js - templateOptions() -->
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"></a>
+
+                        </li>
+                        <!-- END Template Options -->
+                    </ul>
+                    <!-- END Left Header Navigation -->
+
+                    <!-- Search Form -->
+                    <form action="page_ready_search_results.html" method="post" class="navbar-form-custom">
+                        <div class="form-group">
+                            <input type="text" id="top-search" name="top-search" class="form-control" placeholder="Search..">
+                        </div>
+                    </form>
+                    <!-- END Search Form -->
+
+                    <!-- Right Header Navigation -->
+                    <ul class="nav navbar-nav-custom pull-right">
+                        <!-- Alternative Sidebar Toggle Button -->
+                        <li>
+                            <!-- If you do not want the main sidebar to open when the alternative sidebar is closed, just remove the second parameter: App.sidebar('toggle-sidebar-alt'); -->
+                            <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar-alt', 'toggle-other');this.blur();">
+                                <i class="gi gi-share_alt"></i>
+                                <span class="label label-primary label-indicator animation-floating">4</span>
+                            </a>
+                        </li>
+                        <!-- END Alternative Sidebar Toggle Button -->
+
+                        <!-- User Dropdown -->
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="../img/IMG_0573.JPG" alt="avatar">
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
+                                <li class="dropdown-header text-center">Account</li>
+                                <li>
+                                    <a href="page_ready_timeline.html">
+                                        <i class="fa fa-clock-o fa-fw pull-right"></i>
+                                        <span class="badge pull-right">10</span>
+                                        Updates
+                                    </a>
+                                    <a href="page_ready_inbox.html">
+                                        <i class="fa fa-envelope-o fa-fw pull-right"></i>
+                                        <span class="badge pull-right">5</span>
+                                        Messages
+                                    </a>
+                                    <a href="page_ready_pricing_tables.html"><i class="fa fa-magnet fa-fw pull-right"></i>
+                                        <span class="badge pull-right">3</span>
+                                        Subscriptions
+                                    </a>
+                                    <a href="page_ready_faq.html"><i class="fa fa-question fa-fw pull-right"></i>
+                                        <span class="badge pull-right">11</span>
+                                        FAQ
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                        <!-- END User Dropdown -->
+                    </ul>
+                    <!-- END Right Header Navigation -->
+                </header>
+                <!-- END Header -->
+
+                <!-- Page content -->
+                <div id="page-content">
+
+                    <div class="content-header">
+                        <div class="header-section">
+                            <!--   <div class="breadcrumb row">
+                                <a href="#">{{title}}</a>
+                            </div>-->
+                            <div id="toolbar-section">
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- <div class="block">
+                        <div class="block-title">
+                            <h2><strong>Form Validation</strong> Example</h2>
+                        </div>
+                         
+                    </div>-->
+                    <div class="widget">
+                        <div class="widget-simple farma-pageheader">
+                            <div ng-view>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END Page Content -->
+
+                <!-- Footer -->
+                <footer class="clearfix">
+                    <div class="pull-right">
+                        Powered by <a href="http://www.rbntechnologies.com" target="_blank">RBN</a>
+                    </div>
+                    <div class="pull-left">
+                        <span id="year-copy"></span>&copy; <a href="http://goo.gl/TDOSuC" target="_blank">RBN Technologies</a>
+                    </div>
+                </footer>
+                <!-- END Footer -->
+            </div>
+            <!-- END Main Container -->
+        </div>
+        <!-- END Page Container -->
+    </div>
+    <!-- END Page Wrapper -->
+     
+    <!-- Controllers -->
+    <!--<script src="dist/js/controllers/challan.js"></script>-->
+    <!-- end fo controllers -->
+    <!--<script>$(function () { FormsValidation.init(); });</script>-->
+
+
+</body>
+</html>

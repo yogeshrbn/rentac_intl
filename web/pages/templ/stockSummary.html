@@ -1,0 +1,98 @@
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-2">
+            <label>Warehouse</label>
+            <searchableselect id="warehouse" ng-model="Filter.WarehouseId" data-field="Warehouses" tab-index="1" data-val="WarehouseId"
+                              data-text="Name"></searchableselect>
+
+        </div>
+        <div class="col-sm-2 ">
+            <label>As On Date</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.OnDate" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-8">
+            <label>&nbsp;</label>
+            <div class="d-flex" style=" display: flex; justify-content: space-between; align-items: flex-end;}">
+
+                <input type="button" class="btn btn-primary" tabindex="4" value="Show" ng-click="GetStockSummary();" />
+                <!--<button class="btn btn-primary" tabindex="4" ng-click="Print();">
+                <i class="fa fa-print"></i> Print
+            </button>-->
+
+
+                <export data="ItemsList" url="'stocksummary.html'"></export>
+            </div>
+        </div>
+
+
+
+        <div class="clearfix"></div>
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table class="table table-condensed " med-key>
+
+                    <tr class="headerRow">
+
+                        <th style="width: 30px" class="text-center">#</th>
+                        <th style="width: 30px;">Item Code</th>
+                        <th style="width: 150px;">Item Name</th>
+                        <th style="width: 30px;" class="text-center">P.Unit</th>
+
+                        <th style="width: 40px;" class="text-right">O.B</th>
+                        <th style="width: 50px;" class="text-right">Pur</th>
+                        <th style="width: 50px" class="text-right">Sold</th>
+                        <!--<th style="width: 50px">Issued Qty</th>-->
+                        <th style="width: 50px" class="text-right">On Site</th>
+                        <th style="width: 50px; text-align: right">B.Qty</th>
+                        <th style="width: 50px; text-align: right">B.Pur</th>
+
+
+                    </tr>
+                    <tr ng-repeat="item in ItemsList">
+
+                        <td class="text-center">{{$index + 1 }}</td>
+                        <td>{{item.Code }}</td>
+                        <td>{{item.ClientName }}
+                      
+                        </td>
+                        <td class="text-center">  <small>{{item.PurchaseUnitName || '-'}}</small></td>
+                        <td class="text-right">{{item.OpeningBalance}}</td>
+                        <td class="text-right">{{item.PurchaseUnitQty }}</td>
+                        <td class="text-right">{{item.SaleQty }}</td>
+
+
+
+                        <!--<td>{{item.IssuedQty | number:2
+        }}
+    </td>-->
+                        <td class="text-right"><b>{{item.OnSite}}</b></td>
+                        <td style="background-color: #b6edd7; text-align: right"><b>{{item.OnFloor}}</b></td>
+
+                        <td style="background-color: #b6edd7; text-align: right"><b>{{item.BalanceInPurchaseUnit}}</b></td>
+
+
+                    </tr>
+                    <!--<tr class="total">
+
+                    <td colspan="8"></td>
+                    <td>Total</td>
+
+                    <td>{{LastRow.Balance |number:2 }} {{LastRow.TransactionTypeName}}</td>
+
+                </tr>-->
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script lang="ja">
+
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+</div>

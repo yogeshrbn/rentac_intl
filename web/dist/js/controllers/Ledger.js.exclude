@@ -1,0 +1,96 @@
+﻿app.controller('LedgerController', function ($scope, $routeParams, $http) {
+    var ledgerId = $routeParams.lId == undefined ? 0 : $routeParams.lId;
+    var groupDTO = new $.AccountGroup({ AccountGroupId: 0 });
+    var stateCity = new $.StateCity({});
+    var ledger = new $.Ledger({ LedgerId: ledgerId });
+    $scope.Ledger = ledger;
+
+    function GetAllLedgers() {
+        ledger.GetAll(function (e) {
+            $scope.Ledgers = e.data;
+        });
+    }
+    GetAllLedgers();
+
+    groupDTO.GetAll(function (e) {
+        $scope.AccGroups = e.data;
+    });
+
+    stateCity.GetStates(function (e) {
+        $scope.States = e.data;
+        fillCity(0);
+    });
+
+    if (ledgerId > 0) {
+        ledger.GetInfo(function (e) {
+            console.log(e.data);
+            $scope.Ledger.Props = e.data;
+        });
+
+
+    }
+
+
+    $scope.onStateSelect = function (id) {
+        fillCity(id);
+
+    };
+    function fillCity(stateId) {
+
+        stateCity.Props.StateId = stateId;
+        stateCity.GetCities(function (e) {
+            $scope.Cities = e.data;
+        });
+    }
+    FormsValidation.init();
+    $scope.Save = function () {
+
+        var activeForm = $('.nav li.active a').attr('aria-controls');
+        if (activeForm == 'ledgerInfo') {
+            var m = $('#form-ledger').valid();
+            if (m) {
+                EnableToolbar(0);
+                ledger.Add(function (e) {
+                    $scope.Ledger.Props = e.data;
+
+                    EnableToolbar(1);
+                    showMessage(MessageClass.PRODUCTCATEGORY_SAVED);
+                });
+            }
+        }
+        else {//save the contact address details
+
+            //return if ledger is not in edit mode
+            if ($scope.Ledger.Props.LedgerId == 0) {
+                return;
+            }
+            var m = $('#form-ledgerContact').valid();
+            if (m) {
+                EnableToolbar(0);
+                ledger.SaveAddress(function (e) {
+                    EnableToolbar(1);
+                    showMessage(MessageClass.PRODUCTCATEGORY_SAVED);
+                });
+            }
+
+        }
+    };
+    //activate/de-activate ledger record
+    $scope.Activate = function (activate, ledgerId) {
+        ledger.Props.IsActive = activate;
+        ledger.Props.LedgerId = ledgerId;
+        ledger.ChangeStatus(function (e) {
+            GetAllLedgers();
+        });
+    };
+
+    $scope.Find = function () {
+        ledger.Props.Name = $scope.filterName;
+        ledger.Props.Code = $scope.filterCode;
+
+        ledger.Find(function (e) {
+            $scope.Ledgers = e.data;
+        });
+    };
+
+});

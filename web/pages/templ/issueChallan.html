@@ -1,0 +1,720 @@
+
+<div class="clearfix">&nbsp;</div>
+
+<!--<div class="col-sm-12" ng-init="issueChallanMode = issueChallanMode || 'rental'">
+    <ul class="nav nav-pills" style="margin-bottom:10px;">
+        <li role="presentation" ng-class="issueChallanMode=='rental' ? 'active' : ''">
+            <a href="#" ng-click="issueChallanMode='rental'">Rental</a>
+        </li>
+        <li role="presentation" ng-class="issueChallanMode=='contract' ? 'active' : ''">
+            <a href="#" ng-click="issueChallanMode='contract'">Contract</a>
+        </li>
+        <li role="presentation" ng-class="issueChallanMode=='sales' ? 'active' : ''">
+            <a href="#" ng-click="issueChallanMode='sales'">Sales</a>
+        </li>
+    </ul>
+</div>-->
+
+<div class="col-sm-12">
+    <div id="workOrderInfo">
+        <form id="form-workorder" method="post" class="">
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-4 control-label">Party</label>
+                                <div class="col-sm-8">
+                                    <table class="table table-responsive no-border nopadding">
+                                        <tr>
+                                            <td class="no-border nopadding" style="width: 80%; padding-right: 1px !important;">
+                                                <!--<searchabletext ng-id="client_value1" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code"
+                                                selected-object="selectedParty" data-entry="1" initial-value="initialValue"> </searchabletext>-->
+
+                                                <searchableselect style=" max-width: 220px; display: block;" ng-name="client_value1" ng-id="client_value1" data-field="Accounts"
+                                                                  ng-model="WorkOrder.LedgerId" data-val="LedgerId" data-primarytext="TradeName" data-text="Name" description-field="Code"></searchableselect>
+                                            </td>
+
+                                            <td class="no-border nopadding">
+                                                <input type="button" class="btn btn-primary" ng-click="NewLedger();" ng-show="AccessData.Add" value="..." />
+
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-4 control-label">Issue Date</label>
+                                <div class="col-sm-7">
+                                    <div style="display:flex;">
+
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="WorkOrder.WorkOrderDate" type="text" class="form-control"
+                                                   id="val_workOrderDate" name="val_workOrderDate" maxDate="{{Today}}" ng-change="onWorkOrderDateChange()"/>
+                                        </datepicker>
+
+
+                                        <!--<input type="time" style="width:50%" class="form-control" ng-model="WorkOrder.IssueTime">-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-4 control-label">Site</label>
+                                <div class="col-sm-8">
+                                    <table class="table table-responsive no-border nopadding">
+                                        <tr>
+                                            <td class="no-border nopadding" style="width: 80%; padding-right: 1px !important;">
+                                                <searchableselect ng-name="val_Site" ng-id="val_Site" data-field="LedgerSites" style=" max-width: 220px; display: block;"
+                                                                  ng-model="WorkOrder.SiteInfo.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+                                            </td>
+                                            <td class="no-border nopadding">
+                                                <input type="button" class="btn btn-primary" ng-click="NewSite();" ng-show="AccessData.Add" value="..." />
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-4 control-label">Rent Start Date</label>
+                                <div class="col-sm-7">
+                                    <div style="display:flex;">
+
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="WorkOrder.RentStartDate" type="text" class="form-control"
+                                                   id="val_rentStartDate" name="val_rentStartDate" minDate="{{MinDate}}" />
+                                        </datepicker>
+
+                                        <!--<input type="time" style="width:50%" class="form-control" ng-model="WorkOrder.IssueTime">-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+
+                                <label for="inputEmail3" class="col-sm-4 control-label">Vehicle</label>
+
+
+                                <div class="col-sm-7">
+
+                                    <input type="text" ng-model="WorkOrder.SiteInfo.Vehicle" tabindex="4" class="form-control" name="site_name" maxlength="16" />
+                                    <!--<searchableselect ng-name="val_Vehicle" ng-id="val_Vehicle" data-field="Vehicles" ng-model="WorkOrder.SiteInfo.VehicleId" data-val="VehicleId" data-text="Name"></searchableselect>-->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">PO Number</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" maxlength="50" ng-model="WorkOrder.PONumber" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+
+                                <label for="inputEmail3" class="col-sm-4 control-label">Driver</label>
+
+
+                                <div class="col-sm-7">
+                                    <input type="text" ng-model="WorkOrder.SiteInfo.Driver" tabindex="4" class="form-control" name="site_name" maxlength="50" />
+
+                                    <!--<searchableselect ng-name="val_Driver" ng-id="val_Driver"
+                                    data-field="Drivers" ng-model="WorkOrder.SiteInfo.DriverId"
+                                    data-val="EmployeeId" data-text="Name"></searchableselect>-->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">PO Date</label>
+                                <div class="col-sm-7">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="WorkOrder.PODate" type="text" class="form-control"
+                                               id="val_poDate" name="val_poDate" />
+                                    </datepicker>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="col-sm-5">
+                            <label class="vcenter">Challan #</label>
+                        </div>
+                        <div class="col-sm-7">
+                            <label class="vcenter" ng-If="Config.allowEditChallanNumber ==  false">{{WorkOrder.ChallanNumber}}</label>
+                            <input type="text" validateprefix ng-If="Config.allowEditChallanNumber == true" class="form-control" maxlength="20" ng-model="WorkOrder.ChallanNumber" />
+                            <!--<p class="text-muted small" style="margin-top:6px;margin-bottom:0;"
+                               ng-if="Config.showNextChallanInvoiceNumbers && !edit && (WorkOrder.ChallanNumber || NextRentInvoiceNumber)">
+                            </p>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="col-sm-5">
+                            <label class="vcenter">
+                                Ref #
+                                <i class="fa fa-info-circle text-info"
+                                   style="cursor:pointer" data-toggle="tooltip"
+                                   data-placement="bottom" title="Reference number can be quotation number or PO number"></i>
+                            </label>
+                        </div>
+                        <div class="col-sm-7">
+
+                            <input type="text" class="form-control" maxlength="30" ng-model="WorkOrder.RefNo" />
+                            <!--<quotation bound-Action="onQuotationSelected(value)" tabindex="1" id="'mainItem'"
+                            ng-model="WorkOrder.Product"></quotation>-->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 mt-2">
+                            <label>
+                                Last Challan#: {{LastChallan}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!edit && NextChallanNumber">
+                        <div class="col-sm-12 mt-2">
+                            <label>
+                                Next Challan#: {{NextChallanNumber}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 nopadding" style="border-top: solid 1px #a5b0b5; margin-top: 5px !important;">
+                <!--    <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="info" style="padding: 0px;">-->
+                <div class="col-sm-12 addItemBox" style="border: solid 1px #a5b0b5;border-top: none; border-bottom: none;">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="col-sm-7">
+                                <div class="form-group">
+                                    <label class="col-sm-3 vcenter">
+                                        Product
+                                    </label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <searchabletext ng-id="itemSelect" local-data="AllSizes" title-field="Product"
+                                                    name="Product" search-fields="Product,Code" description-field="BOMCode,Code"
+                                                    selected-object="selectedProduct" data-entry="1"> </searchabletext>
+                                    <span ng-if="IssueItem.ProductId && getSelectedItemBalance() !== null" class="text-muted" style="display:block;font-size:12px;margin-top:4px;">
+                                        Balance: {{getSelectedItemBalance()}}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="col-sm-4 vcenter">
+                                        Quantity
+
+                                    </label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control maskednumber" nodecimal maxlength="5" ng-model="IssueItem.SentQty" />
+                                </div>
+
+
+                            </div>
+                            <!--<div class="col-sm-2">
+                                <label>
+                                    Rate
+                                </label>
+                                <input type="number" ng-disabled="IssueItem.GroupItemId > 0" class="form-control maskednumber" ng-model="IssueItem.Rate" />
+                            </div>-->
+                            <div class="col-sm-1">
+                                <!--<label style="display:block;">&nbsp; </label>-->
+                                <button class="btn btn-primary" value="Add" ng-keydown="addItem($event);" stopfocus="true" ng-click="addItem();" ng-show="AccessData.Add">Add</button>
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="addWithTable" style="height: 240px;overflow-y: auto;border: solid 1px #a5b0b5;border-top: none;">
+                    <table class="table table-condensed table-responsive tableInput" med-key>
+
+                        <tr class="headerRow">
+                            <th style="width: 15px;">#</th>
+                            <th>Item</th>
+
+                            <!--  <th>Size</th>-->
+                            <th class="text-right" width="150px">Qty</th>
+                            <th width="150px" class="text-right">Rate</th>
+                            <!--<th>Total</th>-->
+                            <th width="150px" class="text-right">Amount</th>
+                            <th class="text-center" width="30px">
+                                Delete
+                            </th>
+                        </tr>
+                        <tr ng-repeat="item in WorkOrder.Items | filter: {Deleted : 0}:strict" ng-class="item.GroupItemId > 0 ? 'groupitem':'' ">
+                            <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">
+                                {{$index+1}}
+                            </td>
+                            <td>
+                                <span style="padding-left: 20px" ng-if="item.GroupItemId > 0 "></span><span ng-if="item.Code" class="text-muted">{{item.Code}} - </span>{{item.Product}}
+                            </td>
+                            <!-- <td style="width: 100px;">
+                                <span ng-if="item.EditSize==undefined || item.EditSize==false" ng-click="sizeTextFocused(item);">{{item.Size}}</span>
+                                <!--<input type="text" ng-show="item.EditSize==undefined || item.EditSize==false" ng-model="item.Size" class="form-control" ng-focus="sizeTextFocused(item);" />
+                                <select class="form-control sizeSeletBox" ng-show="item.EditSize" ng-focus="sizeTextFocused(item);" ng-model="item.ProductSizeId" ng-blur="OnSizeOut(item);" ng-change="OnSizeOut(item);"
+                                    ng-options="i.ProductSizeId as (i.Size ) for i in item.ItemSizes">
+                                </select>
+                            </td>-->
+                            <td class="text-right">
+                                <input type="text" ng-model="item.SentQty" nodecimal class="form-control maskednumber text-right" /><!-- {{item.SentQty}}-->
+
+
+                            </td>
+                            <td class="text-right">
+
+                                <!--ng-disabled="item.GroupItemId > 0"-->
+                                <input type="text" ng-model="item.Rate" class="form-control maskednumber" />
+                                <!--{{item.Rate}}-->
+
+                            </td>
+
+                            <td class="text-right">
+
+
+
+
+
+
+
+                                <!--{{ item.SentQty * item.Rate |number:2  }}-->
+                                {{item.SubTotal  |number:2}}
+                            </td>
+
+                            <td class="text-center">
+                                <a href="#" ng-click="DeleteItem($index)" stop="true">  <i class="fa fa-trash-o text-danger"></i></a>
+
+                            </td>
+                        </tr>
+                        <tr class="headerRow">
+
+                            <th colspan="2" class="text-right">Total: </th>
+                            <th class="text-right">{{WorkOrder.Items|sum:'SentQty'}}</th>
+                            <th></th>
+                            <!--<th>Total</th>-->
+                            <th width="150px" class="text-right">{{WorkOrder.SubTotal  |number:2}}</th>
+                            <td></td>
+                        </tr>
+                    </table>
+
+                </div>
+
+                <!--<div id="collapseExample">
+                <div role="tabpanel" class="table-responsive" id="otherCharges" style="overflow-y: auto; padding: 0px;">-->
+
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" style="padding-top:10px;">
+                    <ul class="qutoationSettingsTab nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#chlOtherInfo"  aria-controls="chlOtherInfo" role="tab" data-toggle="tab">Other Information</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#chlOtherCharges" aria-controls="chlOtherCharges" role="tab"
+                               data-toggle="tab">Other Charges</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" style="border: solid 1px #c0c0c0;padding:8px; ">
+
+                        <div role="tabpanel" class="tab-pane active" id="chlOtherInfo">
+                            <div class="row">
+                                <div class="">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">
+                                                        Warehouse
+                                                    </label>
+                                                    <div class="col-sm-12">
+                                                        <searchableselect style=" max-width: 220px; display: block;" ng-name="warehouse" ng-id="client_value1" data-field="warehouses"
+                                                                          ng-model="WorkOrder.WarehouseId" data-val="WarehouseId" data-text="Name"></searchableselect>
+
+                                                        <!--<warehouse ng-model="WorkOrder.WarehouseId"
+                                                                   warehouses="warehouses"
+                                                                   data-text="Name"
+                                                                   data-val="WarehouseId">
+                                                        </warehouse>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">
+                                                        Transporter
+                                                    </label>
+                                                    <div class="col-sm-12">
+                                                        <searchableselect style=" max-width: 220px; display: block;" ng-name="transperter" ng-id="client_value1" data-field="Transporters"
+                                                                          ng-model="WorkOrder.SiteInfo.TransporterId" data-val="TransporterId" data-text="Name"></searchableselect>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">
+                                                        Installation Team
+                                                    </label>
+                                                    <div class="col-sm-12">
+                                                        <searchableselect style=" max-width: 220px; display: block;" ng-name="transperter" ng-id="client_value1" data-field="TeamList"
+                                                                          ng-model="WorkOrder.SiteInfo.TeamId" data-val="TeamId" data-text="Name"></searchableselect>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">
+                                                        Tentative Pickup Date
+                                                    </label>
+                                                    <div class="col-sm-12">
+                                                        <datepicker date-format="dd/MM/yyyy">
+                                                            <input ng-model="WorkOrder.SiteInfo.RecoveryDate" type="text" class="form-control"
+                                                                   id="val_RecoveryDate" name="val_RecoveryDate" minDate="{{MinDate}}" />
+                                                        </datepicker>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">
+                                                        Weight (Kg)
+                                                    </label>
+                                                    <div class="col-sm-12">
+                                                        <input type="number" ng-model="WorkOrder.SiteInfo.Weight" class="form-control maskednumber" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">
+                                                        Approximate Value
+                                                    </label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" ng-model="WorkOrder.SiteInfo.ApproximateValue" class="form-control maskednumber" maxlength="15" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">LR Number</label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="form-control" ng-model="WorkOrder.SiteInfo.LRNumber" maxlength="50" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">CR Number</label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="form-control" ng-model="WorkOrder.SiteInfo.CRNumber" maxlength="50" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="col-sm-12">GR Number</label>
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="form-control" ng-model="WorkOrder.SiteInfo.GRNumber" maxlength="50" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!--<div class="form-group">
+                                        <label class="col-sm-12">Remarks</label>
+                                        <div class="col-sm-12">
+                                            <textarea ckeditor="remarksEditorOptions" ng-model="WorkOrder.Remarks" data-ck-editor style="height:100px;"></textarea>
+                                        </div>
+                                    </div>-->
+                                    <div class="form-group">
+                                        <label class="col-sm-12">SEZ Description</label>
+                                        <div class="col-sm-12">
+                                            <input type="text" class="form-control" maxlength="500" ng-model="WorkOrder.SezDescription" placeholder="SEZ description (optional)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-12">Ship From</label>
+                                        <div class="col-sm-12">
+                                            <input type="text" class="form-control" maxlength="500" ng-model="WorkOrder.ShipFrom" placeholder="Ship from (optional)" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-12">Terms and Conditions</label>
+                                        <div class="col-sm-12">
+                                            <!--<textarea class="form-control" maxlength="1000" ng-model="WorkOrder.Tnc" style="height:80px;"></textarea>-->
+                                            <textarea ckeditor="editorOptions" 
+                                                       id="editor_{{WorkOrderId}}"
+                                                      ng-model="WorkOrder.Tnc" data-ck-editor style="height:100px;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display:none">
+                                <div class="col-sm-12 paymentBox" ng-If="edit === false">
+                                    <div class="col-sm-3">
+                                        <label>Party Payment</label>
+                                    </div>
+                                    <div class="col-sm-8  form-inline">
+                                        <div class="radio-inline">
+                                            <label for="exampleInputName2">
+                                                <input type="radio" name="paymentMode" ng-model="Trans.EntryType" ng-value="1" />
+                                                Cash
+                                            </label>
+
+                                        </div>
+                                        <div class="radio-inline">
+                                            <label for="exampleInputName2">
+                                                <input type="radio" name="paymentMode" ng-model="Trans.EntryType" ng-value="2" />
+                                                Cheque
+                                            </label>
+                                        </div>
+                                        <div class="radio-inline">
+                                            <label for="exampleInputName2">
+                                                <input type="radio" name="paymentMode" ng-model="Trans.EntryType" ng-value="7" />
+                                                Online
+                                            </label>
+                                        </div>
+                                        <!--<div class="form-group">
+                                            <label for="exampleInputName2">Cheque</label>
+                                            <input type="radio" name="paymentMode" ng-model="Trans.EntryType" ng-value="2" />
+                                        </div>-->
+
+
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <hr class="nopadding" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label>Amount</label>
+                                        <input type="text" class="form-control" ng-model="Trans.TransactionAmount" />
+                                    </div>
+                                    <div class="col-sm-4" ng-if="Trans.EntryType==2">
+                                        <label>Cheque #</label>
+                                        <input type="text" class="form-control" ng-model="Trans.TranRefNumber" />
+                                    </div>
+                                    <div class="col-sm-4" ng-if="Trans.EntryType==2">
+                                        <label>Cheque Date</label>
+                                        <input type="text" class="form-control" ng-model="Trans.ChequeDate" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label>Remarks</label>
+                                        <input type="text" class="form-control" ng-model="Trans.Description" />
+                                    </div>
+                                </div>
+                                <div class="clearfix">&nbsp;</div>
+
+                            </div>
+                        </div>
+
+
+                        <div role="tabpanel" class="tab-pane" id="chlOtherCharges">
+
+
+                            <div class="table-responsive">
+                                <table class="table tableInput" ng-if="ChallanType != 1">
+                                    <tr class="headerRow">
+                                        <th style="width: 30px" class="text-center">#</th>
+                                        <th style="width: 150px">Charge</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    <tr ng-repeat="ch in WorkOrder.OtherCharges">
+                                        <td class="text-center">{{$index+1}}</td>
+                                        <td ng-bind="ch.Name" style="width:70%"></td>
+                                        <td style="padding: 2px !important;">
+
+                                            <input type="text" class="form-control maskednumber"
+                                                   style="border: solid 1px #00bcd4;padding-right:3px;"
+                                                   ng-model="ch.Amount" maxlength="8" />
+
+                                        </td>
+
+                                    </tr>
+                                </table>
+                                <div class="form-group mt-2">
+
+                                    <div class="col-sm-10">
+                                        <label>Apply GST</label>
+                                        <input type="checkbox" ng-model="ApplyGST" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-0">
+                    <table class="table  text-bold" ng-if="ChallanType != 1">
+                        <tr class="hide">
+
+                            <td class="text-right"><b>SubTotal</b></td>
+                            <td class="text-right" width="80px">
+
+
+
+
+
+
+
+
+
+
+
+                                <!-- {{ SubTotal(0)|number:2}}-->
+                                {{WorkOrder.SubTotal}}
+                            </td>
+
+                        </tr>
+                        </
+                        <tr>
+
+                            <td class="text-right"><b>Freight</b></td>
+                            <td class="text-right" width="150px">
+
+                                <input type="text" class="form-control maskednumber text-right"
+                                       ng-model="WorkOrder.SiteInfo.Freight" maxlength="12" />
+                            </td>
+                            <td style="width:40px"></td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-right"><b>Other Charges</b></td>
+                            <td class="text-right" width="150px">
+
+                                {{WorkOrder.OtherCharges | sum:'Amount'}}
+                            </td>
+                            <td style="width:40px"></td>
+                        </tr>
+
+
+                        <tr>
+
+                            <td class="text-right">
+                                <div class="form-group">
+
+                                    <!--<input type="checkbox" ng-model="tax.Applicable" class="checkbox-inline" />-->
+                                    IGST ({{WorkOrder.Taxes.IGST  |number:2 }}%)
+                                </div>
+                            </td>
+                            <td class="text-right" width="100px">{{   WorkOrder.Taxes.IGSTAmount |number:2}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-right">
+                                <div class="form-group">
+                                    <!--<input type="checkbox" ng-model="tax.Applicable" class="checkbox-inline" />-->
+                                    SGST ({{WorkOrder.Taxes.SGST  |number:2 }}%)
+                                </div>
+                            </td>
+                            <td class="text-right" width="100px">{{  WorkOrder.Taxes.SGSTAmount  |number:2}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-right">
+                                <div class="form-group">
+                                    <!--<input type="checkbox" ng-model="tax.Applicable" class="checkbox-inline" />-->
+                                    CGST ({{WorkOrder.Taxes.CGST  |number:2 }}%)
+                                </div>
+                            </td>
+                            <td class="text-right" width="100px">{{  WorkOrder.Taxes.CGSTAmount |number:2}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-right">
+                                <b>
+                                    Total
+
+                                </b>
+
+                            </td>
+
+
+                            <td class="text-right" width="150px"> {{ WorkOrder.Total |number:2}}</td>
+                            <td></td>
+                        </tr>
+
+
+
+                    </table>
+                    <div class="col-sm-12 text-right" style="margin-bottom:20px;">
+                        <div class="clearfix">&nbsp;</div>
+                        <a class="btn btn-default mr-1" ui-sref="issuedList" ng-If="ChallanType == 2">Cancel</a>
+                        <a class="btn btn-default mr-1" ui-sref="hiredreg" ng-If="ChallanType == 10">Cancel</a>
+
+                        <input type="button" style="width: 80px;" class="btn btn-primary ml-1"
+                               ng-disabled="WorkOrder.Items.length == 0"
+                               ng-show="AllowEdit ? true : false " value="Save" ng-click="Save(false);" />
+
+                        <input type="button" style="width: 170px;" class="btn btn-primary ml-1"
+                               ng-disabled="WorkOrder.Items.length == 0"
+                               ng-show="(AllowEdit ? true : false) && comp.EwayBillEnabled ==true "
+                               value="Save & Create EwayBill" ng-click="Save(true);" />
+                        <!--<input type="button" style="width: 100px;" tabindex="100" class="btn btn-primary"
+                        ng-show="edit == true" value="Save"
+                        ng-click="Save();" />-->
+                    </div>
+                </div>
+
+
+
+
+
+                <!--</div>
+                </div>-->
+            </div>
+        </form>
+    </div>
+
+</div>
+<script lang="javascript">
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+
+</script>
+
+
+
+
+
+<script lang="ja">
+    $('.tabContainer a').click(function (e) {
+        e.preventDefault();
+    });
+
+</script>
+

@@ -1,0 +1,49 @@
+﻿
+
+          .container {
+          width: 90%;
+          min-height: 600px;
+          border: solid 1px;
+          margin: auto;
+          }
+
+          table {
+          }
+
+          tr {
+          line-height: 20px;
+          }
+
+          td {
+		   
+          border: solid 1px #000;
+          font-size: 13px;
+          }
+
+          strong {
+          font-size: 22px;
+          }
+
+          #items th {
+          padding-left: 5px;
+          padding-top: 5px;
+          padding-bottom: 5px;
+          text-align: left;
+          background-color: #e6e4e4;
+          color: black;
+		  font-size: 13px;
+          font-weight: bold;
+          }
+
+          #items td, #items th {
+          border: 1px solid #252222;
+         
+          border-left: none;
+          }
+          .padding {
+          padding: 5px;
+          }
+          .headerRow td { background-color: #e6e4e4;
+          color: black;
+          font-weight: bold;}
+    

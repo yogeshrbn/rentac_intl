@@ -1,0 +1,913 @@
+@using ReportViewer.Helpers
+@{
+
+
+    Layout = null;
+    var data = ViewBag.BillData;
+    var balance = ViewBag.Balance;
+    var challans = ViewBag.ChallansWithDate;
+    var balanceTable = ViewBag.BalanceTable;
+    var totalBalanceQty = ViewBag.TotalBalanceQty;
+    var imagepath = data.Tables[0].Rows[0]["CompanyLogo"];
+    var signature = data.Tables[0].Rows[0]["Signature"];
+
+    var firstRow = data.Tables[0].Rows[0];
+
+    var taxes = data.Tables[1];
+    var breakageItems = data.Tables[2];
+
+    var lossItems = data.Tables[3];
+    var charges = data.Tables[4];
+    var freightTable = data.Tables[5];
+    var chargesTable = data.Tables[6];
+
+    var billingConfig = BillingConfigViewHelper.AsEnumerable(ViewBag.ConfigData);
+    var invoiceTitle = BillingConfigViewHelper.GetValue(billingConfig, "invoiceTitle", "TAX Invoice");
+    var billPeriodText = BillingConfigViewHelper.GetValue(billingConfig, "billPeriodText", "Bill Period");
+    var showCompanyPhoneMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyPhone");
+    var showCompanyEmailMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyEmail");
+    var showClientMobileMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientMobile");
+    var showClientEmailMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientEmail");
+    var showClientPinMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientPin");
+    var showPONumberMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showPONumber");
+    var showDetailedDayCalculation = BillingConfigViewHelper.GetBool(billingConfig, "showDetailedDayCalculation", true);
+
+    var subTotal = data.Tables[0].Compute("Sum(SubTotal)", "");
+    var rowsToSpanAtBottom = 2 + 3 + charges.Rows.Count;
+    var minDate = data.Tables[0].Compute("Min(From)", "");
+    var lastDate = data.Tables[0].Compute("Max(To)", "");
+    var IGST = data.Tables[0].Compute("Sum(IGST)", "");
+    var CGST = data.Tables[0].Compute("Sum(CGST)", "");
+    var SGST = data.Tables[0].Compute("Sum(SGST)", "");
+    decimal lossCharges = 0;
+    decimal breakageCharges = 0;
+    decimal total = 0;
+    decimal additionalChargeAmount = 0;
+    //var excessQty = data.Tables[0].Select("ExcessQty > 0");
+    var totalExessQty = ViewBag.ExcessQty.Compute("Sum(balance)", "");
+    if (lossItems != null && lossItems.Rows.Count > 0)
+    {
+        IGST += lossItems.Compute("Sum(IGST)", "");
+        SGST += lossItems.Compute("Sum(SGST)", "");
+        CGST += lossItems.Compute("Sum(CGST)", "");
+        lossCharges = lossItems.Compute("Sum(Amount)", "");
+        rowsToSpanAtBottom++;
+    }
+    if (breakageItems != null && breakageItems.Rows.Count > 0)
+    {
+        IGST += breakageItems.Compute("Sum(IGST)", "");
+        SGST += breakageItems.Compute("Sum(SGST)", "");
+        CGST += breakageItems.Compute("Sum(CGST)", "");
+        breakageCharges = breakageItems.Compute("Sum(SubTotal)", "");
+        rowsToSpanAtBottom++;
+    }
+
+    total = subTotal + IGST + CGST + SGST + lossCharges + breakageCharges;
+    total += firstRow["Freight"] + firstRow["FreightTax"] + firstRow["ChargesTax"];
+    if (firstRow["Freight"] > 0)
+    {
+        rowsToSpanAtBottom += 1;
+    }
+    if (firstRow["FreightTax"] > 0)
+    {
+        if (IGST == 0)
+        {
+            SGST += firstRow["FreightTax"] / 2;
+            CGST += firstRow["FreightTax"] / 2;
+
+        }
+        else
+        {
+            IGST += firstRow["FreightTax"];
+        }
+    }
+    if (firstRow["ChargesTax"] > 0)
+    {
+        if (IGST == 0)
+        {
+            SGST += firstRow["ChargesTax"] / 2;
+            CGST += firstRow["ChargesTax"] / 2;
+
+        }
+        else
+        {
+            IGST += firstRow["ChargesTax"];
+        }
+    }
+    if (chargesTable != null && chargesTable.Rows.Count > 0)
+    {
+        additionalChargeAmount = chargesTable.Compute("Sum(Amount)", "");
+        total += additionalChargeAmount;
+    }
+    decimal totalWithoutTax = subTotal + lossCharges + breakageCharges + additionalChargeAmount + firstRow["Freight"];
+
+    total -= (firstRow["discount"] + firstRow["breakageDiscount"] + firstRow["lossDiscount"]);
+    //  total = Math.Round(total, MidpointRounding.AwayFromZero);
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Report with Footer Only on Last Page</title>
+    <style>
+        @@media print {
+
+            body {
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                font-size: 14px !important;
+                color: #111;
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+            }
+
+            .page {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 290mm; /* A4 (297mm) - top/bottom margins (20mm each) */
+                box-sizing: border-box;
+                page-break-after: always;
+                padding: 0;
+            }
+
+                .page:last-of-type {
+                    page-break-after: auto;
+                }
+
+            header {
+                text-align: center;
+                font-size: 14px;
+                font-weight: bold;
+                padding-top: 10mm;
+            }
+
+            .content {
+                flex: 1;
+                height: 95%;
+                padding-top: 0px;
+                padding-left: 0;
+                padding-right: 0;
+                padding-bottom: 0;
+            }
+
+            .footer {
+                text-align: center;
+                padding: 5mm 0 0;
+                margin-top: 5mm;
+            }
+            /* Hide footer on all pages except the last */
+            /*  .page:not(:last-of-type) .footer {
+               display: none;
+           }
+        */
+            .text-right {
+                text-align: right;
+            }
+            /*
+
+           */
+            .table-container {
+                /*   height: 100%;*/
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+                border-collapse: collapse;
+                font-family: inherit !important;
+            }
+
+            .table-header {
+                display: table-header-group;
+            }
+
+            .repeat-header {
+                display: table-header-group;
+            }
+
+            .address-row {
+                display: table-row-group;
+            }
+
+            .table-body {
+                display: table-row-group;
+                /*  height: 100%;*/
+            }
+
+            .table-row {
+                display: table-row;
+            }
+
+            td {
+                font-size: 16px;
+                padding-top: 2px;
+                padding-bottom: 2px;
+            }
+
+            .table-cell {
+                display: table-cell;
+                padding: 5px;
+                /*   border: 1px solid #000;*/
+
+                vertical-align: top;
+            }
+            /* Spacer row to fill space */
+            .spacer-row {
+                height: 100%;
+            }
+
+                .spacer-row .table-cell {
+                    /*border: 1px solid #000;*/
+                }
+
+            .text-center {
+                text-align: center;
+            }
+
+            .firstRow {
+                border-top: solid 1px;
+            }
+
+            .border {
+                border: solid 1px #000;
+            }
+
+            .breakage {
+            }
+
+            .subHeading {
+                font-size: 12pt;
+                font-weight: bold;
+            }
+
+            h3 {
+                padding: 0px;
+            }
+
+            .paty-details {
+                font-size: 13pt;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        @*<header>Confidential Report (continued)</header>*@
+        <table style="width:100%;margin:0px;" class="headertable" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2" style="text-align:center;">
+                    <span style="color: green; font-size: 14pt; font-weight: bold;">@invoiceTitle</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span style="font-size:14pt;font-weight:bold;">@firstRow["Company"]</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top;">
+                    <table style="width:100%">
+                        <tr>
+                            <td class="subHeading" style="width:30%;">Registered Address</td>
+                            <td style="width:70%;">@firstRow["CompanyAddress1"],@firstRow["CompanyCity"] (@firstRow["CompanyStateName"]) Pin:- @firstRow["CompanyZipCode"] </td>
+                        </tr>
+                        <tr>
+                            <td class="subHeading">Godown address:</td>
+                            <td style="text-align:left;">@firstRow["CompanyAddress2"]</td>
+                        </tr>
+                        @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]))
+                        {
+                            <tr>
+                                <td class="subHeading">Email</td>
+                                <td> @firstRow["CompanyEmail"]</td>
+                            </tr>
+                        }
+                        @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyPhoneMode, firstRow["CompanyPhone"]))
+                        {
+                            <tr>
+                                <td class="subHeading">Contact no.</td>
+                                <td>@firstRow["CompanyPhone"]</td>
+                            </tr>
+                        }
+                       
+                    </table>
+                </td>
+                <td style="vertical-align:top;">
+                    <table style="width:100%">
+                        <tr>
+                            <td style="text-align: right; width: 130px;"><strong>Bill Date:</strong></td>
+                            <td style="padding-left:8px;"> @BAL.Objects.Utils.FormatDate(@firstRow["InvoiceDate"])</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><strong>CIN No.:</strong></td>
+                            <td style="padding-left:8px;"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><strong>GST NO.: </strong>  </td>
+                            <td style="padding-left:8px;">@firstRow["CompanyGST"]</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><strong>PAN NO: </strong></td>
+                            <td style="padding-left:8px;">@firstRow["CompanyPAN"]</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><strong>BILL NO: </strong>  </td>
+                            <td style="padding-left:8px;">@firstRow["InvoiceNumber"]</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><strong>SAC NO: </strong></td>
+                            <td style="padding-left:8px;">9973</td>
+                        </tr>
+                        @if (BillingConfigViewHelper.ShouldShowStringField(showPONumberMode, firstRow["billPONumber"]))
+
+                        {
+                            <tr>
+                                <td style="text-align:right"><strong>PO No.</strong></td>
+                                <td style="padding-left:8px;">@firstRow["billPONumber"]</td>
+                            </tr>
+
+                        }
+                        @if (BillingConfigViewHelper.ShouldShowStringField(showPONumberMode, firstRow["billPONumber"]))
+
+                        {
+                            <tr>
+                                <td style="text-align:right"><strong>PO Date</strong></td>
+                                <td style="padding-left:8px;">@BAL.Objects.Utils.CheckDateAndReturnDefault(Convert.ToString(firstRow["billPODate"]), "")</td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="paty-details">
+                    <table style="width:100%">
+                        <tr>
+                            <td class="paty-details">Party:</td>
+                            <td class="paty-details">
+                                @firstRow["ClientBillToName"]
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:100px;" class="paty-details">Address: </td>
+                            <td class="paty-details">
+
+                                @if (Convert.ToInt16(firstRow["BillFromSiteAddress"]) == 1)
+                                {
+                                    <span>
+                                        @firstRow["SiteProject"] @firstRow["SiteAddress"]  @firstRow["SiteAddress2"]
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["SiteZipCode"]))
+                                        {
+                                            <span>Pin: -@firstRow["SiteZipCode"]</span>
+                                        }
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                                        {
+                                            <span>Mobile: -@firstRow["ClientPhone"]</span>
+                                        }
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                        {
+                                            <span>Email: -@firstRow["ClientEmail"]</span>
+                                        }
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>
+                                        @firstRow["ClientAddress1"]  @firstRow["ClientAddress2"]
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["ClientZipCode"]))
+                                        {
+                                            <span>Pin: -@firstRow["ClientZipCode"]</span>
+                                        }
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                                        {
+                                            <span>Mobile: -@firstRow["ClientPhone"]</span>
+                                        }
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                        {
+                                            <span>Email: -@firstRow["ClientEmail"]</span>
+                                        }
+
+                                    </span>
+                                }
+
+
+                            </td>
+                        </tr>
+                        @if (Convert.ToInt16(firstRow["BillFromSiteAddress"]) == 1)
+                        {
+                            <tr>
+                                <td class="paty-details"> City: </td>
+                                <td class="paty-details">  @firstRow["SiteCity"] </td>
+
+                            </tr>
+                            <tr>
+                                <td class="paty-details"> State: </td>
+                                <td class="paty-details">  @firstRow["SiteState"] </td>
+
+                            </tr>
+                            <tr>
+                                <td class="paty-details" style="font-size:16pt;">GST No. </td>
+                                <td class="paty-details" style="font-size:16pt;color:red;"> @firstRow["SiteGST"] </td>
+
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="paty-details"> City: </td>
+                                <td class="paty-details">  @firstRow["ClientCity"] </td>
+
+                            </tr>
+                            <tr>
+                                <td class="paty-details"> State: </td>
+                                <td class="paty-details">  @firstRow["ClientStateName"] </td>
+
+                            </tr>
+                            <tr>
+                                <td class="paty-details" style="font-size:16pt;">GST No. </td>
+                                <td class="paty-details" style="font-size:16pt;color:red;"> @firstRow["ClientGST"] </td>
+
+                            </tr>
+                        }
+
+                    </table>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="border-bottom:solid 1px green;font-size:18px; text-align:center;">@billPeriodText: From @BAL.Objects.Utils.FormatDate(minDate) To  @BAL.Objects.Utils.FormatDate(lastDate)</td>
+            </tr>
+
+        </table>
+
+        <div class="content">
+
+            <table class="table-container">
+                <colgroup>
+                    <col style="width: 250px;">
+                    <col style="width: 50px;">
+                    <col style="width: 80px;">
+
+                    <col style="width: 80px;">
+                    <col style="width: 60px;">
+                    <col style="width: 60px;">
+                    <col style="width: 50px;">
+                    <col style="width: 80px;">
+                    <col style="width: 80px;">
+                    <col style="width: 120px;">
+                    <col style="width: 120px;">
+                </colgroup>
+
+                @*<thead>
+
+
+                    </thead>*@
+                <tbody class="table-body">
+                    <tr class="table-row">
+                        <th class="table-cell" colspan="2" style="width:70mm;border-right:none;text-align:left;">Balance</th>
+                        <th class="table-cell text-center" style="width:70px;">Send</th>
+                        <th class="table-cell text-center" style="width:70px;">Recd</th>
+                        <th class="table-cell text-center" style="width:70px;">From</th>
+                        <th class="table-cell text-center" style="width:70px;">To</th>
+
+                        <th class="table-cell text-center" style="width:40px;">Days</th>
+                        <th class="table-cell text-center" style="width:50px;">Mode</th>
+                        <th class="table-cell" style="width:60px;">Rate (in paisa)</th>
+                        <th class="table-cell text-right" style="width:80px;">Amount</th>
+                        <th class="table-cell text-right" style="width:80px;">Total</th>
+
+                    </tr>
+                    @{
+                        foreach (var g in ViewBag.UniqueItems)
+                        {
+
+                            string borderCss = "firstRow";
+                            string item = "";
+                            int x = 0;
+                            var itemSubTotals = data.Tables[0].Compute("Sum(SubTotal)", "ProductId =" + g.ToString());
+                            int itemRows = data.Tables[0].Select("ProductId = " + g.ToString()).Length;
+                            foreach (var row in data.Tables[0].Select("ProductId = " + g.ToString()))
+                            {
+                                if (x == 0)
+                                {
+                                    item = Convert.ToString(row["Item"]);
+                                    <tr>
+
+                                        <td colspan="2" style="font-weight:bold;font-size:14px;">
+                                            @item
+                                        </td>
+                                        <td></td>
+                                        <td class="text-center" style="border-bottom:dotted 1px;"><strong>@row["CB"]</strong> </td>
+                                        <td colspan="7"></td>
+                                    </tr>
+                                }
+                                x++;
+                                if (Convert.ToDouble(row["SubTotal"]) == 0)
+                                {
+                                    if (ViewBag.hideZeroAmountItem)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                var opBalance = (Convert.ToInt32(@row["CB"]) - Convert.ToInt32(@row["Quantity"]));
+                                var sent = Convert.ToInt32(@row["Quantity"]) > 0 ? Convert.ToInt32(@row["Quantity"]) : 0;
+                                var recvd = Convert.ToInt32(@row["Quantity"]) < 0 ? Convert.ToInt32(@row["Quantity"]) : 0;
+                                var nodeValue = Convert.ToInt32(@row["CB"]) * Convert.ToInt32(@row["Days"]);
+                                var closingBal = Convert.ToInt32(@row["CB"]);
+
+                                if ((opBalance == 0 && sent == closingBal) || sent == 0)
+                                {
+                                    sent = 0;
+                                }
+
+                                <tr class="table-row">
+                                    <td colspan="2" style="padding: 7px 3px;">
+                                        @row["CB"]
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        @sent
+
+
+                                    </td>
+                                    <td class="table-cell text-center">
+
+                                        @Math.Abs(recvd)
+
+                                    </td>
+                                    <td class="table-cell text-center">
+                                        @Convert.ToDateTime(row["From"]).ToString("dd/MM")
+                                    </td>
+                                    <td class="table-cell text-center">
+                                        @Convert.ToDateTime(row["To"]).ToString("dd/MM")
+                                    </td>
+                                    <td class="table-cell text-center">
+                                        @row["Days"]
+                                    </td>
+                                    <td class="table-cell text-right">
+                                        @(showDetailedDayCalculation ? nodeValue.ToString() : "")
+                                    </td>
+                                    <td class="table-cell text-center">@(Convert.ToDouble(Convert.ToDecimal(row["Rate"]) * 100)) </td>
+                                    <td class="table-cell text-right">@row["SubTotal"].ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                    <td class="table-cell text-right">
+                                        @if (x == itemRows)
+                                        {
+                                            @itemSubTotals
+                                        }
+                                    </td>
+                                </tr>
+                                borderCss = "";
+                            }
+                        }
+
+                    }
+
+                    @*<tr class="table-row spacer-row">
+                            <td class="table-cell" colspan="2">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                            <td class="table-cell">&nbsp;</td>
+                        </tr>*@
+                    <tr class="table-row">
+                        <td colspan="8" rowspan="9">
+                            <table>
+                                <tr>
+                                    <td class="subHeading">Total Short Items: </td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">Total Excess Items: </td>
+                                    <td>@totalExessQty</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">Total Item Balance: </td>
+                                    <td>@totalBalanceQty</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td colspan="2" class="table-cell subHeading" style="vertical-align:top;border-top:solid 1px;border-right:solid 1px;">Total Hire Charges</td>
+                        <td class="table-cell subHeading text-right" style="vertical-align:top; border-top:solid 1px;">@subTotal.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="subHeading" style="border-right: solid 1px;padding-bottom:10px;">Shortage / Breakage</td>
+                        <td class="text-right">@breakageCharges</td>
+                    </tr>
+
+
+                    <tr>
+                        <td colspan="2" class="subHeading" style="border-right: solid 1px; padding-bottom: 10px;">Cartage Charges</td>
+                        <td class="text-right">@firstRow["Freight"]</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" class="subHeading" style="border-right: solid 1px; padding-bottom: 10px;">Additional Charges</td>
+                        <td class="text-right">@additionalChargeAmount</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="subHeading" style="border-right: solid 1px; padding-bottom: 10px;">
+                            SUB TOTAL
+                        </td>
+                        <td class="subHeading text-right">
+                            @totalWithoutTax
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-right: solid 1px;padding-left:5px;">
+                            IGST
+                        </td>
+                        <td class="text-right">
+                            @IGST
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-right: solid 1px; padding-left: 5px;">
+                            CGST
+                        </td>
+                        <td class="text-right">
+                            @CGST
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-right: solid 1px; padding-left: 5px; padding-bottom: 10px; ">
+                            SGST
+                        </td>
+                        <td class="text-right">
+                            @SGST
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="subHeading" style="border-right: solid 1px;border-bottom:solid 1px;">Total</td>
+                        <td class="subHeading text-right" style="border-bottom: solid 1px;border-top:solid 1px;">@total</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            @if (ViewBag.PrintBalanceMaterial == true)
+                            {
+                                <table style="width:100%">
+                                    <tr>
+                                        <td class="subHeading" colspan="2"><u>Rest Item Balance</u></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="subHeading"><u>Particular</u></td>
+                                        <td class="subHeading text-right"><u>Balance</u></td>
+                                    </tr>
+                                    @foreach (var b in balanceTable)
+                                    {
+                                        <tr>
+                                            <td>@b.Product</td>
+                                            <td class="text-right">@b.Quantity</td>
+                                        </tr>
+                                    }
+                                </table>
+
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+            <div style="width:100%;page-break-before:always">
+                <h2 style="text-decoration:underline;text-align:center;">Cartage/Additional Expenses Detail</h2>
+                <table border="0" style="width:100%" cellspacing="0">
+                    <tr>
+                        <td style="width:60%">
+                            <table style="width:100%">
+                                <tr>
+                                    <td class="subHeading">
+                                        Cartage on Challans:
+                                        <br />
+                                        <div style="width: 100%; display: inline-block; font-weight: normal; font-size: 12px;">
+                                            @if (freightTable.Select("ChallanType = 1 and Freight > 0").Length > 0)
+                                            {
+                                                <span>||</span>
+                                            }
+                                            @foreach (var r in freightTable.Select("ChallanType = 1 and Freight > 0"))
+                                            {
+                                                <span style="">
+                                                    @r["ChallanNumber"]
+                                                    <span style="margin-left:10px;">@r["Freight"]</span>  ||
+                                                </span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Cartage on Receipt:
+                                        <br />
+                                        <div style="width: 100%; display: inline-block; font-weight: normal; font-size: 12px;">
+                                            @if (freightTable.Select("ChallanType = 2  and Freight > 0").Length > 0)
+                                            {
+                                                <span>||</span>
+                                            }
+                                            @foreach (var r in freightTable.Select("ChallanType = 2 and Freight > 0"))
+                                            {
+                                                <span style="font-weight:normal;font-size:12px;">
+                                                    @r["ChallanNumber"]
+                                                    <span style="margin-left:10px;">@r["Freight"]</span>  ||
+                                                </span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Shortage/Breakage:
+                                        <br />
+                                        <div style="width: 100%; display: inline-block; font-weight: normal; font-size: 12px;">
+                                            @breakageCharges
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Additional Exp on Challan:
+                                        <br />
+                                        <div style="width: 100%; display: inline-block; font-weight: normal; font-size: 12px;">
+                                            @if (chargesTable.Select("ChallanType = 1 and amount > 0").Length > 0)
+                                            {
+                                                <span>||</span>
+                                            }
+                                            @foreach (var r in chargesTable.Select("ChallanType = 1 and amount > 0"))
+                                            {
+                                                <span style="font-weight:normal">
+                                                    @r["Number"]
+                                                    <span style="margin-left:10px;">@r["amount"]</span>||
+                                                </span>
+                                            }
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Additional Exp on Receipt:
+                                        <br />
+                                        <div style="width: 100%; display: inline-block; font-weight: normal; font-size: 12px;">
+                                            @if (chargesTable.Select("ChallanType = 2 and amount > 0").Length > 0)
+                                            {
+                                                <span>||</span>
+                                            }
+                                            @foreach (var r in chargesTable.Select("ChallanType = 2 and amount > 0"))
+                                            {
+                                                <span style="font-weight:normal">
+                                                    @r["Number"]
+                                                    <span style="margin-left:10px;">@r["amount"]</span>||
+                                                </span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="width:40%">
+                            <table style="width:100%">
+                                <tr>
+                                    <td class="subHeading" style="width:65%;">
+                                        Total Cartage on Challans:
+                                    </td>
+                                    <td class="text-right">@freightTable.Compute("Sum(Freight)", "ChallanType = 1")</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Total  Cartage on Receipt:
+                                    </td>
+                                    <td class="text-right">@freightTable.Compute("Sum(Freight)", "ChallanType = 2")</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Total  Shortage/Breakage:
+                                    </td>
+                                    <td class="text-right">@breakageCharges</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Total  Additional Exp on Challan:
+                                    </td>
+                                    <td class="text-right">@chargesTable.Compute("Sum(amount)", "ChallanType = 1")</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading">
+                                        Total  Additional Exp on Receipt:
+                                    </td>
+                                    <td class="text-right">@chargesTable.Compute("Sum(amount)", "ChallanType = 2")</td>
+                                </tr>
+                                <tr>
+                                    <td class="subHeading" style="border-top:solid 1px;">Total</td>
+                                    <td class="text-right" tyle="border-top:solid 1px;">@(firstRow["Freight"] + breakageCharges + additionalChargeAmount)</td>
+                                </tr>
+                            </table>
+                        </td>
+
+
+                    </tr>
+
+                </table>
+            </div>
+
+
+
+            <!-- Last row will automatically expand to fill remaining space -->
+            @*<div class="footer">
+
+                </div>*@
+            @{
+                if (ViewBag.PrintExcessQty && ViewBag.ExcessQty != null && ViewBag.ExcessQty.Rows.Count > 0)
+                {
+                    <div style="width:70%;page-break-before:auto">
+                        <h2 style="text-decoration:underline;text-align:center;">Excess Detail</h2>
+                        <table border="0" style="width:100%" cellspacing="0">
+                            <tr>
+                                <td class="header_table noborder" style="width:200px;font-weight:bold;">Particular</td>
+                                <td class="header_table noborder text-center" style="font-weight: bold; width: 100px;">OB</td>
+                                <td class="header_table noborder text-center" style=" font-weight: bold; width: 100px;">QtyExcess</td>
+                                <td class="header_table noborder text-center" style="font-weight: bold; width: 100px;">QtyAdjusted</td>
+                                <td class="header_table noborder text-center" style="font-weight: bold; width: 100px;">QtyBalance</td>
+                            </tr>
+                            @foreach (var row in ViewBag.ExcessQty.Rows)
+                            {
+                                <tr>
+                                    <td>@row["product"]</td>
+                                    <td class="text-center">@row["OB"]</td>
+                                    <td class="text-center">@row["ExcessQty"]</td>
+                                    <td class="text-center">@row["Adjusted"]</td>
+                                    <td class="text-center">@row["balance"]</td>
+
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+            }
+            @{
+                if (lossItems != null && lossItems.Rows.Count > 0)
+                {
+                    <div style="width:100%;page-break-before:auto">
+                        <h2 style="width:100%;text-align:center;text-decoration:underline">Loss Items</h2>
+                        <table border="0" style="width:100%" cellspacing="0">
+                            <tr>
+
+
+                                <th class="header_table" style="border-right: 0px;">Description</th>
+                                <th class="header_table text-center">Quantity</th>
+                                <th class="header_table text-center" style="width: 100px; border-right: 0px;">Rate</th>
+                                <th class="header_table text-right" style="width: 100px; ">Amount</th>
+                            </tr>
+                            @foreach (var row in lossItems.Rows)
+                            {
+                                <tr>
+                                    <td>@row["Item"]</td>
+                                    <td class="text-center">@row["Quantity"]</td>
+
+                                    <td class="text-center">@row["Rate"]</td>
+                                    <td class="text-right">@row["Amount"]</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+            }
+            @{
+                if (breakageItems != null && breakageItems.Rows.Count > 0)
+                {
+
+                    <div class="breakage" style="width:100%;">
+                        <h2 style="width:100%;text-align:center;text-decoration:underline">Shortage/Breakage Details</h2>
+                        <table border="0" style="width:100%" cellspacing="0">
+                            <tr>
+                                <th class="header_table" style="text-align:left">Description</th>
+                                <th class="header_table text-center" style="width: 100px; border-right: 0px;">Quantity</th>
+
+                                <th class="header_table text-center" style=" width: 100px; border-right: 0px;">Rate</th>
+                                <th class="header_table text-right" style="width: 100px; ">Amount</th>
+                            </tr>
+                            @foreach (var row in breakageItems.Rows)
+                            {
+                                <tr>
+                                    <td>@row["Item"]</td>
+                                    <td class="text-center">@row["Quantity"]</td>
+                                    <td class="text-center">@row["Rate"]</td>
+                                    <td class="text-right">@row["Amount"]</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+</body>
+</html>
+

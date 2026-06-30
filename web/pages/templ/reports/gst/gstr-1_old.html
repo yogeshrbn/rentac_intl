@@ -1,0 +1,87 @@
+﻿<div>
+    <div class="col-sm-10">
+        <form id="frmGstr1">
+            <div class="col-sm-3 form-horizontal">
+                <div class="form-group">
+                    <label for="exampleInputName2" class="col-sm-3 control-label">Month</label>
+                    <div class="col-sm-9">
+                        <month ng-model="filter.month"></month>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-3 form-horizontal">
+                <div class="form-group">
+                    <label for="exampleInputName2" class="col-sm-3 control-label">Year</label>
+                    <div class="col-sm-9">
+                        <year  ng-model="filter.year"></year>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-4">
+
+                <div class="form-group" style="padding:4px;">
+
+                    <button type="button" class="btn btn-primary" ng-click="show();"><i class="fa fa-eye"></i> Show</button>
+
+                    <button type="button" class="btn btn-primary" ng-click="exportToExcel();"><i class="fa fa-file-excel-o"></i> Excel</button>
+                     
+
+                </div>
+            </div>
+        </form>
+
+
+
+    </div>
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <table class="table table-condensed " med-key>
+
+                <tr class="headerRow">
+                    <th>GSTIN Of Recipient</th>
+                    <th>Invoice#</th>
+                    <th>Invoice Date</th>
+                    <th>Invoice Value</th>
+                    <th>Place Of Supply</th>
+                    <th>Reverse Charge</th>
+                    <th>Invoice Type</th>
+                    <th>Rate</th>
+                    <th>Taxable Value</th>
+                    <th>Cess Amount</th>
+                </tr>
+                <tr dir-paginate="item in gstrData | itemsPerPage: PAGE_SIZE |filter: search:strict">
+                    <td>
+                        {{item.GSTIN}}
+                    </td>
+                    <td>
+                        {{item.InvoiceNumber}}
+                    </td>
+                    <td>
+                        {{item.InvoiceDate | date}}
+                    </td>
+                    <td>   {{item.Total}}</td>
+                    <td>  {{item.State}} </td>
+                    <td>
+                        {{item.ReverseCharge}}
+                    </td>
+                    <td>
+                        {{item.InvoiceType}}
+                    </td>
+                    <td>
+                        {{item.Rate}}
+                    </td>
+                    <td>   {{item.TaxableValue}}</td>
+                    <td>  {{item.CessAmount}} </td>
+                </tr>
+                <tr ng-if="gstrData.length == 0">
+                    <td colspan="10" class="text-center">
+                        <div class="alert-info">No records found.</div>
+                    </td>
+                </tr>
+            </table>
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+</div>

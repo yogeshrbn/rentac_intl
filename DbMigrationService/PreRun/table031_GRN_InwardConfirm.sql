@@ -1,0 +1,16 @@
+USE [$AppDb$]
+GO
+
+IF COL_LENGTH('GRN', 'InwardConfirm') IS NULL
+BEGIN
+    ALTER TABLE GRN
+    ADD InwardConfirm BIT NOT NULL CONSTRAINT DF_GRN_InwardConfirm DEFAULT(0);
+END
+GO
+
+IF COL_LENGTH('GRN', 'InwardConfirmDate') IS NULL
+BEGIN
+    ALTER TABLE GRN
+    ADD InwardConfirmDate DATETIME NULL;
+END
+GO

@@ -1,0 +1,33 @@
+<!--<pageheader heading="Settings"></pageheader>-->
+<div style="display:flex">
+    <div class="settingsLeftCol" style="height:calc(100vh - 114px)">
+
+        <ul class="nav nav-pills nav-stacked" role="tablist">
+            <!--<li role="presentation" class="active"><a href="#itemInfo" role="tab" data-toggle="tab"><i class="fa fa-angle-right" aria-hidden="true"></i>  Default Company</a></li>-->
+            <li role="presentation"  ui-sref-active="active" class="actions"><a ui-sref="templates.issuechallan"><i class="fa fa-arrow-circle-o-right fa-2x " aria-hidden="true"></i> <span>Issue Challan</span> </a></li>
+            <li role="presentation"  ui-sref-active="active" class="actions"><a ui-sref="templates.returns"><i class="fa fa-arrow-circle-o-right fa-2x " aria-hidden="true"></i> <span>Return Challan</span> </a></li>
+            <li role="presentation"  ui-sref-active="active" class="actions"><a ui-sref="templates.ewaybill"><i class="fa fa-arrow-circle-o-right fa-2x " aria-hidden="true"></i> <span>Eway Bill</span> </a></li>
+
+            <li role="presentation"  ui-sref-active="active" class="actions"><a ui-sref="templates.quotations"><i class="fa fa-arrow-circle-o-right fa-2x " aria-hidden="true"></i> <span>Quotations</span> </a></li>
+            <li role="presentation"  ui-sref-active="active" class="actions"><a ui-sref="templates.sales"><i class="fa fa-arrow-circle-o-right fa-2x " aria-hidden="true"></i> <span>Sales</span> </a></li>
+            <li role="presentation" ui-sref-active="active"  class="actions"><a ui-sref="templates.rentbills"><i class="fa fa-arrow-circle-o-right fa-2x " aria-hidden="true"></i> <span>Rent Bills</span> </a></li>
+
+
+
+        </ul>
+    </div>
+    <div class="col-xs-12 col-lg-10 col-md-12 col-sm-7 settingsRightCol">
+
+
+        <div ui-view></div>
+
+    </div>
+
+</div>
+
+<script lang="ja">
+
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+</script>

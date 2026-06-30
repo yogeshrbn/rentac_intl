@@ -1,0 +1,131 @@
+﻿<md-dialog style="width:55%;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Add Edit Site</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="closeDialog()">
+
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout="row" layout-wrap layout-margin layout-align="center">
+        <form id="form-clientsite" method="post" class="form-horizontal form-bordered" style="width:100%;">
+            <md-tabs md-dynamic-height md-border-bottom>
+                <md-tab label="Site">
+                    <md-content class="md-padding">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label>Project</label>
+                                <input type="text" class="form-control" name="project" ng-model="Site.Project" maxlength="100">
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Address</label>
+                                <input type="text" class="form-control" name="address" ng-model="Site.SiteAddress" maxlength="100" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Address 2</label>
+                                <input type="text" class="form-control" name="address2" ng-model="Site.Address2" maxlength="100" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Contact Person</label>
+                                <input type="text" class="form-control" name="contactPerson" ng-model="Site.ContactPerson" maxlength="50" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Contact Person Mobile</label>
+                                <input type="text" class="form-control" maxlength="10" name="phone" ng-model="Site.ContactPersonPhone" phoneformat="true" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>City</label>
+                                <input type="text" class="form-control" name="city" ng-model="Site.City" />
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label>State</label>
+                                <state ng-model="Site.StateId"></state>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>Zip Code</label>
+                                <input type="text" class="form-control" name="city" ng-model="Site.ZipCode" maxlength="6" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label>GST</label>
+                                <input type="text" class="form-control" name="gst" ng-model="Site.SiteGST" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Tax Category</label>
+                                <searchableselect id="ddlTaxes" tab-index="2" ng-model="Site.TaxCategoryId" data-field="TAXES" data-val="TaxId" data-text="TaxName"></searchableselect>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">PO Number</label>
+                                <input type="text" class="form-control" name="gst" ng-model="Site.PONumber" maxlength="30" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">PO Date</label>
+                                <datepicker date-format="dd/MM/yyyy">
+                                    <input ng-model="Site.PODate" type="text" class="form-control"
+                                           id="val_rentStartDate" name="val_rentStartDate" />
+                                </datepicker>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Billing To Site</label>
+                                <searchableselect ng-id="val_BillingToSiteId" ng-name="val_BillingToSiteId"
+                                                  data-field="AllBillingSites" ng-model="Site.BillingToSiteId"
+                                                  data-val="LedgerSiteId" data-text="DisplaySite"></searchableselect>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Print Last Bill Details On Current Bill</label>
+                                <div>
+                                    <input type="radio" name="printlastbilldetails" value="1" ng-model="Site.PrintLastBillDetails" /> Yes
+                                    <input type="radio" name="printlastbilldetails" value="0" ng-model="Site.PrintLastBillDetails" style="margin-left:10px;" /> No
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Use this Address for billing</label>
+                                <div>
+                                    <input type="radio" name="useForBilling" value="1" ng-model="Site.UseForBilling" /> Yes
+                                    <input type="radio" name="useForBilling" value="0" ng-model="Site.UseForBilling" style="margin-left:10px;" /> No
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="control-label">Project Owner</label>
+                                <div>
+                                    <searchableselect ng-name="val_projectOwner" ng-id="val_projectOwner"
+                                                      data-field="Employees" ng-model="Site.ProjectOwnerId"
+                                                      data-val="EmployeeId" data-text="Name"></searchableselect>
+                                </div>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+                <md-tab label="Documents">
+                    <md-content class="md-padding">
+                        <p class="text-muted">Up to 5 optional documents (PDF, images, or Office). Max 10 MB each.</p>
+                        <div class="form-group" ng-repeat="n in [1,2,3,4,5]">
+                            <div class="col-sm-12">
+                                <label>Document {{n}}</label>
+                                <div ng-if="siteDocName(n)" style="margin-bottom:6px;">
+                                    <span class="text-info">{{siteDocName(n)}}</span>
+                                    <a href="" class="ml-2" ng-click="downloadSiteDocument(n); $event.preventDefault()" ng-show="Site.LedgerSiteId > 0">Download</a>
+                                </div>
+                                <input type="file" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.doc,.docx,.xls,.xlsx,.ppt,.pptx" id="siteDocFile{{n}}" />
+                                <label class="checkbox-inline ml-2" ng-show="siteDocName(n)">
+                                    <input type="checkbox" ng-model="removeDoc[n-1]" /> Remove current file on save
+                                </label>
+                            </div>
+                        </div>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </form>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="pull-right">
+            <button ng-click="closeDialog()" class="btn btn-default" value="Close">Close</button>
+
+            <span flex></span>
+            <button ng-click="OkButtonClick()" class="btn btn-primary" value="Print">Save <i class="fa fa-spinner fa-spin hide" style="color:#fff;"></i></button>
+
+
+        </div>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8D9789EA-67A6-42BA-867C-94CC366B1BFB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BAL</RootNamespace>
+    <AssemblyName>BAL</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Azure.Core, Version=1.47.1.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Core.1.47.1\lib\net472\Azure.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Azure.Identity, Version=1.14.2.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Identity.1.14.2\lib\netstandard2.0\Azure.Identity.dll</HintPath>
+    </Reference>
+    <Reference Include="Azure.Storage.Blobs, Version=12.24.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Storage.Blobs.12.24.0\lib\netstandard2.0\Azure.Storage.Blobs.dll</HintPath>
+    </Reference>
+    <Reference Include="Azure.Storage.Common, Version=12.23.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Azure.Storage.Common.12.23.0\lib\netstandard2.0\Azure.Storage.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.4.0\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.66\lib\net461\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.12.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.12.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.1-beta1\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.PdfSharp.1.5.1-beta1\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.4, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.4\lib\net461\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp.xmlworker, Version=5.5.13.4, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\itextsharp.xmlworker.5.5.13.4\lib\net461\itextsharp.xmlworker.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.1\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.Cryptography, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Cryptography.8.0.0\lib\net462\Microsoft.Bcl.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.SqlClient, Version=6.0.0.0, Culture=neutral, PublicKeyToken=23ec7fc2d6eaa4a5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.SqlClient.6.1.2\lib\net462\Microsoft.Data.SqlClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Caching.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Caching.Memory.8.0.1\lib\net462\Microsoft.Extensions.Caching.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.2\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=8.0.0.3, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.8.0.3\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.8.0.2\lib\net462\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client, Version=4.73.1.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Identity.Client.4.73.1\lib\net472\Microsoft.Identity.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client.Extensions.Msal, Version=4.73.1.0, Culture=neutral, PublicKeyToken=0a613f4dd989e8ae, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Identity.Client.Extensions.Msal.4.73.1\lib\netstandard2.0\Microsoft.Identity.Client.Extensions.Msal.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Abstractions, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Abstractions.7.7.1\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.7.7.1\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.7.7.1\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocols, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocols.7.7.1\lib\net472\Microsoft.IdentityModel.Protocols.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocols.OpenIdConnect.7.7.1\lib\net472\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.7.7.1\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.2.2\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.2.2\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.6.0.3\lib\net46\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NReco.PdfGenerator, Version=1.2.1.0, Culture=neutral, PublicKeyToken=231663d50a41b451, processorArchitecture=MSIL">
+      <HintPath>..\packages\NReco.PdfGenerator.1.2.1\lib\net45\NReco.PdfGenerator.dll</HintPath>
+    </Reference>
+    <Reference Include="Omu.ValueInjecter, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5692a4ecdffbe736, processorArchitecture=MSIL">
+      <HintPath>..\packages\ValueInjecter.3.2.0\lib\net45\Omu.ValueInjecter.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.4000.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.4000-beta3b\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.4000.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.4000-beta3b\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QRCoder, Version=1.6.0.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.6.0\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
+    <Reference Include="Razorpay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Razorpay.3.0.2\lib\net45\Razorpay.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ClientModel, Version=1.5.1.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ClientModel.1.5.1\lib\netstandard2.0\System.ClientModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Common, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.Common.4.3.0\lib\net451\System.Data.Common.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.OleDb, Version=10.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.OleDb.10.0.1\lib\net462\System.Data.OleDb.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.8.0.1\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=7.7.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.7.7.1\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.FileSystem.AccessControl, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.AccessControl.5.0.0\lib\net461\System.IO.FileSystem.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Hashing, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Hashing.6.0.0\lib\net461\System.IO.Hashing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory.Data, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.Data.8.0.1\lib\net462\System.Memory.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.AccessControl, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.5.0.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=8.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Pkcs.8.0.1\lib\net462\System.Security.Cryptography.Pkcs.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.ProtectedData, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.ProtectedData.4.5.0\lib\net461\System.Security.Cryptography.ProtectedData.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.5, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.8.0.5\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=10.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Dataflow.10.0.1\lib\net462\System.Threading.Tasks.Dataflow.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\ApiResponseMessage.cs" />
+    <Compile Include="Common\DataCopier.cs" />
+    <Compile Include="Common\QuickReceiptDocumentHelper.cs" />
+    <Compile Include="Common\LoggedInUserInfo.cs" />
+    <Compile Include="Data\Contracts\IDBBackupRespository.cs" />
+    <Compile Include="Data\Contracts\IProductionRepository.cs" />
+    <Compile Include="DAL\AccountGroupDAL.cs" />
+    <Compile Include="DAL\AddressDAL.cs" />
+    <Compile Include="DAL\AuthenticationDAL.cs" />
+    <Compile Include="DAL\BaseDAL.cs" />
+    <Compile Include="DAL\BillingDAL.cs" />
+    <Compile Include="DAL\ChallanDA.cs" />
+    <Compile Include="DAL\ChallanItemDAL.cs" />
+    <Compile Include="DAL\ChallanTaxDAL.cs" />
+    <Compile Include="DAL\CommDAL.cs" />
+    <Compile Include="DAL\CompanyDAL.cs" />
+    <Compile Include="DAL\ConfigDAL.cs" />
+    <Compile Include="DAL\ContractDAL.cs" />
+    <Compile Include="DAL\ContractDocumentDAL.cs" />
+    <Compile Include="DAL\EmployeeDAL.cs" />
+    <Compile Include="DAL\ErrorCodeDAL.cs" />
+    <Compile Include="DAL\Integrations\WhatsappDAL.cs" />
+    <Compile Include="DAL\InventoryDAL.cs" />
+    <Compile Include="DAL\IRPDAL.cs" />
+    <Compile Include="DAL\JobCardDAL.cs" />
+    <Compile Include="DAL\LookupDAL.cs" />
+    <Compile Include="DAL\RoleCostingDAL.cs" />
+    <Compile Include="DAL\NotificationDAL.cs" />
+    <Compile Include="DAL\OtpDAL.cs" />
+    <Compile Include="DAL\PartyDAL.cs" />
+    <Compile Include="DAL\RentacPackageDAL.cs" />
+    <Compile Include="DAL\PaymentDAL.cs" />
+    <Compile Include="DAL\RBNClientDAL.cs" />
+    <Compile Include="DAL\SalesDAL.cs" />
+    <Compile Include="DAL\PurchaseDAL.cs" />
+    <Compile Include="DAL\LedgerDAL.cs" />
+    <Compile Include="DAL\GRNDAL.cs" />
+    <Compile Include="DAL\InvoiceDAL.cs" />
+    <Compile Include="DAL\JournalDAL.cs" />
+    <Compile Include="DAL\NextIdDAL.cs" />
+    <Compile Include="DAL\ReportDAL.cs" />
+    <Compile Include="DAL\SiteDAL.cs" />
+    <Compile Include="DAL\SubscriptionDAL.cs" />
+    <Compile Include="DAL\TaskDAL.cs" />
+    <Compile Include="DAL\TaxDAL.cs" />
+    <Compile Include="DAL\TemplateDAL.cs" />
+    <Compile Include="DAL\TransactionDAL.cs" />
+    <Compile Include="DAL\TransporterDAL.cs" />
+    <Compile Include="DAL\UserDAL.cs" />
+    <Compile Include="DAL\UserRoleDAL.cs" />
+    <Compile Include="DAL\VehicleDAL.cs" />
+    <Compile Include="DAL\WarehouseDAL.cs" />
+    <Compile Include="DAL\WorkOrderItemDAL.cs" />
+    <Compile Include="DAL\WorkOrderDAL.cs" />
+    <Compile Include="DAL\ProductCategoryDAL.cs" />
+    <Compile Include="DAL\ProductDAL.cs" />
+    <Compile Include="DAL\SaltDAL.cs" />
+    <Compile Include="DAL\StateCityDAL.cs" />
+    <Compile Include="DAL\UOMDAL.cs" />
+    <Compile Include="DAL\WorkStationDAL.cs" />
+    <Compile Include="DAL\ZoneDAL.cs" />
+    <Compile Include="Data\Contracts\IProductTaxClassificationContract.cs" />
+    <Compile Include="Data\Repository\DbBackupRepository.cs" />
+    <Compile Include="Data\Repository\ProductionRepository.cs" />
+    <Compile Include="Data\Repository\ProductTaxClassificationRepository.cs" />
+    <Compile Include="DTO\AccountGroupDTO.cs" />
+    <Compile Include="DTO\AddressDTO.cs" />
+    <Compile Include="DTO\BaseDTO.cs" />
+    <Compile Include="DTO\BillingDTO.cs" />
+    <Compile Include="DTO\ChallanDocumentDTO.cs" />
+    <Compile Include="DTO\ChallanDTO.cs" />
+    <Compile Include="DTO\ChallanItemDTO.cs" />
+    <Compile Include="DTO\ClientDTO.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DTO\ClientSiteDTO.cs" />
+    <Compile Include="DTO\CommDTO.cs" />
+    <Compile Include="DTO\ConfigDTO.cs" />
+    <Compile Include="DTO\ConfigFilterDTO.cs" />
+    <Compile Include="DTO\ContractDTO.cs" />
+    <Compile Include="DTO\DocumentDTO.cs" />
+    <Compile Include="DTO\EInvoiceDTO.cs" />
+    <Compile Include="DTO\EmailTemplateDTO.cs" />
+    <Compile Include="DTO\EmployeeDTO.cs" />
+    <Compile Include="DTO\EwayBillDTO.cs" />
+    <Compile Include="DTO\FinYearDTO.cs" />
+    <Compile Include="DTO\FunctionDTO.cs" />
+    <Compile Include="DTO\GSTRDTO.cs" />
+    <Compile Include="DTO\InvoiceChargeDTO.cs" />
+    <Compile Include="DTO\InvoiceIRNDTO.cs" />
+    <Compile Include="DTO\ItemGroupDTO.cs" />
+    <Compile Include="DTO\LedgerTaxDTO.cs" />
+    <Compile Include="DTO\LogDTO.cs" />
+    <Compile Include="DTO\LostItemDTO.cs" />
+    <Compile Include="DTO\MenuDTO.cs" />
+    <Compile Include="DTO\NotificationDto.cs" />
+    <Compile Include="DTO\OtherChargeDTO.cs" />
+    <Compile Include="DTO\OtpDTO.cs" />
+    <Compile Include="DTO\PackageDTO.cs" />
+    <Compile Include="DTO\PartyDTO.cs" />
+    <Compile Include="DTO\PartyStockChallanWisePdfDTO.cs" />
+    <Compile Include="DTO\PaymentOrderVMDTO.cs" />
+    <Compile Include="DTO\ProductionDTO.cs" />
+    <Compile Include="DTO\RBNClientDTO.cs" />
+    <Compile Include="DTO\RentalVsContractComparisonAnalyticsDto.cs" />
+    <Compile Include="DTO\RoleDTO.cs" />
+    <Compile Include="DTO\RoleCostingDTO.cs" />
+    <Compile Include="DTO\SalesDTO.cs" />
+    <Compile Include="DTO\EntryTypeDTO.cs" />
+    <Compile Include="DTO\FilterCriteria.cs" />
+    <Compile Include="DTO\GRNDTO.cs" />
+    <Compile Include="DTO\InvoiceDTO.cs" />
+    <Compile Include="DTO\JournalDTO.cs" />
+    <Compile Include="DTO\LedgerTransactionDTO.cs" />
+    <Compile Include="DTO\MasterDTO.cs" />
+    <Compile Include="DTO\NextIdDTO.cs" />
+    <Compile Include="DTO\PayReminderDTO.cs" />
+    <Compile Include="DTO\ProductRateDTO.cs" />
+    <Compile Include="DTO\PurchaseDTO.cs" />
+    <Compile Include="DTO\ReportDTO.cs" />
+    <Compile Include="DTO\ServiceResult.cs" />
+    <Compile Include="DTO\SiteDTO.cs" />
+    <Compile Include="DTO\StockTransactionDTO.cs" />
+    <Compile Include="DTO\SubscriptionDTO.cs" />
+    <Compile Include="DTO\TaskDTO.cs" />
+    <Compile Include="DTO\TaxCategoryDTO.cs" />
+    <Compile Include="DTO\Template.cs" />
+    <Compile Include="DTO\TransactionDTO.cs" />
+    <Compile Include="DTO\TransactionLookupDTO.cs" />
+    <Compile Include="DTO\TransporterDTO.cs" />
+    <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="DTO\VehicleDTO.cs" />
+    <Compile Include="DTO\VerificationLinkDTO.cs" />
+    <Compile Include="DTO\View\OTPDTOVM.cs" />
+    <Compile Include="DTO\View\StockTransactionViewDTO.cs" />
+    <Compile Include="DTO\WarehouseDTO.cs" />
+    <Compile Include="DTO\WhatsappDTO.cs" />
+    <Compile Include="DTO\WorkOrderChageDTO.cs" />
+    <Compile Include="DTO\WorkOrderItemDTO.cs" />
+    <Compile Include="DTO\CompanyDTO.cs" />
+    <Compile Include="DTO\CeoForecastingAnalyticsDto.cs" />
+    <Compile Include="DTO\CeoEarlyWarningAlertsDto.cs" />
+    <Compile Include="DTO\CeoRiskProjectDto.cs" />
+    <Compile Include="DTO\CeoSalesPipelineDto.cs" />
+    <Compile Include="DTO\AccountsAgeingSummaryDto.cs" />
+    <Compile Include="DTO\AccountsSiteOutstandingDto.cs" />
+    <Compile Include="DTO\AccountsRevenueKpisDto.cs" />
+    <Compile Include="DTO\OperationsDailyActivityDto.cs" />
+    <Compile Include="DTO\OperationsInstallationTeamDailyDto.cs" />
+    <Compile Include="DTO\OperationsSiteKpisDto.cs" />
+    <Compile Include="DTO\WorkOrderDTO.cs" />
+    <Compile Include="DTO\LedgerDTO.cs" />
+    <Compile Include="DTO\ProductCategoryDTO.cs" />
+    <Compile Include="DTO\ProductDTO.cs" />
+    <Compile Include="DTO\RentRateDTO.cs" />
+    <Compile Include="DTO\SaltDTO.cs" />
+    <Compile Include="DTO\StateCity.cs" />
+    <Compile Include="DTO\StoreDTO.cs" />
+    <Compile Include="DTO\TaxDTO.cs" />
+    <Compile Include="DTO\UOMDTO.cs" />
+    <Compile Include="DTO\UOMSizeDTO.cs" />
+    <Compile Include="DTO\WorkStation.cs" />
+    <Compile Include="DTO\ZonesDTO.cs" />
+    <Compile Include="Enums\AccountGroupType.cs" />
+    <Compile Include="Enums\AddressType.cs" />
+    <Compile Include="Enums\ChallanType.cs" />
+    <Compile Include="Enums\ConfigCategory.cs" />
+    <Compile Include="Enums\ExportFormat.cs" />
+    <Compile Include="Enums\InvoiceStatus.cs" />
+    <Compile Include="Enums\InvoiceTypes.cs" />
+    <Compile Include="Enums\NextIDTables.cs" />
+    <Compile Include="Enums\AddressRoleType.cs" />
+    <Compile Include="Enums\ReportNames.cs" />
+    <Compile Include="Enums\RoleType.cs" />
+    <Compile Include="Enums\SiteItemType.cs" />
+    <Compile Include="Enums\StockPostingType.cs" />
+    <Compile Include="Enums\TaxItem.cs" />
+    <Compile Include="Enums\TransactionModes.cs" />
+    <Compile Include="Enums\TransactionTypes.cs" />
+    <Compile Include="Exceptions\UDFException.cs" />
+    <Compile Include="Interface\IApplicableTaxes.cs" />
+    <Compile Include="Models\ExportRequest.cs" />
+    <Compile Include="Models\Production.cs" />
+    <Compile Include="Objects\AccountGroup.cs" />
+    <Compile Include="Objects\Address.cs" />
+    <Compile Include="Objects\Authentication.cs" />
+    <Compile Include="Objects\Billing.cs" />
+    <Compile Include="Objects\Contract.cs" />
+    <Compile Include="Objects\EInvoiceService.cs" />
+    <Compile Include="Objects\EwayBillService.cs" />
+    <Compile Include="Objects\GSTService.cs" />
+    <Compile Include="Objects\IRPRequestParams.cs" />
+    <Compile Include="Objects\JobCard.cs" />
+    <Compile Include="Objects\Warehouse.cs" />
+    <Compile Include="Services\Contracts\IDBBackupService.cs" />
+    <Compile Include="Services\Contracts\INotificationSenderService.cs" />
+    <Compile Include="Services\Contracts\IProductionService.cs" />
+    <Compile Include="Services\Contracts\IProductTaxClassificationService.cs" />
+    <Compile Include="Services\NotificationSenderService.cs" />
+    <Compile Include="Services\ProductTaxClassificationService.cs" />
+    <Compile Include="Services\DBBackupService.cs" />
+    <Compile Include="Services\Integrations\WhatsappService.cs" />
+    <Compile Include="Services\Integrations\Whatsapp\DoubleTickWhatsappTemplateProvider.cs" />
+    <Compile Include="Services\Integrations\Whatsapp\GupshupWhatsappTemplateProvider.cs" />
+    <Compile Include="Services\Integrations\Whatsapp\IWhatsappTemplateProvider.cs" />
+    <Compile Include="Services\Integrations\Whatsapp\WhatsappProviderNames.cs" />
+    <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Objects\OTP.cs" />
+    <Compile Include="Objects\Party.cs" />
+    <Compile Include="Objects\RBNClient.cs" />
+    <Compile Include="Objects\RentacPackage.cs" />
+    <Compile Include="Objects\RentacPackageService.cs" />
+    <Compile Include="Objects\Security.cs" />
+    <Compile Include="Objects\SubscriptionService.cs" />
+    <Compile Include="Objects\Challan.cs" />
+    <Compile Include="Objects\ChallanItem.cs" />
+    <Compile Include="Objects\Communication.cs" />
+    <Compile Include="Objects\Company.cs" />
+    <Compile Include="Objects\Config.cs" />
+    <Compile Include="Objects\Employee.cs" />
+    <Compile Include="Objects\RoleCosting.cs" />
+    <Compile Include="Objects\Inventory.cs" />
+    <Compile Include="Objects\LookupData.cs" />
+    <Compile Include="Objects\Number.cs" />
+    <Compile Include="Objects\PaymentService.cs" />
+    <Compile Include="Objects\Sales.cs" />
+    <Compile Include="Objects\Purchase.cs" />
+    <Compile Include="Objects\Ledger.cs" />
+    <Compile Include="Objects\GRN.cs" />
+    <Compile Include="Objects\Invoice.cs" />
+    <Compile Include="Objects\Journal.cs" />
+    <Compile Include="Objects\NextId.cs" />
+    <Compile Include="Objects\PayReminder.cs" />
+    <Compile Include="Objects\Report.cs" />
+    <Compile Include="Objects\Site.cs" />
+    <Compile Include="Objects\TemplateService.cs" />
+    <Compile Include="Objects\Transaction.cs" />
+    <Compile Include="Objects\TransporterService.cs" />
+    <Compile Include="Objects\User.cs" />
+    <Compile Include="Objects\UserRole.cs" />
+    <Compile Include="Objects\Utils.cs" />
+    <Compile Include="Objects\Vehicle.cs" />
+    <Compile Include="Objects\WorkOrderItem.cs" />
+    <Compile Include="Objects\WorkOrder.cs" />
+    <Compile Include="Objects\Product.cs" />
+    <Compile Include="Objects\ProductCategory.cs" />
+    <Compile Include="Objects\Salt.cs" />
+    <Compile Include="Objects\StateCity.cs" />
+    <Compile Include="Objects\Tax.cs" />
+    <Compile Include="Objects\UOM.cs" />
+    <Compile Include="Objects\WorkStation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AzureStorageService.cs" />
+    <Compile Include="Services\ErrorCodeService.cs" />
+    <Compile Include="Services\LoggingService.cs" />
+    <Compile Include="Services\MailerUtility.cs" />
+    <Compile Include="Services\PDFGenerator.cs" />
+    <Compile Include="Services\ProductionService.cs" />
+    <Compile Include="Services\SendEmails.cs" />
+    <Compile Include="Services\TaskService.cs" />
+    <Compile Include="Services\ZoneService.cs" />
+    <Compile Include="SQL\SQL.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\BAL.dll" />
+    <Content Include="bin\Debug\BAL.pdb" />
+    <Content Include="bin\Release\BAL.dll" />
+    <Content Include="bin\Release\BAL.pdb" />
+    <Content Include="Exceptions\ErrorCodes.xml" />
+    <Content Include="obj\Release\BAL.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Release\BAL.dll" />
+    <Content Include="obj\Release\BAL.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="obj\Release\BAL.csprojResolveAssemblyReference.cache" />
+    <None Include="obj\Release\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Release\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

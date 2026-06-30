@@ -1,0 +1,59 @@
+﻿<md-dialog aria-label="List dialog">
+  <md-dialog-content>
+<div ng-show="{{Data.Type == 0}}">
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-12">
+         <div class="panel panel-primary">
+            <div class="panel-heading">
+              {{Data.Closed == 0 ? 'Open' : 'Closed'}}   Sites
+             </div>
+          
+         <table class="table table-condensed table-responsive">
+             <tr>
+
+                 <th>#</th>
+                 <th>Site</th>
+             </tr>
+              <tr ng-repeat="site in DialogData">
+                <td>{{$index+1}}</td>
+                <td>{{site.Site}}</td>
+            </tr>
+        </table>
+                <md-progress-circular id="loadersite" md-mode="indeterminate" style="margin:auto;"></md-progress-circular>
+                </div>
+       </div>
+    <hr />
+</div>
+      <div ng-show="{{Data.Type == 1}}">
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-12">
+         <div class="panel panel-primary">
+            <div class="panel-heading">
+                 {{Data.Closed == 0 ? 'Open' : 'Closed'}}   Job Numbers
+             </div>
+         <table class="table table-condensed table-responsive">
+               <tr>
+
+                 <th>#</th>
+                 <th>Site</th>
+                    <th>Job#</th>
+             </tr>
+              <tr ng-repeat="site in DialogData">
+                  <td>{{$index+1}}</td>
+              <td>{{site.Site}}</td>
+                <td><a href="#sInfo?siteId={{site.SiteId}}">{{site.JobNumber}}</a></td>
+            </tr>
+        </table>
+                <md-progress-circular id="loaderJob" md-mode="indeterminate" style="margin:auto;"></md-progress-circular>
+                </div>
+       </div>
+    <hr />
+</div>
+</md-dialog-content>
+  <md-dialog-actions>
+    
+    <md-button ng-click="closeDialog()" class="md-primary btn-danger">Close</md-button>
+  </md-dialog-actions>
+</md-dialog>
+
+

@@ -1,0 +1,121 @@
+<!--<pageheader heading="Bank Entry Register" />-->
+<div class="col-sm-12">
+
+    <!--<div class="col-sm-3">
+        <label>Choose Party</label>
+        <searchabletext ng-id="client" data-item="Client" data-all="true" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>
+    </div>-->
+
+    <div class="col-sm-2 text-center">
+
+        <label>From</label>
+
+        <datepicker date-format="dd/MM/yyyy">
+      <input ng-model="Filter.From" type="text" class="form-control" />
+    </datepicker>
+    </div>
+    <div class="col-sm-2 text-center">
+
+        <label>To</label>
+        <datepicker date-format="dd/MM/yyyy">
+      <input ng-model="Filter.To" type="text" class="form-control"/>
+    </datepicker>
+
+    </div>
+    <!--<div class="col-sm-1">
+        <label class="col-sm-12">&nbsp;</label>
+        <input type="button" class="btn btn-primary" value="Search" ng-click="FindEntryies();" />
+
+    </div>
+    <div class="col-sm-1">
+        <label class="col-sm-12">&nbsp;</label>
+
+        <input type="button" class="btn btn-primary" tabindex="8" value="Print" ng-click="PrintRegister();" />
+    </div>-->
+
+</div>
+
+<div class="clearfix">&nbsp;</div>
+<div class="form-group addWithTable">
+
+
+
+
+    <div class="col-sm-12 addItemBox">
+        <div class="col-sm-3">
+            <label>
+                Party
+            </label>
+            <!-- <searchableselect name="client" tabindex="2" ng-show="Trans.EntryType && BankId" data-field="Accounts" ng-model="LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>-->
+            <searchableselect name="val_bank" tabindex="2" data-field="Accounts" ng-model="Filter.CrLedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+        </div>
+        <div class="col-sm-3">
+            <label>
+                Site
+            </label>
+            <searchableselect ng-name="val_Site" ng-id="val_Site" tabindex="4" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+            <label>
+                Entry Type
+            </label>
+            <searchableselect name="val_entry" tabindex="3" data-field="EntryTypes" ng-model="Filter.EntryType" data-val="EntryTypeId" data-text="Name"></searchableselect>
+        </div>
+
+        <div class="col-sm-2">
+            <label>
+                Ref#
+            </label>
+            <input type="text" class="form-control" ng-model="Filter.TranRefNumber" />
+        </div>
+        <div class="col-sm-2">
+            <label class="col-sm-12">&nbsp; </label>
+            <input type="button" class="btn btn-primary" tabindex="8" value="Refine Search" ng-click="FindEntryies();" />
+
+        </div>
+    </div>
+    <table class="table table-condensed table-responsive">
+
+        <tr class="headerRow">
+
+            <th style="width: 100px;">Date</th>
+            <th style="width: 100px;">Party</th>
+            <th style="width: 100px;">Entry</th>
+            <th style="width: 100px;">Account</th>
+            <th style="width: 100px;">Ref#</th>
+            <!--   <th style="width: 100px;">Ch. Date</th>-->
+            <th style="width: 100px;">Remarks</th>
+
+            <th style="text-align: right; width: 100px;">Amount</th>
+            <th style="text-align: right; width: 20px;">More</th>
+
+        </tr>
+        <tr ng-repeat="item in TransList">
+
+            <td>{{item.TransactionDate | formatDate}}</td>
+            <td>{{item.CrLedgerName}}</td>
+            <td>{{item.EntryTypeName}} </td>
+            <td>{{item.DrLedgerName}} </td>
+            <td>{{item.TranRefNumber}} </td>
+            <!--  <td>{{item.ChequeDate}} </td>-->
+            <td>{{item.Description}} </td>
+            <td style="text-align: right;">{{item.TransactionAmount |number:2 }}</td>
+            <td style="text-align: right;">
+                <div class="btn-group">
+
+                    <i class="fa fa-chevron-down" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="#" ng-click="PrintTransaction(item.LedgerTransactionId);" stop="true"><i class="fa fa-print text-primary fa-2x"></i>Print</a></li>
+                        <li><a href="#" ng-click="SendReminder(item.LedgerTransactionId,EMAIL_REMINDER);" stop="true"><i class="fa fa-envelope-o text-success fa-2x"></i>Email To Client</a></li>
+                        <li><a href="#" ng-click="SendReminder(item.LedgerTransactionId,SMS_REMINDER);" stop="true"><i class="fa fa-comment text-success fa-2x"></i>Send SMS</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+
+    </table>
+
+
+</div>
+

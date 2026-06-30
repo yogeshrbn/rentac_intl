@@ -1,0 +1,147 @@
+<!--  <pageheader heading="Bill register" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Party</label>
+                <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts"
+                                  ng-id="client_value"  data-primarytext="TradeName"  ng-model="Billing.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Site</label>
+                <searchableselect id="Searchableselect1" ng-model="Billing.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                  data-text="SiteAddress"></searchableselect>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Bill#</label>
+                <input type="text" ng-model="Billing.InvoiceNumber" class="form-control" placeholder="Invoice No" maxlength="30" />
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Inv. Type</label>
+                <select class="form-control" ng-model="Billing.InvoiceType">
+                    <option value="0" ng-selected="true">ALL</option>
+                    <option value="1">Rent</option>
+                    <option value="2">Breakage</option>
+                    <option value="4">Sale</option>
+                    <option value="5">Contract</option>
+                    <option value="6">Loss</option>
+                    <option value="8">Hire</option>
+                    <option value="9">Measurement</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" ng-model="Billing.StatusId">
+                    <option value="0" ng-selected="true">ALL</option>
+                    <option value="3">Draft</option>
+                    <option value="4">Sent For Approval</option>
+                    <option value="1">Approved</option>
+                    <option value="2">Deleted</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>From</label>
+                <datepicker date-format="dd/MM/yyyy"  >
+                    <input ng-model="Billing.From" type="text" tabindex="2" class="form-control" />
+                </datepicker>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>To</label>
+                <datepicker date-format="dd/MM/yyyy"   >
+                    <input ng-model="Billing.To" type="text" tabindex="3" class="form-control" />
+                </datepicker>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="form-group">
+                <label class="hidden-xs">&nbsp;</label>
+                <div class="d-flex" style="align-items:center;gap:8px;flex-wrap:wrap;">
+                    <input type="button" class="btn btn-primary" tabindex="4" value="Search Bills" ng-click="GetBills();" />
+                    <input type="button" class="btn btn-primary" tabindex="5" value="Print Report" ng-click="printBillListGstReport();" title="PDF bill list with GST columns (current filters, all pages)" />
+                    <input type="button" ui-sref="genBill" class="btn btn-primary" value="New Bill" ng-show="AccessData.Add" />
+                    <!--<export data="Bills" url="'billList.html'"></export>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="col-lg-12 mt-2">
+    <div id="billListGrid" class="ag-theme-quartz" style="height:450px;width:100%;"></div>
+    <div style="display:none" dir-paginate="item in Bills | itemsPerPage: PAGE_SIZE" pagination-id="billList" total-items="TotalItems"></div>
+    <div class="flex-between mt-2" style="margin-top:8px;">
+        <div class="text-muted small" ng-if="Bills.length > 0">Showing {{(CurrentPage - 1) * PAGE_SIZE + 1}} - {{(CurrentPage - 1) * PAGE_SIZE + Bills.length}} of {{TotalItems}}</div>
+        <dir-pagination-controls pagination-id="billList" on-page-change="onPageChange(newPageNumber)"></dir-pagination-controls>
+    </div>
+    <div class="col-lg-12 mt-2" ng-if="Bills.length > 0">
+        <button class="btn btn-primary" ng-click="printSelected()">Print Selected</button>
+    </div>
+    <div class="modal right fade" id="billOptionsModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:50%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Bill — {{SelectedBill.InvoiceNumber}}</h4>
+                </div>
+                <div class="modal-body" style="padding-bottom:0;">
+                    <loadingcircle ng-show="BillListPreview == 1"></loadingcircle>
+                    <div class="row" ng-if="SelectedBill">
+                        <div class="col-sm-12" style="background:#c0c0c059;padding:10px;margin-bottom:10px;">
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="downloadBillPdf()">
+                                <i class="fa fa-download"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div id="billPreviewRpt" style="zoom:0.8;overflow-y:auto;max-height:91vh;"></div>
+                </div>
+                <div class="modal-footer" style="text-align:left;">
+                    <div class="btn-toolbar" style="flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="editBill();" title="Edit bill">
+                            <i class="fa fa-edit"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="CancellBill()" title="Cancel bill">
+                            <i class="fa fa-trash"></i> Cancel
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" ng-show="AccessData.Add && SelectedBill.Balance > 0 && SelectedBill.StatusId == 1" ng-click="SettleBill()" title="Settle bill">
+                            <i class="fa fa-check"></i> Settle
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="PrintBill()" title="Print / download bill">
+                            <i class="fa fa-print"></i> Print
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" ng-if="SelectedBill.StatusId == 1" ng-click="pushToIRP()" title="Push to IRP">
+                            <i class="fa fa-paper-plane"></i> IRP
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" ng-if="SelectedBill.InvoiceType == 4" ng-click="createEwayBill()" title="Create e-way bill">
+                            <i class="fa fa-truck"></i> E-Way
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="downloadBillPdf()" title="Download PDF">
+                            <i class="fa fa-download"></i> PDF
+                        </button>
+                    </div>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

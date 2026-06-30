@@ -1,0 +1,22 @@
+-- Quotation.ValidUntil — optional validity end date on quotation header.
+-- Run DDL from PreRun/table059_Quotation_ValidUntil.sql via DbUp first.
+--
+-- Full procedure bodies for p_Quotation_ins / p_Quotation_upd / p_getQuotation_byId are not fully versioned in this repo.
+-- Export current definitions from SQL Server, merge the changes below, then deploy (CREATE OR ALTER).
+--
+-- =============================================================================
+-- p_Quotation_ins / p_Quotation_upd
+--   Add parameter (match BAL/DAL/BillingDAL.cs AddQuotation after @poDate):
+--     @validUntil DATE = NULL
+--   INSERT/UPDATE dbo.Quotation must set column:
+--     ValidUntil = @validUntil
+--
+-- p_getQuotation_byId (and any header SELECT used for quotation by number, e.g. p_getQuotation_byNumber)
+--   Add to SELECT list (alias to match QuotationDTO):
+--     q.ValidUntil
+--   (adjust table alias if not `q`.)
+--
+-- Dapper loads into QuotationDTO.ValidUntil.
+-- =============================================================================
+USE [$AppDb$]
+GO

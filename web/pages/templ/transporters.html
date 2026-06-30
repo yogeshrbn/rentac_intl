@@ -1,0 +1,110 @@
+﻿<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+   
+    <div class="col-lg-12">
+
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <div class="d-flex mb-1 mr-1">
+                <input type="text" class="form-control mr-1" placeholder="Find by name" ng-model="Search.Name" />
+
+                <input type="button" value="Find" class="btn btn-primary  mr-1" ng-click="find();" />
+
+                <a    class="btn btn-primary" ng-show="AccessData.Add"  data-toggle="modal" data-target="#addTransModel">New Transporter</a>
+                
+            </div>
+            <div>
+                <export data="Companies" url="'companies.html'"></export>
+            </div>
+        </div>
+        <div class="table-responsive">
+
+            <table class="table table-condensed table-responsive " med-key>
+
+                <tr class="headerRow">
+                    <th style="width:50px;" class="text-center">S.No</th>
+                    <th>Name</th>
+                    <th>GSTIN</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th class="text-center">Actions</th>
+
+
+                </tr>
+                <tr ng-repeat="item in Transporters">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        {{item.Name}}
+                    </td>
+                    <td>
+                        {{item.GST}}
+                    </td>
+                    <td>{{item.Phone}}</td>
+                    <td>{{item.Email}}</td>
+                    <td class="text-center">
+                        <a ng-click="edit(item);" ng-show="AccessData.Edit"><span class="fa fa-edit fa-2x text-primary"></span></a>&nbsp;&nbsp;
+                        <!--<a ng-show="item.IsActive==0" ng-click="Activate(1,item.CompanyId);"><span class="fa fa-trash text-danger"></span></a>
+        <a ng-show="item.IsActive==1" ng-click="Activate(0,item.CompanyId);"><span class="fa fa-check text-primary"></span></a>-->
+                    </td>
+                </tr>
+                <tr ng-if="Transporters.length == 0">
+                    <td colspan="7" class="text-center">
+                        <div class="alert alert-info">No branches found.</div>
+                    </td>
+                </tr>
+            </table>
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addTransModel" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Add/Edit Transporter</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group">
+                       
+                        <div class="col-sm-12">
+                            <form name="frmTransporter" id="frmTransporter">
+                                <div class="form-group row">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Name</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="val_name" class="form-control" ng-model="TP.Name" autocomplete="off" maxlength="50">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">GSTIN</label>
+                                    <div class="col-sm-8">
+                                        <input type="text"  name="val_gst"class="form-control" id="inputEmail3"   ng-model="TP.GST" maxlength="15">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                                    <div class="col-sm-8">
+                                        <input type="text"  name="val_phone"class="form-control maskednumber" phoneformat="true" ng-model="TP.Phone" maxlength="10" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="val_email" class="form-control" ng-model="TP.Email" autocomplete="off" maxlength="50">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+                <button class="btn btn-primary btn-sm ml-1" ng-click="Save();">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

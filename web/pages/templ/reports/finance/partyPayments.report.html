@@ -1,0 +1,98 @@
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Party</label>
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+        </div>
+        <div class="col-sm-2">
+            <label>Site</label>
+            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+        </div>
+        <div class="col-sm-2">
+            <label>From</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="col-sm-1">
+            <label>&nbsp;</label>
+            <input type="button" class="btn btn-primary" value="Search" ng-click="getReport();" />
+        </div>
+        <div class="col-sm-1">
+            <label>&nbsp;</label>
+            <input type="button" class="btn btn-success" value="Print PDF" ng-click="getReport(true);" />
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 mt-2">
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <tr class="headerRow">
+                <th>Party</th>
+                <th>Date</th>
+                <th class="text-right">Amount</th>
+                <th>Mode</th>
+                <th>Payment Date</th>
+                <th>Cheque Number</th>
+                <th>Narration</th>
+            </tr>
+            <tbody ng-if="ReportData.length > 0">
+                <tr ng-repeat-start="(partyKey, partyItems) in ReportData | groupBy: 'PartyDisplay'">
+                    <td colspan="7" style="background-color: #BBDEFB; font-weight: bold; padding: 8px;">
+                        Party: {{(partyKey || '-')}}
+                    </td>
+                </tr>
+                <tr ng-repeat-start="(siteKey, siteItems) in partyItems | groupBy: 'Site'">
+                    <td colspan="7" style="background-color: #E3F2FD; font-weight: bold; padding: 6px 8px 6px 24px;">
+                        Site: {{(!siteKey || siteKey === 'null' || siteKey === 'undefined') ? '-' : siteKey}}
+                    </td>
+                </tr>
+                <tr ng-repeat="item in siteItems">
+                    <td></td>
+                    <td>{{item.TransactionDate | date:'dd/MM/yyyy'}}</td>
+                    <td class="text-right">{{item.TransactionAmount | number:2}}</td>
+                    <td>
+                        <span ng-if="item.TransactionMode == 1">Cash</span>
+                        <span ng-if="item.TransactionMode == 2">Bank</span>
+                        <span ng-if="item.TransactionMode == 3">Cheque</span>
+                        <span ng-if="item.TransactionMode == 4">NEFT/RTGS</span>
+                        <span ng-if="item.TransactionMode == 5">Others</span>
+                        <span ng-if="item.TransactionMode == 6">UPI</span>
+                        <span ng-if="!item.TransactionMode">-</span>
+                    </td>
+                    <td>{{item.ChequeDate || '-'}}</td>
+                    <td>{{item.ChequeNumber || '-'}}</td>
+                    <td>{{item.Narration || '-'}}</td>
+                </tr>
+                <tr style="background-color: #e9ecef; font-weight: bold;">
+                    <td colspan="2" style="padding-left: 24px;">Subtotal ({{(!siteKey || siteKey === 'null' || siteKey === 'undefined') ? '-' : siteKey}}):</td>
+                    <td class="text-right">{{(siteItems | sum:'TransactionAmount') | number:2}}</td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr ng-repeat-end><td colspan="7" style="height: 4px;"></td></tr>
+                <tr style="background-color: #e3f2fd; font-weight: bold;">
+                    <td colspan="2" style="padding-left: 16px;">Party Subtotal ({{(partyKey || '-')}}):</td>
+                    <td class="text-right">{{(partyItems | sum:'TransactionAmount') | number:2}}</td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr ng-repeat-end><td colspan="7" style="height: 8px;"></td></tr>
+            </tbody>
+            <tr ng-if="ReportData.length > 0" class="headerRow">
+                <td colspan="2" class="text-right">Grand Total</td>
+                <td class="text-right">{{(ReportData | sum:'TransactionAmount') | number:2}}</td>
+                <td colspan="4"></td>
+            </tr>
+            <tr ng-if="ReportData.length == 0">
+                <td colspan="7" class="text-center">No records found.</td>
+            </tr>
+        </table>
+    </div>
+</div>

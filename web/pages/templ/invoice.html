@@ -1,0 +1,104 @@
+﻿ <!--  <pageheader heading="Generate Invoice" />-->
+<div class="col-sm-12">
+
+    <div class="col-sm-4">
+        <label>Choose Job#</label>
+        <searchableselect id="ddlSite" ng-model="WorkOrder.SiteId" data-field="Site" data-val="SiteId" data-text="JobNumber"></searchableselect>
+    </div>
+    <div class="col-sm-4">
+        <label>Invoice#</label>
+        <input type="text" class="form-control" ng-model="WorkOrder.InvoiceNumber" />
+    </div>
+    <div class="col-sm-4">
+        <label>Invoice Date</label>
+        <input type="date" class="form-control" ng-model="WorkOrder.InvoiceDate" />
+    </div>
+
+
+</div>
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="col-sm-4">
+        <label>Company</label>
+        <searchabletext ng-id="company" data-item="Company" selected-object="CompanySelection" name="company_value" field-required="true"> </searchabletext>
+
+    </div>
+    <div class="col-sm-4">
+    </div>
+</div>
+
+<div class="col-sm-12">
+
+    <div class="clearfix">&nbsp;</div>
+</div>
+<div class="col-sm-12">
+    <div class="col-sm-12" style="overflow-y: auto;">
+        <table class="table table-condensed table-responsive tableInput" med-key>
+
+            <tr class="headerRow">
+                <th style="width: 15px;">#</th>
+                <th>Item</th>
+                <!--            <th>Totl On Site</th>-->
+                <th>Qty</th>
+                <th>Rate</th>
+                <th width="150px">Amount</th>
+            </tr>
+            <tr ng-repeat="item in WorkOrder.Items">
+                <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">{{$index+1}}
+                </td>
+                <td>
+                    <searchabletext ng-id="item{{$index+1}}" data-item="Product" selected-object="selectedProduct"> </searchabletext>
+                </td>
+
+                <td>
+                    <input type="number" ng-model="item.PurchaseQty" class="form-control" />
+
+                </td>
+                <td>
+                    <input type="text" ng-model="item.Rate" class="form-control" /></td>
+                <td class="text-right">{{item.PurchaseQty * item.Rate |number:3  }}
+
+                </td>
+
+            </tr>
+
+        </table>
+    </div>
+
+</div>
+
+<div class="col-sm-12">
+    <div class="col-sm-8">
+        <div class="clearfix">&nbsp;</div>
+        <div class="row">
+
+            <div class="col-sm-5">
+                <label>Details</label>
+                <textarea class="form-control" style="height: 70px;" ng-model="WorkOrder.Details"></textarea>
+            </div>
+            <div class="col-sm-5">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4" style="padding-right: 15px;">
+        <table class="table  table-responsive text-bold">
+            <tr>
+                <td class="text-right">SubTotal</td>
+                <td class="text-right" width="80px">{{ SubTotal(0)|number:2}}</td>
+            </tr>
+
+            <tr ng-repeat="tax in WorkOrder.Taxes">
+
+                <td class="text-right">
+                    <input type="checkbox" ng-model="tax.Applicable" />
+                    {{tax.Name}}({{tax.Rate  |number:2 }}%)</td>
+                <td class="text-right" width="100px">{{tax.Applicable && (WorkOrder.SubTotal  * tax.Rate/100.00) || 0 |number:2}}</td>
+            </tr>
+
+            <tr>
+
+                <td class="text-right">Total</td>
+                <td class="text-right" width="150px">{{ SubTotal(1)|number:2}}</td>
+            </tr>
+    </div>
+</div>

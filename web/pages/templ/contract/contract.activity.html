@@ -1,0 +1,139 @@
+<div class="modal fade" id="addJobDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:36%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Add Activity</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form name="fromWoJobCard" id="fromWoJobCard">
+                        <!--<div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-4">Job Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="jobNumber" maxlength="20" class="form-control" ng-model="JobCard.JobNumber" />
+                                </div>
+                            </div>
+                        </div>-->
+                        <!--<div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Days</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="days" maxlength="3" nodecimal class="form-control maskednumber " ng-model="JobCard.Days" />
+                                </div>
+                            </div>
+                        </div>-->
+                        <!--<div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Quantity</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="3" nodecimal name="quantity" class="form-control maskednumber" ng-model="JobCard.Quantity" />
+                                </div>
+                            </div>
+                        </div>-->
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4">
+                                    Activity Type
+
+                                </label>
+                                <div class="col-sm-8">
+                                    <searchableselect ng-name="activityType" ng-id="activityType"
+                                                      data-field="ActivityTypes" ng-model="JobCard.TypeId"
+                                                      data-val="Id" data-text="Name"></searchableselect>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1" ng-if="showEmployees">
+                            <div class="form-group">
+                                <label class="col-sm-4">
+                                    Employee(s)
+
+                                </label>
+                                <div class="col-sm-8">
+                                    <!--<searchableselect ng-name="employee" ng-id="employee"
+                                    data-field="Employees" ng-model="JobCard.EmployeeId"
+                                    data-val="EmployeeId" data-text="Name"></searchableselect>-->
+                                    <multiselectcheckbox data="Employees" text="Name" text2="Name" key="EmployeeId"
+                                                         selecteddata="selectedEmployees"></multiselectcheckbox>
+                                    <span>Select your employee for this job</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Client Contact Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="30" name="clientContactName" class="form-control" ng-model="JobCard.ContactName" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Client Contact No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="10" name="clientContactMobile maskednumber" phoneformat="true" class="form-control" ng-model="JobCard.ContactNo" />
+                                </div>
+                            </div>
+                        </div>-->
+                        <!--<div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Area Covered</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="30" name="clientContactName" class="form-control maskednumber" ng-model="JobCard.AreaCovered" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Rate/Sqft</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="30" name="clientContactName maskednumber" class="form-control" ng-model="JobCard.UnitAreaRate" />
+                                </div>
+                            </div>
+                        </div>-->
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Estimated Start Date</label>
+                                <div class="col-sm-8">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="JobCard.EstimatedStartDate" name="estimatedStartDate" id="estimatedStartDate" tabindex="2" type="text" class="form-control" />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Estimated End Date</label>
+                                <div class="col-sm-8">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="JobCard.EstimatedEndDate" name="estimatedEndDate" id="estimatedEndDate" tabindex="2" type="text" class="form-control" />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea maxlength="500" class="form-control" ng-model="JobCard.Remarks" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary btn-sm" ng-click="SaveJobCard();">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>

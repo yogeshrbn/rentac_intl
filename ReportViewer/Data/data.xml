@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RioMedals>
+  <Country Name="America" Gold="43" Silver="37" Bronze="36"></Country>
+  <Country Name="GreatBritain" Gold="27" Silver="22" Bronze="17"></Country>
+  <Country Name="China" Gold="26" Silver="18" Bronze="26"></Country>
+  <Country Name="Russia" Gold="17" Silver="17" Bronze="19"></Country>
+  <Country Name="India" Gold="1" Silver="1" Bronze="1"></Country>
+</RioMedals>

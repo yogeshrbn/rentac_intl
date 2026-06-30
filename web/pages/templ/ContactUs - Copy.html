@@ -1,0 +1,79 @@
+﻿<div class="form-group">
+
+   
+    <div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>
+    <div class="col-lg-12">
+
+        <table class="table table-condensed table-responsive" med-key>
+            <tr class="filterRow hidden-xs">
+                <th>
+                    <!--<input type="text" class="form-control" placeholder="Find by code" ng-model="search.Name" />-->
+                </th>
+                <th>
+                    <!--<input type="text" class="form-control" placeholder="Find by name" ng-model="search.Address1" />-->
+                </th>
+                <th colspan="6" style="text-align:right;">
+                    <!--<input type="button" value="Find" class="btn btn-primary" ng-click="Find();" />&nbsp;-->
+                    <button ng-click="New()" class="btn btn-primary" ng-show="AccessData.Add">New Employee</button>
+                    <!--<input type="button" value="Advance Filter" class="btn btn-primary" />-->
+                </th>
+               
+                <th></th>
+            </tr>
+            <tr class="headerRow">
+                <th>S.No</th>
+                <th>Name</th>
+                  <th>Code</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Aadhar</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+
+            </tr>
+            <tr dir-paginate="item in Employees | itemsPerPage: PAGE_SIZE |filter: search:strict">
+                <td>{{$index+1}}</td>
+                <td>{{item.Name}}
+                </td>
+                 <td>{{item.EmployeeCode}}</td>
+                <td>{{item.Address}}
+                </td>
+                <td>{{item.Phone}}</td>
+                <td>{{item.Aadhar}}</td>
+                <td>{{item.RoleName}}</td>
+                <td>{{item.StatusName}}</td>
+                <td  >
+                    <div class="btn-group">
+                        <!-- <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Action
+                         <span class="caret"></span>
+                        </button>-->
+                        <i class="fa fa-chevron-down" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ></i>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="#" ng-click="Edit(item);" ng-show="AccessData.Edit">Edit</a></li>
+                            <!--    <li><a href="#" ng-click="De-Activate(item);">Close Site</a></li>
+
+                            <li><a href="#" ng-click="Activate(item);">Open Site</a></li>-->
+                        </ul>
+                    </div>
+
+                </td>
+            </tr>
+
+        </table>
+        <dir-pagination-controls></dir-pagination-controls>
+        <script lang="javascript">
+            $('.nav a').click(function (e) {
+                e.preventDefault();
+            });
+            $('table').click(function (e) {
+
+                e.preventDefault();
+
+            });
+        </script>
+    </div>
+</div>

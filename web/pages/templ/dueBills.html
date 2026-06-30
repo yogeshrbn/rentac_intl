@@ -1,0 +1,179 @@
+<div class="form-group">
+    <style>
+        .md-dialog-content {
+            max-width: 300px;
+        }
+
+        md-dialog {
+            max-width: 300px;
+        }
+    </style>
+    <!--   <div class="clearfix">&nbsp;</div>-->
+    <!--    <div class="alert alert-success" ng-show="Salts.length==null">
+    </div>-->
+
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-lg-12">
+        <div class="row mb-1">
+            <div class="col-sm-3">
+                <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+            </div>
+            <div class="col-sm-3">
+                <searchableselect class="flex-item-right" id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                  data-text="SiteAddress"></searchableselect>
+            </div>
+            <div class="col-sm-2">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+
+                </datepicker>
+            </div>
+            <div class="col-sm-2">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input ng-model="Filter.To" type="text" tabindex="2" class="form-control" />
+
+                </datepicker>
+            </div>
+            <div class="col-sm-2 col-xs-12">
+                <div class="d-flex" style="align-items:center;justify-content:space-between;">
+
+                    <div class="d-flex" style="align-items: center; justify-content: space-between;">
+
+                        <input type="button" value="Find" class="btn btn-primary mr-1" ng-click="Find();" />
+                        <input type="button" value="Print PDF" class="btn btn-success mr-1" ng-click="PrintPdf();" />
+
+                    </div>
+                    <div>
+                        <export data="dataToExport" url="'dueBills.html'"></export>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="table-responsive">
+            <table class="table table-condensed " id="workOrderTable">
+
+                <!--<tr class="headerRow">
+                    <th colspan="5" class="text-right">
+                        <label>Total</label>
+                    </th>
+                    <th class="text-right">  {{DueBills | sum:'Amount' | number:2}}</th>
+                </tr>-->
+
+                <tr class="headerRow">
+                    <th style="width: 20px;" class="text-center">S.#</th>
+                    <th style="width: 150px;" colspan="2">Site</th>
+                    <th style="width: 40px;" class="text-center">Opening</th>
+
+                    <th style="width: 40px;" class="text-center">Sent</th>
+                    <th style="width: 40px;" class="text-center">Received</th>
+                    <th style="width: 40px;" class="text-center">Balance</th>
+                    <th style="width: 150px;">Last Invoice #</th>
+                    <th style="width: 100px;">Last Billed On</th>
+                    <th style="width: 150px;" class="text-right">Bill Amount</th>
+                    <!--<th style="width: 50px;">Phone</th>-->
+                    <!--<th style="width: 50px;" class="text-right">Due Amount</th>-->
+                    <th style="width: 40px;" class="text-center">Actions</th>
+
+                </tr>
+
+                <tbody ng-if="(DueBills || []).length > 0">
+                    <tr ng-repeat-start="(partyKey, partyItems) in DueBills | groupBy: 'Client'">
+                        <td colspan="10" style="background-color: #BBDEFB; font-weight: bold; padding: 8px;">
+                            Party: {{(partyKey || '-')}}
+                        </td>
+                    </tr>
+                    <tr ng-repeat="item in partyItems">
+                        <td class="text-center">{{$index+1}}</td>
+
+                        <td colspan="2" style="max-width: 200px; text-overflow: ellipsis; word-break: break-word;" class="overflow-td"><i class="text-info">{{item.Project}}</i> {{item.SiteAddress}}</td>
+                        <td class="text-center">{{item.OpBalance}}</td>
+
+                        <td class="text-center">{{item.SentQty}}</td>
+                        <td class="text-center">{{item.RecQty}}</td>
+                        <td class="text-center">{{item.ClosingBalance}}</td>
+
+                        <td>
+                            <a ng-if="(item.LastInvoiceNumber || item.InvoiceNumber) && item.InvoiceId"
+                               class="text-primary" href=""
+                               ng-click="$event.preventDefault(); previewLastRentBill(item);"
+                               title="Open bill PDF"
+                               style="cursor:pointer;text-decoration:underline;">{{item.LastInvoiceNumber || item.InvoiceNumber}}</a>
+                            <span ng-if="(item.LastInvoiceNumber || item.InvoiceNumber) && !item.InvoiceId">{{item.LastInvoiceNumber || item.InvoiceNumber}}</span>
+                            <span ng-if="!(item.LastInvoiceNumber || item.InvoiceNumber)">-</span>
+                        </td>
+                        <td>{{item.LastBillDate | formatDate}}</td>
+                        <td class="text-right">{{item.Total | number:2}}</td>
+
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-success" ng-click="gotoBilling(item)" ng-show="AccessData.Add">Bill Now</button>
+                        </td>
+                    </tr>
+                    <tr ng-repeat-end><td colspan="10" style="height: 8px;"></td></tr>
+                </tbody>
+
+                <tr ng-if="!(DueBills || []).length">
+
+                    <td class="nodatafound" colspan="10">No sites found!</td>
+
+
+
+                </tr>
+
+
+                <!--<tr class="headerRow">
+                    <td colspan="5" class="headerRow text-right">
+                        <label>Total </label>
+                    </td>
+                    <td class="text-right">
+                        {{DueBills | sum:'Amount' | number:2}}
+                    </td>
+                </tr>-->
+
+            </table>
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+    <div class="modal right fade" id="previewDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:50%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Preview</h4>
+                </div>
+                <div class="modal-body" style="padding-bottom:0px;">
+                    <loadingcircle ng-show="DueBillPreview == 1"></loadingcircle>
+                    <div class="row">
+                        <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                            <div class="d-flex d-sm-block" style="justify-content: space-between; flex-direction: row;">
+                                <button class="btn btn-primary btn-sm" ng-click="downloadDueBillPdf()">Download PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rpt" style="zoom: 0.8; overflow-y: auto; max-height: 93vh;">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" ng-click="downloadDueBillPdf()">Download PDF</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script lang="ja">
+        $('.hi').click(function (e) {
+            alert('hi');
+            e.preventDefault();
+        });
+
+
+    </script>
+</div>

@@ -1,0 +1,656 @@
+<style>
+    .tile-container {
+        /* margin-bottom: 30px;*/
+    }
+
+    .tile {
+        border-radius: 6px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        background: white;
+        border: 1px solid #e1e5eb;
+    }
+
+        .tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .delayed {
+        color: red !important;
+    }
+
+    .due {
+        color: green !important;
+    }
+
+    .tile-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #e1e5eb;
+        font-weight: 600;
+        color: #2c3e50;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tile-body {
+        padding: 20px;
+    }
+
+    .tile-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #e1e5eb;
+        background-color: #f8f9fa;
+    }
+
+    .order-id {
+        font-weight: 600;
+        color: #3498db;
+    }
+
+    .customer-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .order-date {
+        color: #7f8c8d;
+        font-size: 0.9em;
+    }
+
+    .order-amount {
+        font-size: 1.4em;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .order-status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-processing {
+        background-color: #cce7ff;
+        color: #004085;
+    }
+
+    .status-shipped {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-delivered {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .order-items {
+        /*     margin-top: 15px;*/
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px dashed #e1e5eb;
+    }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+    .item-name {
+        flex-grow: 1;
+    }
+
+    .item-qty {
+        color: #7f8c8d;
+        margin: 0 5px;
+    }
+
+    .item-price {
+        font-weight: 600;
+    }
+
+    .order-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .btn-order {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+
+    .metrics-tile {
+        text-align: center;
+        padding: 5px 0px
+    }
+
+    .metric-value {
+        font-size: 2.2em;
+        color: #000;
+        font-weight: 300;
+        margin: 0px 0;
+    }
+
+    .metric-label {
+        font-size: 0.95em;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .metric-change {
+        font-size: 0.85em;
+        margin-top: 5px;
+    }
+
+    .change-positive {
+        color: #27ae60;
+    }
+
+    .change-negative {
+        color: #e74c3c;
+    }
+
+    .priority-high {
+        border-left: 4px solid #e74c3c;
+    }
+
+    .priority-medium {
+        border-left: 4px solid #f39c12;
+    }
+
+    .priority-low {
+        border-left: 4px solid #3498db;
+    }
+
+    .order-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.7em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .order-tile {
+        position: relative;
+    }
+
+    .customer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+    }
+
+        .customer-avatar img {
+            width: 100%;
+            height: auto;
+        }
+
+    .customer-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .filter-controls {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .progress {
+        height: 8px;
+        margin-bottom: 10px;
+    }
+
+    .employeesMultiSelect div {
+        height: 100px;
+    }
+
+    .rentac-multiselect {
+        border: solid 1px #cdcdcd;
+        position: relative;
+        width: auto;
+        zoom: 1;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .rentac-multiselect li {
+            padding: 2px;
+        }
+</style>
+<div class="col-md-12">
+    <!-- Filter Controls -->
+    <div class="row" style="margin-bottom:10px;">
+        <div class="col-sm-12">
+            <div class="flex-container" style="justify-content: space-between;">
+                <div>
+                    <label>Choose Party</label>
+
+                    <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                      ng-id="client_value" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                </div>
+                <!--<div style="width:200px;">
+                    <label>Site</label>
+                    <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                      data-text="SiteAddress"></searchableselect>
+                </div>-->
+                <div>
+                    <label>From</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+                    </datepicker>
+                </div>
+                <div>
+                    <label>To</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+                    </datepicker>
+                </div>
+                <div>
+                    <label>Contract Status</label>
+                    <select class="form-control" ng-model="Filter.ActivityType">
+                        <option ng-value="0"> All</option>
+                        <!--<option ng-value="1"> Draft</option>-->
+                        <!--<option ng-value="2"> Active</option>-->
+                        <!--<option ng-value="3"> Deleted</option>-->
+                        <option ng-value="1"> Installation</option>
+                        <option ng-value="2"> Dismantle</option>
+                        <option ng-value="4"> Re-Install</option>
+                        <option ng-value="3"> Pick-Up</option>
+
+                    </select>
+                </div>
+                <div>
+                    <label>Activity Status</label>
+                    <select class="form-control" ng-model="Filter.ActivityStatusId">
+                        <option ng-value="0"> All</option>
+                        <option ng-value="1">Not Completed</option>
+                        <option ng-value="2">Completed</option>
+                        <option ng-value="3">Delayed</option>
+                        <option ng-value="4">In-Progress</option>
+                    </select>
+                </div>
+                <div>
+                    <label>&nbsp;</label>
+                    <div style=" display: flex; flex-direction: row; align-content: space-around; justify-content: space-between; align-items: center;">
+
+                        <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="filter();" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Metrics -->
+    <div class="row tile-container">
+        <div class="col-md-2 col-sm-6">
+            <div class="tile metrics-tile selected-tile" ng-click="applyByStatus('');">
+                <div class="metric-value">{{Contracts.length}}</div>
+                <div class="metric-label">Total</div>
+                <!--<div class="metric-change change-positive">
+                <i class="fa fa-arrow-up"></i> 12.5% from last month
+            </div>-->
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-6">
+            <div class="tile metrics-tile" ng-click="applyByStatus('install');">
+                <div class="metric-value">{{Installations}}</div>
+                <div class="metric-label">Installations</div>
+                <!--<div class="metric-change change-positive">
+                <i class="fa fa-arrow-up"></i> 8.3% from last month
+            </div>-->
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-6">
+            <div class="tile metrics-tile" ng-click="applyByStatus('dismantle');">
+                <div class="metric-value">{{Dismantle}}</div>
+                <div class="metric-label">Dismantal</div>
+                <!--<div class="metric-change change-negative">
+                <i class="fa fa-arrow-down"></i> 3.2% from last week
+            </div>-->
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <div class="tile metrics-tile" ng-click="applyByStatus('reinstall');">
+                <div class="metric-value">{{ReInstall}}</div>
+                <div class="metric-label">Re-Install</div>
+                <!--<div class="metric-change change-negative">
+                <i class="fa fa-arrow-down"></i> 3.2% from last week
+            </div>-->
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <div class="tile metrics-tile" ng-click="applyByStatus('pickup');">
+                <div class="metric-value">{{Pickup}}</div>
+                <div class="metric-label">Pickup</div>
+                <!--<div class="metric-change change-negative">
+                <i class="fa fa-arrow-down"></i> 3.2% from last week
+            </div>-->
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <div class="tile metrics-tile" ng-click="applyByStatus('other');">
+                <div class="metric-value">{{Others}}</div>
+                <div class="metric-label">Others</div>
+                <!--<div class="metric-change change-positive">
+                <i class="fa fa-arrow-up"></i> 0.2 from last month
+            </div>-->
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Grid -->
+    <div class="row tile-container">
+        <div class="col-sm-offset-10 col-sm-2  text-right mb-1">
+
+
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" title="Table View" class="btn btn-default" ng-click="view = 'list'"><i class="fa fa-list"></i></button>
+                <button type="button" title="Card View" class="btn btn-default" ng-click="view = 'card'"><i class="fa fa-th"></i></button>
+            </div>
+
+
+        </div>
+        <!-- Order 1 -->
+        <div class="col-md-4 col-sm-6" ng-repeat="item in FilteredContracts" ng-if="view=='card'">
+            <div class="tile order-tile priority-high">
+                <div class="tile-header">
+
+                    <span class="order-id" ng-class="{'delayed' : item.ActivityStatus == 'Delayed'}">{{item.Activity}}</span>
+                    <span class="order-status status-processing" ng-class="{'delayed' : item.ActivityStatus == 'Delayed'}">{{item.ActivityStatus}}</span>
+                </div>
+                <div class="tile-body">
+                    <div class="customer-info">
+                        <div class="customer-avatar">
+                            <img src="https://via.placeholder.com/150/3498db/ffffff?text=JS" alt="Customer Avatar">
+                        </div>
+                        <div>
+                            <div class="customer-name">
+                                {{item.Client}}
+
+                            </div>
+                            <div class="order-date">Placed on:  {{item.EffectiveFrom | date}}</div>
+                        </div>
+                    </div>
+                    <!--<div class="order-amount">
+                        INR {{item.ContractValue | number:2}}
+                    </div>-->
+                <div class="order-items">
+                    <div class="order-item" ng-if="item.ProjectOwnerName">
+                        <span style="color:blue;font-size:12px;">
+
+                            ({{item.ProjectOwnerName}})
+                        </span>
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">Quotation#</span>
+                        <span class="item-price">{{item.QuotationNumber}}</span>
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">Description</span>
+                        <span class="item-price">{{item.SizeDescription}}</span>
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">Due On</span>
+                        <span class="item-price">
+                            {{item.ActivityDate | formatDate}}
+                        </span>
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">Completed On</span>
+                        <span class="item-price">
+                            {{item.ActivityCompletionDate | formatDate}}
+
+                        </span>
+
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">Total Area</span>
+                        <!--<span class="item-qty">x2</span>-->
+                        <span class="item-price"> {{item.ActivityArea}}</span>
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">Completed Area</span>
+                        <!--<span class="item-qty">x2</span>-->
+                        <span class="item-price"> {{item.ActivtyAreaCovered}}</span>
+                    </div>
+
+                    <div class="order-item">
+                        <span class="item-name">Site</span>
+                        <!--<span class="item-qty">x1</span>-->
+                        <span class="item-price">
+                            {{item.SiteAddress}}
+                        </span>
+                    </div>
+                    <div class="order-item">
+                        <span class="item-name">App. Weight</span>
+                        <!--<span class="item-qty">x1</span>-->
+                        <span class="item-price">
+                            {{item.ApproximateWeight}} KG
+                        </span>
+                    </div>
+                </div>
+                    <!--<div class="progress">
+                        <div class="progress-bar progress-bar-warning" style="width: 60%"></div>
+                    </div>
+                    <small>Order is being processed</small>-->
+                </div>
+                <div class="tile-footer">
+                    <div class="order-actions">
+                        <button class="btn btn-primary btn-order" ng-click="info(item)">View Details</button>
+                        <button class="btn btn-success btn-order" ng-if="item.ActivityStatus != 'Completed' || item.ActivityStatus == 'Delayed'" ng-click="updateStatusDialog(item)">Update Status</button>
+                        <div style="display: flex; width: 103px; justify-content: space-between;">
+                            {{item.ActivityType}}
+                            <button class="btn btn-default" ng-if="item.Activity != 'DISMANTLE'" title="Delivery Challan" ng-click="createDeliveryChallan(item)"> <i class="fa fa-truck fa-2x text-success"></i></button>
+                            <button class="btn btn-default" title="Return Challan" ng-click="createReturnChallan(item)"> <i class="fa fa-undo fa-2x text-warning"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive" ng-if="view !='card'">
+            <table class="table table-condensed ">
+                <tr class="headerRow">
+                    <th style="width: 50px;" class="text-center">#</th>
+                    <th style="width: 100px;" sort-header="Contracts" sort-field="Activity">Activity</th>
+                    <th style="width: 100px;" class="text-center" sort-header="Contracts" sort-field="ActivityStatus">Status</th>
+                    <th style="width: 100px;" class="text-center" sort-header="Contracts" sort-field="ActivityDate">Due Date</th>
+                    <th style="width: 110px;" class="text-center" sort-header="Contracts" sort-field="ActivityCompletionDate">Comp. Date</th>
+                    <th style="width: 130px;" class="text-center" sort-header="Contracts" sort-field="Area">Area | Comp</th>
+                    <th style="width: 100px;" class="text-center" sort-header="Contracts" sort-field="SizeDescription">Size</th>
+                    <th style="width: 350px;" sort-header="Contracts" sort-field="Client">Details</th>
+                    <th style="width: 50px;" class="text-center" sort-header="Contracts" sort-field="QuotationNumber">Quotation#</th>
+                    <!--<th style="width: 120px;" class="text-right" sort-header="Contracts" sort-field="ContractValue">Value (INR)</th>-->
+                    <td style="width:100px" class="text-center">Actions</td>
+
+                </tr>
+                <tr id="tr{{item.ContractId}}" ng-repeat="item in FilteredContracts track by $index">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        <span class="order-id" ng-class="{'delayed' : item.ActivityStatus == 'Delayed'}">{{item.Activity}}</span>
+
+                    </td>
+                    <td class="text-center">
+                        {{item.ActivityStatus}}
+
+                    </td>
+                    <td class="text-center">
+                        {{item.ActivityDate | formatDate}}
+                    </td>
+                    <td class="text-center">
+                        {{item.ActivityCompletionDate  | formatDate}}
+                    </td>
+                    <td class="text-center">
+                        {{item.ActivityArea}} | {{item.ActivtyAreaCovered}}
+                    </td>
+                    <td class="text-center">
+                        {{SizeDescription}}
+                    </td>
+                    <td>
+                        <strong>Client:</strong>  {{item.Client}}
+                        <span style="font-size:11px;padding-left:5px;">
+                            <br />
+                            ({{item.SiteAddress}})
+                        </span>
+                        <span ng-if="item.ProjectOwnerName" style="color:blue">
+                            <br />
+                            ({{item.ProjectOwnerName}})
+                        </span>
+                        <span ng-if="item.ApproximateWeight" >
+                            <br />
+                           Weight: ({{item.ApproximateWeight}}) KG
+                        </span>
+                        
+                    </td>
+                    <td class="text-center">
+                        {{item.QuotationNumber}}
+                    </td>
+                    <!--<td class="text-right">
+                        {{item.ContractValue | number:2}}
+                    </td>-->
+                    <td class="text-center" style="vertical-align:middle;">
+
+                        <div style="display: flex; width: 100%; justify-content: space-around;">
+                            <a href="#" ng-click="info(item)" stop="true" title="View Details"><i class="fa fa-eye"></i></a>
+                            <a href="#" stop="true" ng-click="updateStatusDialog(item)" title="Update Status"><i class="fa fa-edit"></i></a>
+                            <a href="#" stop="true" ng-click="createDeliveryChallan(item)" title="Delivery Challan"><i class="fa fa-truck  text-success"></i></a>
+                            <a href="#" stop="true" ng-click="createReturnChallan(item)" title="Return Challan"><i class="fa fa-undo  text-warning"></i></a>
+                        </div>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="changeStatusDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Change Status</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form name="frmExtendConract" id="frmExtendConract">
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Status</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" ng-model="JobCard.StatusId">
+                                        <option ng-value="1">Not Completed</option>
+                                        <option ng-value="4">In-Progress</option>
+                                        <option ng-value="2">Completed</option>
+                                        <option ng-value="3">Delayed</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3">
+                                    Employee(s)
+
+                                </label>
+                                <div class="col-sm-8">
+
+                                    <multiselectcheckbox data="Employees" text="Name" text2="Name" key="EmployeeId"
+                                                         selecteddata="selectedEmployees"></multiselectcheckbox>
+                                    <span>Select your employee for this job</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Area Covered</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="30" name="clientContactName" class="form-control maskednumber" ng-model="JobCard.AreaCovered" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3">Completion Date</label>
+                                <div class="col-sm-8">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="JobCard.CompletionDate" type="text" tabindex="3" class="form-control" />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" style="height:100px;width:100%" ng-model="JobCard.Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1" ng-if="JobCard.Activity === 'INSTALL'">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Install photo</label>
+                                <div class="col-sm-8">
+                                    <input type="file" accept="image/*" style="display:none" id="installActivityImageFile" />
+                                    <button type="button" class="btn btn-default btn-sm" ng-click="browseInstallActivityImage()">Choose image</button>
+                                    <button type="button" class="btn btn-link btn-sm" ng-if="installActivityImageDataUrl" ng-click="clearInstallActivityImage()">Remove</button>
+                                    <div ng-if="installActivityImagePreview" style="margin-top:8px;">
+                                        <img ng-src="{{installActivityImagePreview}}" style="max-width:100%;max-height:180px;border:1px solid #ccc;" alt="Preview" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary btn-sm" ng-click="updateStatus();">Change Status</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<ng-include src="'templ/contract/contract.activity.html'"></ng-include>

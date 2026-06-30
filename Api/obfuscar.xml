@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<Obfuscator>
+  <Var name="InPath" value=".\" />
+  <Var name="OutPath" value=".\Obfuscat\" />
+
+  <Var name="KeepPublicApi" value="true" />
+  <Var name="HidePrivateApi" value="true" />
+  <Var name="RenamePublicMethods" value="true" />
+  <Var name="RenameProperties" value="false" />
+  <Var name="RenameEvents" value="false" />
+  <Var name="ReuseNames" value="false" />
+  <var name="RenameFields" value="true"/>
+  <Module file="$(InPath)FarmaAPI.dll">
+    <SkipType name="FarmaAPI.Controllers.*" />
+    <SkipType name="FarmaAPI.Program" />
+    <SkipType name="FarmaAPI.Startup" />
+  </Module>
+  <Module file="$(InPath)\BAL.dll" />
+</Obfuscator>

@@ -1,0 +1,162 @@
+<!--<pageheader heading="Daily Transactions" />-->
+<div class="clearfix">&nbsp;</div>
+<form id="form-mat" method="post">
+    <div class="col-sm-12">
+
+        <div class="col-sm-3">
+            <label>Party</label>
+            <!--<searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code"
+                    selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>-->
+            <!--<searchableselect ng-name="client" ng-id="client" tabindex="1" data-field="Accounts" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>-->
+            <searchableselect name="client_value" tabindex="2" data-primarytext="TradeName" data-field="Accounts" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+        </div>
+        <div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect ng-name="site" ng-id="site" tabindex="2" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+            <label>Date</label>
+            <datepicker date-format="dd/MM/yyyy" date-max-limit="{{Today}}">
+                <input ng-model="Adjust.WorkOrderDate" type="text" class="form-control"
+                       id="val_workOrderDate" name="val_workOrderDate" maxDate="{{Today}}" minDate="{{MinDate}}" />
+            </datepicker>
+        </div>
+        <div class="col-sm-4">
+            <label>Adjustment Type</label>
+            <div style="padding-top:6px;">
+                <label class="radio-inline"><input type="radio" ng-model="Adjust.AdjType" ng-value="1" /> Rent</label>
+                <label class="radio-inline"><input type="radio" ng-model="Adjust.AdjType" ng-value="2" /> Hire</label>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="form-group">
+
+
+        <div class="clearfix">&nbsp;</div>
+        <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+        </div>-->
+        <div class="col-md-12 nopadding ">
+            <div class="col-md-12 nopadding">
+
+
+
+                <div class="col-md-6">
+                    <!-- <h4>Received Items</h4>-->
+                    <label>
+                        1. Items To be Issued
+                        <i class="fa fa-question-circle text-info"></i>
+                    </label>
+
+                    <table class="table table-condensed table-responsive tableInput">
+
+                        <tr class="headerRow">
+                            <th style="width: 137px;">Item</th>
+                            <th style="width: 50px;" class="text-center">Excess Qty</th>
+                            <th style="width: 50px;" class="text-center">Qty</th>
+                            <th style="width: 50px;"></th>
+
+                        </tr>
+                        <tr class="headerRow">
+                            <th style="width: 137px;">
+                                <searchabletext ng-id="itemIssue" local-data="AllSizes" title-field="Product" name="Product" search-fields="Product,Code"
+                                                selected-object="IssueitemSelected" data-entry="1" tab-index="8"> </searchabletext>
+                            </th>
+                            <th style="width: 50px;" class="text-center">{{IssueItem.ClosingBalance}}</th>
+                            <th style="width: 50px;" class="text-center">
+                                <input type="number" class="form-control text-center" ng-model="IssueItem.SentQty" tabindex="9" />
+                            </th>
+                            <th style="width: 50px;" class="text-center">
+                                <button class="btn btn-primary" ng-click="addToIssueList();" tabindex="10">Add</button>
+                            </th>
+
+                        </tr>
+                        <tr ng-repeat="item in IssueList">
+                            <td style="width: 137px;">{{item.Product}}</td>
+                            <td style="width: 50px;" class="text-center">
+                                {{item.ExcessQty}}
+                            </td>
+                            <td style="width: 50px;" class="text-center">
+                                <input type="text" ng-model="item.SentQty" class="form-control" />
+                            </td>
+                            <td style="width: 50px;" class="text-center">
+                                <a href="#" stop="true" ng-click="removeIssue($index);"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+                </div>
+                <div class="col-md-6" style="">
+                    <!-- <h4>Received Items</h4>-->
+                    <label>
+                        2. Items To be Received
+                        <i class="fa fa-question-circle text-info" data-toggle="tooltip"
+                           data-placement="top" title="Tooltip on top"></i>
+                    </label>
+
+                    <table class="table table-condensed table-responsive tableInput">
+
+                        <tr class="headerRow">
+                            <th style="width: 137px;">Item</th>
+                            <th style="width: 50px;" class="text-center">Balance</th>
+                            <th style="width: 50px;" class="text-center">Qty</th>
+                            <th style="width: 50px;"></th>
+
+                        </tr>
+                        <tr class="headerRow">
+                            <th style="width: 137px;">
+                                <!--  <searchableselect ng-id="product" name="val_product[]" tabindex="7" data-field="Balance" on-itemselected="itemSelected(itemId)" description-field="Code" ng-model="IssueItem.ProductId" ng-ret_type="index" data-val="ProductId" data-text="Item"></searchableselect>-->
+                                <searchabletext ng-id="itemRec" local-data="AllSizes" title-field="Product" name="Product" search-fields="Product,Code"
+                                                selected-object="RecitemSelected" data-entry="1" tab-index="3"> </searchabletext>
+                            </th>
+                            <th style="width: 50px;" class="text-center">
+                                {{RecItem.ClosingBalance}}
+                            </th>
+                            <th style="width: 50px;" class="text-center">
+                                <input type="number" class="form-control" ng-model="RecItem.Quantity" tabindex="4" />
+                            </th>
+                            <th style="width: 50px;" class="text-center">
+                                <button class="btn btn-primary" ng-click="addToRecList();" tabindex="5">Add</button>
+                            </th>
+
+                        </tr>
+                        <tr ng-repeat="item in ReceiveList">
+                            <td style="width: 137px;">{{item.Product}}</td>
+                            <td style="width: 50px;" class="text-center">
+                                {{ item.ClosingBalance}}
+                            </td>
+                            <td style="width: 50px;" class="text-center">
+                                <input type="text" ng-model="item.Quantity" class="form-control" />
+                            </td>
+                            <td style="width: 50px;" class="text-center">
+                                <a href="#" stop="true" ng-click="remove($index);"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+                </div>
+            </div>
+            <div class="col-md-12 nopadding">
+                <div class="col-md-12 layout-margin-gt-md nopadding">
+                    <!--<input type="button" value="Save" class="btn btn-primary" ng-click="SaveAdjustment()" />-->
+                    <a class="btn btn-default" ui-sref="matAdjstList">Cancel</a>
+                    <input type="button" style="width: 100px;" tabindex="100" class="btn btn-primary"
+                           value="Save"
+                           ng-click="SaveAdjustment();" />
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</form>

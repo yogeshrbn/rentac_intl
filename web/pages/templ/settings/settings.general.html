@@ -1,0 +1,291 @@
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-12">
+            <form class="form-horizontal">
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">Maintain Inventory</label>
+                    <div class="col-sm-5">
+                        <div class="radio-inline">
+                            <label for="exampleInputName2">
+                                <input type="radio" name="rdoMaintainInventory" ng-value="2" ng-model="Config.allowNegativeSale" />
+                                Yes
+                            </label>
+                        </div>
+                        <div class="radio-inline">
+                            <label for="exampleInputName2">
+                                <input type="radio" name="rdoMaintainInventory" ng-value="1" ng-model="Config.allowNegativeSale" />
+                                No
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">Hide Clients Created For Quotation</label>
+                    <div class="col-sm-5">
+                        <div class="checkbox-inline">
+                            <label for="exampleInputName2">
+                                <input type="checkbox" name="hidQuotationClients" ng-value="true" ng-model="Config.hidQuotationClients" />
+                            </label>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">Warn if Client Name Already Exists</label>
+                    <div class="col-sm-5">
+                        <div class="checkbox-inline">
+                            <label>
+                                <input type="checkbox" name="warnIfClientNameExists" ng-model="Config.warnIfClientNameExists" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">Print Signature On</label>
+                    <div class="col-sm-5">
+
+                        <div class="checkbox-inline">
+                            <label for="exampleInputName2">
+                                <input type="checkbox" name="printSignatureOnChallans" ng-model="SignaturePrint.challans" /> Challans
+                            </label>
+                        </div>
+                        <div class="checkbox-inline">
+                            <label for="exampleInputName2">
+                                <input type="checkbox" name="printSignatureOnBills" ng-model="SignaturePrint.bills" /> Bills
+                            </label>
+                        </div>
+                        <div class="checkbox-inline">
+                            <label for="exampleInputName2">
+                                <input type="checkbox" name="printSignatureOnQuotations" ng-model="SignaturePrint.quotations" /> Quotations
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">Print Company QR Code On</label>
+                    <div class="col-sm-5">
+                        <div class="checkbox-inline">
+                            <label for="exampleInputName2">
+                                <input type="checkbox" name="printSignatureOnBills" ng-model="PrintQrCode.bills" /> Bills
+                            </label>
+                        </div>
+                        <div class="checkbox-inline">
+                            <label for="exampleInputName2">
+                                <input type="checkbox" name="printSignatureOnQuotations" ng-model="PrintQrCode.quotations" /> Quotations
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">Print HSN/SAC On Challans</label>
+                    <div class="col-sm-2">
+
+                        <select class="form-control" ng-model="Config.printsacorhsnonchallans">
+                            <option value="hsn" ng-selected="Config.printsacorhsnonchallans == 'hsn'">HSN</option>
+                            <option value="sac" ng-selected="Config.printsacorhsnonchallans == 'sac'">SAC</option>
+                        </select>
+
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Print weight on challan</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" ng-model="Config.printWeightOnChallan">
+                            <option value="none">None</option>
+                            <option value="masters">Masters (per item × qty)</option>
+                            <option value="challan">Challan</option>
+                        </select>
+                    </div>
+                </div>
+                <h4>Notifications</h4>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Notify Party for Dispatch/Inward Confirmation</label>
+                    <div class="col-sm-5">
+                        <div class="checkbox-inline">
+                            <label>
+                                <input type="checkbox" ng-model="Config.notifyPartyOnDispatchInwardConfirm" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Test Phone Mobile</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="Config.testPhoneMobile" maxlength="10" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Test Email</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="Config.testEmail" maxlength="100" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Mode</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" ng-model="Config.mode">
+                            <option value="Test">Test</option>
+                            <option value="Live">Live</option>
+                        </select>
+                    </div>
+                </div>    <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-3 control-label">No of Decimal Places</label>
+                    <div class="col-sm-1">
+
+                        <input type="number"
+                               class="form-control"
+                               ng-model="Config.decimalplaces"
+                               ng-change="validateDecimal()" />
+                    </div>
+                </div>
+
+                <!--<div class="form-group">
+        <label class="col-sm-3 control-label">Show next challan &amp; bill # on issue challan</label>
+        <div class="col-sm-5">
+            <div class="checkbox-inline">
+                <label>
+                    <input type="checkbox" ng-model="Config.showNextChallanInvoiceNumbers" />
+                    When enabled, new issue challan shows the upcoming challan number and next rent bill (invoice) number as reference.
+                </label>
+            </div>
+        </div>
+    </div>-->
+                <!--<div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <input type="button" class="btn btn-primary" value="Save" ng-click="save();" />
+        </div>
+
+    </div>-->
+            </form>
+            <hr />
+            <h4>Do you want to auto-generate product codes?</h4>
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-horizontal">
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="radio">
+                                            <label>
+                                                <input name="rdoproductcode" ng-model="Config.productcodegenmode" value="auto" type="radio">Auto generate
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input name="rdoproductcode" ng-model="Config.productcodegenmode" value="manual" type="radio">Enter manually
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section ng-if="Config.productcodegenmode == 'auto'">
+
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="exampleInputName2">Enter Prefix</label>
+                                        <div class="col-sm-2">
+                                            <input type="text" noSpace maxlength="5" class="form-control text-right" ng-model="Config.productcodegenprefix">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="exampleInputName2">Enter 1st Number</label>
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control maskednumber" maxlength="8" nodecimal ng-model="Config.productcodegenstart">
+                                        </div>
+
+                                    </div>
+                                </section>
+                                <!--<div class="form-group mt-3">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                       <button class="btn btn-primary">Save</button>
+                                    </div>
+                                </div>-->
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+                <hr />
+
+            </div>
+            <!-- Party Codes-->
+            <hr />
+            <h4>Do you want to auto-generate party codes?</h4>
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-horizontal">
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="rdopartycode" ng-model="Config.partycodegenmode" value="auto">Auto generate
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="rdopartycode" ng-model="Config.partycodegenmode" value="manual">Enter manually
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <section ng-if="Config.partycodegenmode == 'auto'">
+
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="exampleInputName2">Enter Prefix</label>
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control text-right" noSpace maxlength="5" ng-model="Config.partycodegenprefix">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="exampleInputName2">Enter 1st Number</label>
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control maskednumber" nodecimal maxlength="8" ng-model="Config.partycodegenstart">
+                                        </div>
+
+                                    </div>
+                                </section>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+                <hr />
+
+            </div>
+
+
+
+        </div>
+
+        <div class="col-sm-12 sticky-buttons" style="padding-left:12px">
+            <!--<input type="button" class="btn btn-default" tabindex="10" value="Cancel" ui-sref="products" />-->
+            <input type="button" class="btn btn-primary" tabindex="8" value="Save" ng-click="save();" ng-show="AccessData.Add" />
+        </div>
+    </div>
+</div>
+
+<style>
+    .fixed-btn {
+    }
+
+    .fixed-section {
+        position: fixed;
+        background: red;
+        width: 100%;
+        height: 30px;
+        border: solid 1px red;
+    }
+</style>

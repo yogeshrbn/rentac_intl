@@ -1,0 +1,138 @@
+<!--  <pageheader heading="Bill register" />-->
+
+
+<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+    <div class="col-sm-3">
+        <label>Choose Party</label>
+        <!-- <searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>-->
+        <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+    </div>
+
+    <div class="col-sm-2">
+
+        <label>From</label>
+
+        <datepicker date-format="dd/MM/yyyy">
+            <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+        </datepicker>
+    </div>
+    <div class="col-sm-2">
+
+        <label>To</label>
+        <datepicker date-format="dd/MM/yyyy">
+            <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+        </datepicker>
+
+    </div>
+    <div class="col-sm-5">
+        <label class="col-sm-12 hidden-xs">&nbsp;</label>
+        <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+            <div class="d-flex" style="align-items:center;justify-content:space-between;">
+                <!--<label class="col-sm-12">&nbsp;</label>-->
+                <input type="button" class="btn btn-primary" tabindex="4" value="Seach" ng-click="PurchaseRegister();" />&nbsp;
+                <a href="#purchase" class="btn btn-primary" ng-show="AccessData.Add">New Bill</a>
+
+            </div>
+            <div>
+                <export data="Register" url="'purchasebills.html'"></export>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="col-lg-12"">
+        <div table-responsive" style="margin-top:7px;">
+
+
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+                    <th style="width:50px;" class="text-center">S.No</th>
+                    <th style="width: 80px;">Vch#</th>
+                    <th style="width: 100px;">Bill#</th>
+                    <th style="width: 250px;">Party</th>
+                    <th style="width: 100px;">Date</th>
+
+                    <!--<th style="text-align: right; width: 100px;">Amount</th>-->
+                    <!--<th style="text-align: right; width: 100px;">Freight</th>-->
+                    <!--<th style="text-align: right; width: 100px;">Tax</th>-->
+                    <th style="text-align: right; width: 100px;">Amount</th>
+                    <th style="text-align: right; width: 100px;">Balance Due</th>
+                    <th style="width: 100px;" class="text-center">Status</th>
+                    <th style="text-align: center; width: 50px;">Actions</th>
+
+                </tr>
+                <tr ng-repeat="item in Register">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        <span class="text-primary" ng-click="ShowPurchaseItems(item);">{{item.VoucherNumber}}</span>
+                    </td>
+                    <td>
+                        {{item.BillNumber}}
+                    </td>
+                    <td>
+                        {{item.PartyName}}
+                    </td>
+                    <td>{{item.PurchaseDate |date: 'dd-MM-yyyy'}}</td>
+                    <!--<td style="text-align: right;">{{item.SubTotal |number:2 }}</td>-->
+                    <!--<td style="text-align: right;">{{item.Freight |number:2 }}</td>
+    <td style="text-align: right;"><span class="text-primary" ng-click="PurchaseItemsTax(item)">{{item.TaxAmount |number:2 }}</span> </td>-->
+                    <td style="text-align: right;">{{item.Total |number:2 }}</td>
+                    <td style="text-align: right;">{{item.Balance |number:2 }}</td>
+                    <td style="text-align: center;">
+                        <span class="badge badge-success" ng-if="item.Balance == 0">Paid</span>
+                        <span class="badge badge-warning" ng-if="item.Balance > 0">Due</span>
+                    </td>
+                    <td style="width: 100px;" class="text-center">
+                        <!--<span class="fa fa-file-excel-o text-primary" title="Export to excel" ng-click="print(item,1);"></span>-->
+                        <!--<span class="fa fa-edit fa-2x text-info" style="margin-right:10px;" title="Export to pdf" ng-click="edit(item);"></span>
+           <a href="javascript:void()"><i class="fa fa-eye  fa-2x" ng-click="preview(item)"></i> </a>
+    <span class="fa fa-file-pdf-o fa-2x text-danger" title="Export to pdf" ng-click="print(item,2);"></span>-->
+                        <a href="javascript:void()"><i class="fa fa-eye  fa-2x" ng-click="preview(item)"></i> </a>
+                        <a href="javascript:void()" ng-if="item.Doc1" ng-click="downloadAttachment(item)"><i class="fa fa-paperclip  fa-2x"  ></i> </a>
+
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal right fade" id="previewDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:50%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Preview</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0px;">
+                <loadingcircle ng-show="Preview == 1"></loadingcircle>
+                <div class="row">
+                    <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                        <div class="d-flex" style=" justify-content: space-between; flex-direction: row;">
+                            <button class="btn btn-primary btn-sm" ng-click="edit(SelectedItem)">Edit Invoice</button>
+                            <button class="btn btn-primary btn-sm" ng-click="printPdf()">Download PDF</button>
+                            <button class="btn btn-danger btn-sm" ng-click="delete(SelectedItem)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="rpt" style="zoom: 0.8; overflow-y: auto; max-height: 93vh;">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" ng-click="printPdf()">Print</button>
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,541 @@
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="col-sm-12">
+
+    <div class="row">
+        <form id="frmContract" name="frmContract" method="post" class="form-horizontal">
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="row">
+
+                        <div class="col-sm-9">
+
+                            <!-- Form Horizontal Start -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Party</label>
+                                    <div class="col-sm-8">
+
+                                        <searchableselect ng-name="val_party" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                                            ng-id="val_party" ng-model="Contract.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Site</label>
+                                    <div class="col-sm-8">
+                                        <searchableselect ng-name="val_site" ng-id="val_site"
+                                                          tab-index="2" ng-model="Contract.LedgerSiteId" data-field="LedgerSites" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-success" ng-if="Contract.QuotationId >0 " ng-click="editQuotation()">Edit Quotation</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <!-- Form Horizontal Start -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Eff. From</label>
+                                    <div class="col-sm-8">
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="Contract.EffectiveFrom" name="val_effectiveFrom" id="val_effectiveFrom" tabindex="2" type="text" class="form-control" />
+                                        </datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Valid Till</label>
+                                    <div class="col-sm-8">
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="Contract.ValidTill" name="val_validTill" id="val_validTill" tabindex="2" type="text" class="form-control" />
+                                        </datepicker>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <!--<div class="col-sm-6">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-4 control-label">Duration (days)</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="val_duration" ng-model="Contract.Duration" id="exampleInputAmount" placeholder="Days">
+                    </div>
+                </div>
+            </div>-->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Type</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="Contract.ContractType" name="val_contractType">
+                                            <option>--Select--</option>
+                                            <option ng-value="1" ng-selected="Contract.ContractType == 1">Fixed</option>
+                                            <option ng-value="2" ng-selected="Contract.ContractType == 2"> Running</option>
+                                            <option ng-value="3" ng-selected="Contract.ContractType == 3">Per Day</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Form Horizontal Start -->
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Area</label>
+                                    <div class="col-sm-8">
+                                        <div class="form-group">
+                                            <div class="col-sm-7">
+                                                <input type="text" id="val_area" tabindex="1" name="val_area" ng-model="Contract.Area" class="form-control" />
+                                            </div>
+                                            <div class="col-sm-5">
+
+                                                <select class="form-control" ng-model="Contract.MeasureType">
+
+                                                    <option value="1" ng-selected="Contract.MeasureType == 1">SQFT</option>
+                                                    <option value="2" ng-selected="Contract.MeasureType == 2">SQMTR</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Description</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="val_title" id="val_title" class="form-control" ng-model="Contract.SizeDescription" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Height</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" step="0.01" class="form-control" ng-model="Contract.Height" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Width</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" step="0.01" class="form-control" ng-model="Contract.Width" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Appx. Weight</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" step="0.01" class="form-control" ng-model="Contract.ApproximateWeight" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="col-sm-6" ng-if="Contract.ContractType  == 1">
+
+                            </div>
+                            <div class="col-sm-6" ng-if="Contract.ContractType > 1">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Rate</label>
+                                    <div class="col-sm-8">
+                                        <div class="form-group">
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" ng-model="Contract.Rate" />
+                                            </div>
+                                            <label class="col-sm-4 control-label">/{{ Contract.MeasureType==1 ? 'SQFT':'SQMTR' }}</label>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Title</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="val_title" id="val_title" class="form-control" ng-model="Contract.Title" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Form Horizontal Start -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+
+                                    <label class="col-sm-4 control-label">
+                                        Value (INR):
+
+                                    </label>
+
+                                    <div class="col-sm-8">
+                                        <label ng-if="Contract.ContractType == 2" class="control-label col-sm-4">
+                                            {{Contract.Rate * Contract.Area | number: 2 }}
+                                        </label>
+                                        <input type="text" class="form-control" ng-model="Contract.ContractValue" ng-if="Contract.ContractType == 1" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+
+                                    <label class="col-sm-4 control-label">
+                                        Tax Category
+
+                                    </label>
+
+                                    <div class="col-sm-8">
+                                        <searchableselect id="ddlTaxes" tab-index="2" ng-model="Contract.TaxCategoryId" data-field="TAXES" data-val="TaxId" data-text="TaxName"></searchableselect>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--<div class="col-sm-6">
+                <div class="form-group">
+
+                    <label class="col-sm-4 control-label">
+                        Bill Cycle
+
+                    </label>
+
+                    <div class="col-sm-8">
+                        <div class="d-flex">
+                            <select style="width:50%;flex:8" class="form-control" ng-model="Contract.BillCycle">
+                                <option value="weekly">Weekly</option>
+                                <option value="fortnightly">Fortnightly</option>
+                                <option value="monthly">Monthly</option>-->
+                            <!--<option value="ondate">On Date</option>-->
+                            <!--<option value="onday">On Day of Every Month</option>-->
+                            <!--</select>
+            <input type="number" class="form-control" max="31" style="flex: 2"
+                   ng-if="Contract.BillCycle=='onday'" ng-model="Contract.BillDay" />-->
+                            <!--<datepicker ng-if="BillCycle=='ondate'" style="width:50%;" date-format="dd/MM/yyyy" date-max-limit="{{Today}}">
+                <input ng-model="Contract.BillDate" type="text" class="form-control"
+                       id="val_workOrderDate" name="val_workOrderDate" maxDate="{{Today}}" />
+            </datepicker>-->
+                            <!--</div>
+                    </div>
+                </div>
+
+            </div>-->
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+
+                                    <label class="col-sm-4 control-label">
+                                        Client Ref No
+                                    </label>
+
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="Contract.ClientRefNo" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">
+                                        PO Number
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="Contract.PONumber" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">
+                                        PO Date
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <datepicker date-format="dd/MM/yyyy">
+                                            <input ng-model="Contract.PODate" type="text" class="form-control" />
+                                        </datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">
+                                        Project Owner
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <searchableselect ng-name="val_StageOwner" ng-id="val_StageOwner"
+                                                          data-field="Employees" ng-model="Contract.ProjectOwner"
+                                                          data-val="EmployeeId" data-text="Name"></searchableselect>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Zone</label>
+                                    <div class="col-sm-8">
+
+                                        <searchableselect ng-name="val_zone" ng-id="val_zone"
+                                                          data-field="Zones" ng-model="Contract.ZoneId"
+                                                          data-val="ZoneId" data-text="Name"></searchableselect>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-4 control-label">Locality</label>
+                                    <div class="col-sm-8">
+                                        <searchableselect ng-name="val_locality" ng-id="val_locality"
+                                                          data-field="Localities" ng-model="Contract.LocalityId"
+                                                          data-val="LocalityId" data-text="Name"></searchableselect>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="row" ng-if="SelectedLedger && Contract.LedgerId > 0">
+                        <div class="col-sm-12">
+                            <div class="alert alert-dismissable" style="padding:6px !important">
+                                <span> City: {{SelectedLedger.City}}</span>
+                                <span>| Phone: {{SelectedLedger.Phone1}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+
+
+        </form>
+    </div>
+    <div class="col-sm-12 addItemBox hide" style="border: solid 1px #a5b0b5;">
+        <div class="col-sm-3">
+            <label>
+                Product
+            </label>
+            <!--<searchabletext ng-id="itemSelect" tab-index="5" data-item="Product" selected-object="selectedProduct"> </searchabletext>-->
+            <!--<searchableselect ng-id="product" name="val_product[]" tabindex="2" data-field="ProductRates" on-itemselected="itemSelected(itemId)" ng-model="ContractItem.ProductId" data-val="ProductId" data-text="Product"></searchableselect>-->
+            <searchabletext ng-id="itemSelect" local-data="AllSizes" title-field="Product" name="Product" search-fields="Product,Code"
+                            selected-object="selectedProduct" data-entry="1"> </searchabletext>
+            <!--<searchableselect ng-id="product" name="val_product[]"  data-field="AllSizes" on-itemselected="itemSelected(itemId)" description-field="Code"  ng-ret_type="index" data-val="ProductId" data-text="Product"></searchableselect>-->
+        </div>
+        <div class="col-sm-2">
+            <label>
+                Quantity
+            </label>
+            <input type="number" class="form-control" ng-model="ContractItem.Quantity" />
+        </div>
+        <!--<div class="col-sm-2">
+            <label>
+                Rate
+            </label>
+            <input type="number" ng-disabled="ContractItem.GroupItemId > 0" class="form-control maskednumber" ng-model="ContractItem.Rate" />
+        </div>-->
+        <div class="col-sm-2">
+            <label class="col-sm-12">&nbsp; </label>
+            <button class="btn btn-primary" value="Add" ng-keydown="addItem($event);" stopfocus="true" ng-click="addItem();" ng-show="AccessData.Add">Add</button>
+        </div>
+    </div>
+    <div class="row hide">
+        <div class="col-sm-7">
+            <div class="addWithTable" style="height: 240px;overflow-y: auto;border: solid 1px #a5b0b5;border-top: none; margin-top:7px;">
+                <table class="table table-condensed tableInput" med-key ng-delete="DeleteItem(index)">
+                    <tr class="headerRow">
+                        <th style="width: 15px;">#</th>
+                        <th style="width: 40%;">Item</th>
+                        <!--  <th>Size</th>-->
+                        <th class="text-center">Qty</th>
+                        <!--<th>Rate</th>-->
+                        <!--<th>Total</th>-->
+                        <!--<th width="150px">Amount</th>-->
+                    </tr>
+                    <tr ng-repeat="item in Contract.Details" data-ng-if="item.Deleted != 1" ng-delete="DeleteItem(index);">
+                        <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">
+                        </td>
+                        <td>
+                            {{item.Product}}
+                        </td>
+                        <td>
+                            <input type="number" ng-model="item.Quantity" class="form-control text-center" /><!-- {{item.Quantity}}-->
+                        </td>
+                    </tr>
+                    <tr class="headerRow">
+                        <th colspan="2" class="text-right">Total: </th>
+                        <th class="text-center">{{WorkOrder.Items|sum:'SentQty'}}</th>
+                        <!--<th></th>-->
+                        <!--<th>Total</th>-->
+                        <!--<th width="150px" class="text-right">{{WorkOrder.SubTotal  |number:2}}</th>-->
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-sm-5" style="padding-left:0px;">
+           
+            <div style=" padding-left: 0px; height: 240px; overflow-y: auto; border: solid 1px #47474796; border-left: none; border-top: none;">
+
+                <table class="table table-condensed table-responsive " ng-delete="DeleteCondition(index)">
+
+                    <tr class="headerRow">
+                        <th class="text-center">#</th>
+
+                        <th>Condition</th>
+                        <th class="text-center">Delete</th>
+                    </tr>
+                    <tr ng-repeat="cond in Contract.Conditions track by $index" data-ng-if="cond.Deleted != 1" ng-keydown="onRowKeyDown($event,cond)">
+                        <td class="text-center" style="background: #e4e4e4;"></td>
+                        <td><input type="text" class="form-control" ng-model="cond.Condition" /> </td>
+                        <td class="text-center">
+                            <i class="fa fa-trash-o" ng-click="DeleteCondition(cond)" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;padding-bottom:20px;">
+        <div class="col-sm-7">
+            <div class="form-group">
+                <label class="control-label">Contract Details</label>
+                <!--<textarea class="form-control" style="height: 50px;" ng-model="Contract.Remarks"></textarea>-->
+                <textarea ckeditor="editorOptions" name="details" required ng-model="Contract.Remarks"
+                         data-ck-editor style="height:100px;"></textarea>
+                
+               
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label">Documents</label>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <!--<i class="fa fa-paperclip fa-2x"></i>
+                                <a ng-click="browseFile('imgDoc1','doc1')" class="thumbnail">
+                                </a>
+
+                                -->
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <td class="headerRow" style="width:100px;vertical-align:middle;">Document: <i class="fa fa-paperclip fa-2x" ng-click="downloadFile(Doc1)" ng-if="Doc1 != '' && Doc1 != 'delete'"></i></td>
+
+                                        <td class="text-right">
+
+                                            <a class="btn btn-success" ng-click="browseFile( 'doc1')">
+                                                Browse
+                                            </a>
+                                            <input type="file" id="doc1" accept="image/jpeg,image/gif,image/png,application/pdf" style="display:none;" />
+                                            <button class="btn btn-danger" ng-if="Doc1 != '' && Doc1 != 'delete'" ng-click="Doc1 = 'delete'">Delete</button>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="headerRow" style="width:40px;vertical-align:middle;">Document: <i class="fa fa-paperclip fa-2x" ng-click="downloadFile(Doc2)" ng-if="Doc2 != '' && Doc2 != 'delete'"></i></td>
+
+                                        <td class="text-right">
+                                            <a class="btn btn-success" ng-click="browseFile( 'doc2')">
+                                                Browse
+                                            </a>
+                                            <input type="file" id="doc2" accept="image/jpeg,image/gif,image/png,application/pdf" style="display:none;" />
+                                            <button class="btn btn-danger" ng-if="Doc2 != '' && Doc2 != 'delete'" ng-click="Doc2 = 'delete'">Delete</button>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="headerRow" style="width:40px;vertical-align:middle;">Document: <i class="fa fa-paperclip fa-2x" ng-click="downloadFile(Doc3)" ng-if="Doc3 != '' && Doc3 != 'delete'"></i></td>
+
+                                        <td class="text-right">
+
+                                            <a class="btn btn-success" ng-click="browseFile( 'doc3')">
+                                                Browse
+                                            </a>
+                                            <input type="file" id="doc3" accept="image/jpeg,image/gif,image/png,application/pdf" style="display:none;" />
+                                            <button class="btn btn-danger" ng-if="Doc3 != '' && Doc3 != 'delete'" ng-click="Doc3 = 'delete'">Delete</button>
+                                        </td>
+
+                                    </tr>
+                                </table>
+
+                            </div>
+                            <!--<div class="col-xs-12 col-md-12">
+                                <a class="thumbnail" ng-click="browseFile('imgDoc2','doc2')">-->
+                            <!--<img id="imgDoc2" src="../img/no-doc.svg" alt="..." style="width:50%;">-->
+                            <!--<i class="fa fa-file-pdf-o" style="width: 100%; font-size: 50px; text-align: center; color: red; }"></i>
+                                </a>
+                                <input type="file" id="doc2" style="display:none;" />
+                            </div>
+                            <div class="col-xs-12 col-md-12">
+                                <a class="thumbnail" ng-click="browseFile('imgDoc3','doc3')">
+                                    <img id="imgDoc3" src="../img/no-doc.svg" alt="..." style="width:50%;">
+                                </a>
+                                <input type="file" id="doc3" style="display:none;" />
+                            </div>-->
+                        </div>
+
+                    </div>
+                </div>
+                <!--<div class="col-sm-8 text-center">
+                    <div class="form-group">
+                        <label class="subheading">Bill Period</label>-->
+                <!--<table class="table table-condensed">
+
+                    <tr>
+                        <th class="headerRow" style="width:60%;">Bill Date</th>
+                        <th class="headerRow">Amount</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="date" class="form-control" />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control maskednumber" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="date" class="form-control" />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control maskednumber" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="date" class="form-control" />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control maskednumber" />
+                        </td>
+                    </tr>
+                </table>-->
+                <!--</div>
+                </div>-->
+            </div>
+        </div>
+        <div class="col-sm-12" style="margin-top:10px;">
+            <a class="btn btn-default" ui-sref="contracts">Cancel</a>&nbsp;
+            <button class="btn btn-primary" ng-click="Save()">Save</button>&nbsp;
+        </div>
+    </div>
+</div>

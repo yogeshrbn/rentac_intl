@@ -1,0 +1,136 @@
+<!--  <pageheader heading="Bill register" />-->
+<script src="../../../dist/js/ag-grid/customHeaderComponent.js"></script>
+<div class="clearfix">&nbsp;</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="col-sm-3">Party</label>
+            <div class="col-sm-9">
+                <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                  ng-id="client_value" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="col-sm-3">Site</label>
+            <div class="col-sm-9">
+                <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                  data-text="SiteAddress"></searchableselect>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="col-sm-3">Employee</label>
+            <div class="col-sm-9">
+                <searchableselect id="Searchableselect1" ng-model="Filter.EmployeeId" data-field="Employees" tab-index="1" data-val="EmployeeId"
+                                  data-text="Name"></searchableselect>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="col-sm-3">From</label>
+            <div class="col-sm-9">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+                </datepicker>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="col-sm-3">To</label>
+            <div class="col-sm-9">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+                </datepicker>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <label class="col-sm-3">Status</label>
+            <div class="col-sm-9">
+                <select class="form-control" ng-model="Filter.StatusId">
+                    <option ng-value="2"> Installation</option>
+                    <option ng-value="4"> Dismantale</option>
+                    <option ng-value="5"> Completed</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <div class="d-flex col-xs-12" style="align-items:center;justify-content:space-between;">
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="filter();" />
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="nav nav-pills" role="tablist" style="border-bottom: solid 1px #bdbdbd; padding: 8px 0; background: #e7e7e7; margin-bottom: 0;">
+            <li role="presentation" class="active"><a href="#tabEmpDprActivity" aria-controls="tabEmpDprActivity" role="tab" data-toggle="tab">Activity</a></li>
+            <li role="presentation"><a href="#tabEmpDprDocuments" aria-controls="tabEmpDprDocuments" role="tab" data-toggle="tab">Documents</a></li>
+        </ul>
+        <div class="tab-content" style="border: 1px solid #ddd; border-top: none; padding: 10px;">
+            <div role="tabpanel" class="tab-pane active" id="tabEmpDprActivity">
+                <div class="form-group mt-2">
+                    <div class="clearfix"></div>
+                    <div class="col-lg-8">
+                        <label class="subheading mb-1" style="border-bottom: solid 2px #039be5">Detail</label>
+                        <div id="myGrid" style="width: 100%; max-height: 500px;"></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <label class="subheading mb-1" style="border-bottom: solid 2px #039be5">Summary</label>
+                        <div id="summaryGrid" style="width: 100%; max-height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane table-responsive text-center" id="tabEmpDprDocuments" style="padding: 5px;">
+                <p class="text-muted" style="margin-bottom:10px;">Documents for job cards in the current search result (run <strong>Search</strong> on the Activity tab to refresh).</p>
+                <table class="table table-condensed" ng-if="dprDocuments && dprDocuments.length > 0">
+                    <tr class="headerRow">
+                        <td class="text-center" style="width:5%">#</td>
+                        <th style="width:12%">Contract</th>
+                        <th style="width:12%">Job card</th>
+                        <th style="width:20%">Type</th>
+                        <th style="width:18%">Uploaded</th>
+                        <th style="width:15%">Content type</th>
+                        <th>Preview / open</th>
+                    </tr>
+                    <tr ng-repeat="doc in dprDocuments">
+                        <td class="text-center">{{$index + 1}}</td>
+                        <td>{{ doc.ContractId }}</td>
+                        <td>{{ doc.JobCardId || '—' }}</td>
+                        <td>
+                            <span ng-if="doc.DocumentType === 'InstallActivityImage'">Install photo</span>
+                            <span ng-if="doc.DocumentType !== 'InstallActivityImage'">{{ doc.DocumentType }}</span>
+                        </td>
+                        <td>{{ doc.CreatedOn | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td>{{ doc.ContentType || '—' }}</td>
+                        <td>
+                            <a ng-href="{{ documentFileUrl(doc) }}" target="_blank" rel="noopener">Open</a>
+                            <div ng-if="doc.ContentType && doc.ContentType.indexOf('image/') === 0" style="margin-top:6px;">
+                                <img ng-src="{{ documentFileUrl(doc) }}" alt="" style="max-width:200px;max-height:120px;border:1px solid #ddd;" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="text-center text-muted" ng-if="!dprDocuments || dprDocuments.length === 0">
+                    <p>No documents for the current result. Upload install photos from the ops dashboard when updating install activity, then search again.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

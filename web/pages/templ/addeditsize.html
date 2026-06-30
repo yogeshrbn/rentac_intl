@@ -1,0 +1,25 @@
+﻿<div class="form-group">
+    
+  <!--     <pageheader heading="Add/Edit Size" />-->
+    <div class="clearfix">&nbsp;</div>
+    <form id="form-company" method="post" class="form-horizontal form-bordered">
+        <div class="clearfix">&nbsp;</div>
+        <div class="col-lg-6 col-md-4 col-sm-4">
+            <label>UOM</label>
+            <searchableselect id="ddlUOM" ng-model="Size.UOMId" data-field="UOM" data-val="UOMId" data-text="UOM"></searchableselect>
+
+        </div>
+        <div class="col-lg-6 col-md-4 col-sm-4">
+            <label>Size</label>
+            <input type="text" id="val_address1" name="val_address1" ng-model="Size.Size" class="form-control" />
+        </div>
+
+        <div class="clearfix">&nbsp;</div>
+        <div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-6 col-md-4 col-sm-4">
+            <input type="button" class="btn btn-primary" value="Save" ng-click="Save();" />
+        </div>
+
+    </form>
+</div>

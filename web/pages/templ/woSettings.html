@@ -1,0 +1,89 @@
+﻿<div class="col-sm-12">
+
+    <div class="col-sm-6">
+        <div class="col-sm-12">
+            <h4>Site Info</h4>
+            <table class="table table-bordered table-responsive">
+                <tr>
+                    <td>Job#</td>
+                    <td>{{Site.JobNumber}}</td>
+                </tr>
+                <!--  <tr>
+                <td>Challan#</td>
+                <td>{{Site.ChallanNumber}}</td>
+            </tr>-->
+                <tr>
+                    <td>Site Engg.</td>
+                    <td>{{Site.SiteEng}}</td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="col-sm-12">
+
+            <h4>Challans</h4>
+            <table class="table table-responsive">
+                <tr>
+                    <th>#</th>
+                    <th>Challan #</th>
+                    <th>Date</th>
+                </tr>
+                <tr>
+                    <td class="vcenter">Add</td>
+                    <td>
+                        <input type="text" class="form-control" ng-model="NewWorkOrderNumber"/>
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-primary" value="Add" ng-click="addChallanToSite();" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <h4>Payment Reminders</h4>
+
+        <div class="col-sm-12">
+            <table class="table table-bordered table-responsive" id="workOrderTable">
+
+                <tr class="headerRow">
+                    <th width="25px">S.#</th>
+                    <th>Days</th>
+                    <th>Amount(%)</th>
+                    <th>Actions</th>
+                </tr>
+                <tr ng-repeat="item in Reminders">
+                    <td>{{$index+1}}</td>
+                    <td>{{item.Days}}</td>
+                    <td>{{item.Amount}}</td>
+                    <td>
+                        <i class="fa fa-trash" ng-click="Delete(item.PayReminderId);"></i>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+        <div class="col-sm-12">
+
+            <div class="col-sm-12">
+                <span class="col-sm-4">
+                    <label class="col-sm-12">Days</label>
+                    <input type="number" class="form-control" ng-model="payReminder.Days" />
+                </span><span class="col-sm-4">
+                    <label class="col-sm-12">Amount(%)</label>
+                    <input type="number" class="form-control" ng-model="payReminder.Amount" />
+                </span>
+                <span class="col-sm-4">
+                    <label class="col-sm-12">&nbsp;</label>
+                    <input type="button" class="btn btn-primary" value="ADD" ng-click="Add();" />
+                </span>
+            </div>
+            <div class="col-sm-6">
+                &nbsp;
+            </div>
+        </div>
+
+    </div>
+</div>

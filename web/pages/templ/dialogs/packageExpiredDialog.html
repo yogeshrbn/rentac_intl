@@ -1,0 +1,31 @@
+﻿<md-dialog>
+    <md-dialog-content layout="row" layout-wrap layout-margin layout-align="center">
+
+
+        <div class="modal-body text-center">
+            <p class="text-center">
+                <img src="../img/package-expired-info.jpg" style="width:120px" />
+            </p>
+            <h2>License Expired !</h2>
+            <br />
+            <h5>
+                Your license has been expired. You must purchase the license to continue.
+            </h5>
+            <!--<h5 ng-include="lcd.RemainingDays < 0">
+                Your license has been expired {{lcd.RemainingDays}} days ago. You must renew your license to continue.
+            </h5>-->
+            <h5>Call Rentac Support Team for renewal.</h5>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="text-center" style="width:100%;padding:30px;">
+            <a class="btn btn-primary" ng-click="hideExpireDlg()">OK</a>
+        </div>
+    </md-dialog-actions>
+</md-dialog>
+<style>
+    h5 {
+        color: #000;
+    }
+</style>

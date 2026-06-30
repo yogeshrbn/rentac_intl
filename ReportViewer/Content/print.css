@@ -1,0 +1,71 @@
+﻿#printArea {
+    font-family: Arial;
+    position: relative;
+    min-height: 93vh;
+    padding:30px;
+}
+
+.border-row, td, th {
+    border: solid 1px;
+    font-size: 14px;
+    vertical-align: center;
+    padding: 5px;
+    text-align: left;
+    line-height: 20px;
+}
+
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.noborder {
+    border: none !important;
+}
+
+h5 {
+    line-height: 15pt;
+    margin: 0px;
+    font-size: 16px
+}
+
+footer {
+    position: fixed;
+    text-align: center;
+    color: #000000;
+    width: 100%;
+    bottom: 0.2in;
+}
+
+ 
+
+.header {
+    position: fixed;
+    top: 0;
+}
+
+
+
+@page {
+    margin-top: 0.10in;
+    margin-bottom: 0.10in;
+    padding-bottom: 20px;
+    margin-left: 0.1in;
+    margin-right: 0.1in
+}
+
+body {
+    /*    padding-top: 30px;
+          padding-bottom: 30px;*/
+    
+}
+.subHeading1 {
+    font-size: 16px;
+    font-weight: bold;
+}
+ 
+ 

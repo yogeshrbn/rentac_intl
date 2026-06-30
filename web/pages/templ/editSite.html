@@ -1,0 +1,103 @@
+﻿<md-dialog aria-label="List dialog">
+  <md-dialog-content>
+<div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Job#:</label>
+                <input type="text" class="form-control" id="email" ng-model="SiteInfo.JobNumber" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="pwd">WorkOrder#:</label>
+                <input type="text" class="form-control" id="pwd" ng-model="SiteInfo.WorkOrderNumber"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Site</label>
+                <input type="text" class="form-control" id="email1" ng-model="SiteInfo.Site"/>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="pwd">Site Eng.</label>
+                <input type="text" class="form-control" id="Password1"ng-model="SiteInfo.SiteEng" />
+            </div>
+        </div>
+    </div>
+     <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Shaft Height</label>
+                <input type="text" class="form-control" id="Text1" ng-model="SiteInfo.ShaftHeight"/>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="pwd">Shaft Size</label>
+                <input type="text" class="form-control" id="Text2"ng-model="SiteInfo.ShaftSize" />
+            </div>
+        </div>
+    </div>
+       <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Vehicle</label>
+                <input type="text" class="form-control" id="Text4" ng-model="SiteInfo.Vehicle"/>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="pwd">Driver</label>
+                <input type="text" class="form-control" id="Text5"ng-model="SiteInfo.Driver" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Date</label>
+                <input type="date" class="form-control" id="email2" ng-model="SiteInfo.StartDate"/>
+                <!--<md-datepicker ng-model="Site.StartDate"></md-datepicker>-->
+            </div>
+        </div>
+            <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">Duration</label>
+                <input type="text" class="form-control" id="Text3" ng-model="SiteInfo.Duration"/>
+            </div>
+        </div>
+    </div>
+      <div class="col-sm-12">
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label for="email">State</label>
+                                                <searchableselect name="val_bank"   tabindex="2" data-field="States" ng-model="SiteInfo.State" data-val="StateName" data-text="StateName"></searchableselect>
+
+                <!--<md-datepicker ng-model="Site.StartDate"></md-datepicker>-->
+            </div>
+        </div>
+           
+    </div>
+    <hr />
+</div>
+</md-dialog-content>
+  <md-dialog-actions>
+    <md-button ng-click="update()" class="md-primary">Update</md-button> 
+    <md-button ng-click="closeDialog()" class="md-primary">Close</md-button>
+  </md-dialog-actions>
+</md-dialog>
+
+

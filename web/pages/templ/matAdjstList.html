@@ -1,0 +1,106 @@
+<!--<pageheader heading="Issued Register" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12 nopadding">
+
+    <div class="col-sm-2 ">
+        <label>Choose Party</label>
+        <!--<searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code"
+                        selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>-->
+        <searchableselect name="client_value" tabindex="2" data-field="Accounts" ng-model="Filter.LedgerId" data-primarytext="TradeName" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+    </div>
+    <div class="col-sm-2">
+        <label>Site</label>
+        <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                          data-text="SiteAddress"></searchableselect>
+
+    </div>
+
+    <div class="col-sm-2">
+
+        <label>From</label>
+
+        <datepicker date-format="dd/MM/yyyy">
+            <input ng-model="Filter.From" type="text" class="form-control" />
+        </datepicker>
+    </div>
+    <div class="col-sm-2">
+
+        <label>To</label>
+        <datepicker date-format="dd/MM/yyyy">
+            <input ng-model="Filter.To" type="text" class="form-control" />
+        </datepicker>
+
+    </div>
+    <div class="col-sm-4" style="padding-top:23px">
+        
+        <input type="button" class="btn btn-primary" value="Seach" ng-click="Find();" />
+        <input type="button" class="btn btn-primary" value="Print Selected" ng-click="PrintSelected();" />
+        <a class="btn btn-danger" ng-href="#/matadjust">New</a>
+    </div>
+
+
+</div>
+<div class="clearfix"></div>
+<div class="form-group">
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="col-lg-12">
+
+        <div class="table-responsive" style="margin-top:7px">
+
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+                    <th style="width: 40px;">#</th>
+
+                    <th style="width: 100px;"  sort-header="List" sort-field="Number">Vch</th>
+                    <th style="width: 80px;"   sort-header="List" sort-field="WorkOrderDate">Date</th>
+                    <th style="width: 200px;"   sort-header="List" sort-field="Client">Party</th>
+                    <th style="width: 200px;">Site</th>
+                    <th style="width: 50px;" class="text-right"   sort-header="List" sort-field="Issued">#Issued</th>
+                    <th style="text-align: right; width: 50px;"   sort-header="List" sort-field="Received">#Received</th>
+                    <th style="text-align: center; width: 50px;">Actions</th>
+                </tr>
+                <tr ng-repeat="item in List" ng-class="item.Deleted == 1 ? 'text-danger': ''">
+                    <td>
+                        {{$index + 1}} &nbsp;
+                        <input type="checkbox" ng-model="item.Print" />
+                        <!--<i class="fa fa-chevron-down toggle" style="cursor: pointer;" data-toggle="collapse" data-target="#tr{{$index}}" ng-click="LoadItems($index);"></i>-->
+                    </td>
+                    <td>{{item.Number }}</td>
+                    <td>{{item.WorkOrderDate |date: 'dd-MM-yyyy'}}</td>
+                    <td>
+                        {{item.Client}}
+                    </td>
+
+                    <td>{{item.SiteAddress }}</td>
+                    <td class="text-right">{{item.Issued }}</td>
+                    <td style="text-align: right;">{{item.Received }} </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+
+                            <i class="fa fa-cog fa-2x text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li ng-if="item.Deleted !== 1"><a href="javascript:void()" ng-click="edit(item)"><i class="fa fa-edit text-primary fa-2x"></i>Edit</a></li>
+                                <li><a href="#" ng-click="PrintReceipt(item);" stop="true"><i class="fa fa-print text-primary fa-2x"></i>Print</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li ng-if="item.Deleted !== 1"><a href="#" ng-click="delete(item);" stop="true"><i class="fa fa-trash text-danger fa-2x"></i>Delete</a></li>
+                                <!--<li><a href="#" ng-click="SendEmail(item.WorkOrderId);" stop="true"><i class="fa fa-envelope-o text-success fa-2x"></i>Email To Client</a></li>
+                                <li><a href="#" ng-click="SendSMS(item.WorkOrderId);" stop="true"><i class="fa fa-comment text-success fa-2x"></i>Send SMS</a></li>-->
+                            </ul>
+                        </div>
+                        <!-- <a href="#/issueChallan?wId={{item.WorkOrderId}}&edit=true"><span class="fa fa-edit text-primary"></span></a>
+                        <span class="fa fa-file-pdf-o text-danger" title="Export to pdf" ng-click="PrintReceipt(item);"></span>-->
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+

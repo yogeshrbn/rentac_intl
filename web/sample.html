@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery Challan</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .header {
+            background-color: #003366;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+            .header h1 {
+                margin: 0;
+                font-size: 22px;
+                letter-spacing: 0.5px;
+            }
+
+        .content {
+            padding: 30px;
+            color: #333333;
+        }
+
+            .content p {
+                line-height: 1.6;
+                font-size: 15px;
+            }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+            .details-table td {
+                border: 1px solid #dddddd;
+                padding: 10px;
+                font-size: 14px;
+            }
+
+                .details-table td:first-child {
+                    font-weight: bold;
+                    background-color: #f4f4f4;
+                    width: 35%;
+                }
+
+        .button {
+            display: inline-block;
+            background-color: #007BFF;
+            color: #ffffff !important;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .footer {
+            padding: 20px 30px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            color: #555555;
+        }
+
+            .footer a {
+                color: #003366;
+                text-decoration: none;
+            }
+
+        @media (max-width: 600px) {
+            .content, .footer {
+                padding: 20px;
+            }
+
+            .details-table td {
+                font-size: 13px;
+            }
+
+            .button {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+        }
+        @media print {
+          
+            @page {
+                size: auto;
+                margin: 0mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Delivery Challan - {challan_no}</h1>
+        </div>
+
+        <div class="content">
+            <p>Dear <strong>{client}</strong>,</p>
+
+            <p>
+                We are pleased to inform you that the goods as per your order have been successfully dispatched.
+                Please find below the details of the delivery and use the button below to download the
+                <strong>Delivery Challan (PDF)</strong>.
+            </p>
+
+            <table class="details-table">
+                <tr>
+                    <td>Challan Number</td>
+                    <td>{challan_no}</td>
+                </tr>
+                <tr>
+                    <td>Date of Dispatch</td>
+                    <td>{challan_date}</td>
+                </tr>
+                <tr>
+                    <td>Order / PO Number</td>
+                    <td>NA</td>
+                </tr>
+                <tr>
+                    <td>Delivered To</td>
+                    <td>{ship_address}</td>
+                </tr>
+                <tr>
+                    <td>Delivered By</td>
+                    <td>{company_name}</td>
+                </tr>
+            </table>
+
+            <!-- Download Button -->
+            <p>
+                <a href="{link}" class="button" target="_blank" download>
+                    📥 Download Delivery Challan
+                </a>
+            </p>
+
+            <p>If there are any discrepancies, please let us know at your earliest convenience.</p>
+
+            <p>We appreciate your business and look forward to serving you again.</p>
+        </div>
+
+        <div class="footer">
+            <p>
+                Regards,<br>
+                        <strong>Team {company_name}</strong><br>
+
+                📞 {company_phone} &nbsp;|&nbsp; ✉️  {company_email} <br>
+                🌐 <a href="https://yourcompanywebsite.com">{company_website}</a>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

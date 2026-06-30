@@ -1,0 +1,612 @@
+<!-- <pageheader heading="Receive Items" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="container-fluid">
+    <form id="form-grn" method="post" class="form-horizontal form-bordered">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row" style="margin-right:0px;">
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-12 nopadding">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-3 control-label">Party</label>
+                                            <div class="col-sm-9">
+                                                <searchableselect ng-name="val_party" ng-id="val_party" data-field="Accounts"
+                                                                  ng-model="Filter.LedgerId" data-val="LedgerId" data-primarytext="TradeName" data-text="Name" description-field="Code"></searchableselect>
+
+                                                <!--<searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="val_party" search-fields="Name,Code"
+                                                                selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>-->
+
+                                            </div>
+                                        </div>
+
+
+                                        <!--<searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>-->
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-5 control-label">Site</label>
+                                            <div class="col-sm-7">
+
+                                                <searchableselect ng-id="val_site" ng-name="val_site" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                                                  data-text="SiteAddress"></searchableselect>
+
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-12 nopadding">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-3 control-label">Receiving Date</label>
+                                            <div class="col-sm-9">
+                                                <datepicker date-format="dd/MM/yyyy">
+                                                    <input ng-model="GRN.ReceivingDate" ng-change="onReceivingDateChange()" type="text" class="form-control" tabindex="5" maxDate="{{Today}}" minDate="{{MinDate}}" />
+                                                </datepicker>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-5 control-label">Rent Stop Date</label>
+                                            <div class="col-sm-7">
+                                                <datepicker date-format="dd/MM/yyyy">
+                                                    <input ng-model="GRN.RentStopDate" type="text" class="form-control" tabindex="5" maxDate="{{Today}}" minDate="{{MinDate}}" />
+                                                </datepicker>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-3 control-label">Challan#</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" ng-if="allowEditChallanNumber == true" validateprefix
+                                                       class="form-control" ng-model="GRN.GRN" maxlength="20" />
+                                                <label ng-if="allowEditChallanNumber == false">{{GRN.GRN}}</label>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                                <div class="row" >
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-12 control-label">Last Challan#: {{LastChallanNo}}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4" >
+                                        <div class="form-group">
+                                            <label for="inputEmail3" ng-if="!edit && GRN.GRNId == 0 && NextChallanNumber" class="col-sm-12 control-label">Next Challan#: {{NextChallanNumber}}</label>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 box1" style="height:115px;overflow-y:auto">
+                        <table style="width:100%">
+                            <tr>
+                                <td class="text-center" style="text-decoration:underline">Balance</td>
+                            </tr>
+                        </table>
+                        <table style="width:100%">
+                            <tr>
+                                <td style="width:50%;">
+                                    <table style="width:70%;font-size:11px;">
+                                        <tr ng-repeat="item in BalanceItems">
+                                            <td>
+                                                {{item.Product}}
+                                            </td>
+                                            <td class="text-right">
+                                                {{item.ClosingBalance}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <!--<td style="width:50%;">
+                                    <table style="width: 70%; font-size: 11px;">
+                                        <tr ng-repeat="item in BalanceGroup2">
+                                            <td>
+                                                {{item.Item}}
+                                            </td>
+                                            <td class="text-right">
+                                                {{item.ClosingBalance}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>-->
+                            </tr>
+
+                        </table>
+                    </div>
+
+
+                </div>
+                <div class="clearfix">&nbsp;</div>
+
+
+                <div class="row">
+                    <!--   <input type="checkbox" ng-model="GRN.Size" ng-change="GetBalance();" />
+                    Receive Size-Wise-->
+                    <div class="col-sm-12 ">
+                        <div class="row addItemBox" style="margin: 0px; border: solid 1px #b7b7b7; border-bottom: none;">
+
+                            <div class="col-sm-3">
+                                <label>Item</label>
+                                <searchabletext ng-id="itemSelect" local-data="AllSizes" ng-blur="validateQty()" title-field="Product" name="Product" search-fields="Product,Code" description-field="BOMCode,Code" selected-object="selectedProduct" data-entry="1" tab-index="5"> </searchabletext>
+                                <span ng-if="RecItem.ProductId && getSelectedItemBalance() !== null" class="text-muted" style="display:block;font-size:12px;margin-top:4px;">Balance: {{getSelectedItemBalance()}}</span>
+                                <!--<searchableselect ng-id="product" name="val_product[]" data-field="AllSizes"  description-field="Code" ng-model="IssueItem.ProductId" ng-ret_type="index" data-val="ProductId" data-text="Product"></searchableselect>-->
+                            </div>
+                            <div class="col-sm-1 nomargin">
+                                <label>Qty</label>
+                                <input type="text" id="val_qty" class="form-control maskednumber" ng-blur="validateQty()" nodecimal ng-model="RecItem.Quantity" tabindex="6" maxlength="5" />
+                            </div>
+                            <div class="col-sm-1" ng-if="showRate == true">
+                                <label>Rate</label>
+                                <input type="text" class="form-control maskednumber" nodecimal ng-model="RecItem.Rate" maxlength="8" />
+                            </div>
+                            <div class="col-sm-1">
+                                <label>Brk. Qty</label>
+                                <input type="text" class="form-control maskednumber" ng-blur="validateQty()" nodecimal ng-model="RecItem.Breakage" maxlength="5" />
+                            </div>
+                            <div class="col-sm-1">
+                                <label>Loss</label>
+                                <input type="text" class="form-control maskednumber" nodecimal ng-model="RecItem.ShortQty" maxlength="5" />
+                            </div>
+                            <div class="col-sm-1">
+                                <label>Scrap</label>
+                                <input type="text" class="form-control maskednumber" nodecimal ng-model="RecItem.Scrap" maxlength="5" />
+                            </div>
+                            <div class="col-sm-1" ng-if="!disableExcess">
+                                <label>Excess</label>
+                                <input type="text" class="form-control maskednumber" allownegative nodecimal ng-model="RecItem.ExcessQty" maxlength="5" />
+                            </div>
+
+                            <div class="col-sm-1">
+                                <label style="display:block;">&nbsp;</label>
+                                <!--<button class="btn btn-primary" ng-keydown="addItem($event);" ng-click="AddItem();">Add</button>-->
+                                <button class="btn btn-primary" value="Add" ng-keydown="AddItem($event);" stopfocus="true" ng-click="AddItem();" ng-show="AccessData.Add">Add</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <table class="table table-condensed  tableInput" med-key>
+                                <tr class="headerRow">
+
+                                    <th colspan="2"> </th>
+                                    <th colspan="1"> </th>
+                                    <th colspan="1"> </th>
+                                    <th colspan="1"> </th>
+                                    <th colspan="2"> </th>
+                                    <th ng-attr-colspan="{{ disableExcess ? 2 : 3 }}" class="text-center">Difference</th>
+                                    <th colspan="2"> </th>
+
+                                </tr>
+                                <tr class="headerRow">
+
+                                    <th style="width: 25px;" rowspan="2">#</th>
+                                    <th>Item</th>
+
+                                    <th class="text-center" style="width: 90px;">To Rcvd Qty</th>
+                                    <th class="text-center" style="width: 70px;">Item rate / pc</th>
+                                    <!--<th class="text-center" style="width: 100px;">Excess Qty</th>-->
+                                    <!--<th class="text-center" style="width: 90px;">Actual Rcvd</th>-->
+                                    <th class="text-center" style="width: 140px;">Damage details</th>
+                                    <th class="text-center" style="width: 50px;">Brk</th>
+                                    <th class="text-center" style="width: 90px;">Brk. rate / pc</th>
+                                    <th class="text-center" style="width: 50px;">Loss</th>
+                                    <th class="text-center" style="width: 50px;">Scrap</th>
+                                    <th class="text-center" style="width: 50px;" ng-if="!disableExcess">Excess</th>
+                                    <th class="text-center" style="width: 150px;">Remarks</th>
+                                    <!--<th class="text-center" style="width: 100px;">B.Amount</th>-->
+                                    <!--<th class="text-center" style="width: 100px;">Full Rcvd</th>-->
+
+                                    <th class="text-center" style="width: 50px;">Actions</th>
+
+                                </tr>
+
+                                <tbody>
+                                    <tr ng-repeat="item in GRN.Items | filter:{Deleted:0}" ng-delete="OnItemDeleted(index);" ng-class="item.GroupItemId > 0 ? 'groupitem':'' ">
+                                        <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">
+                                            {{$index+1}}
+                                        </td>
+
+                                        <td>
+                                            <span ng-class="item.GroupItemId > 0 ? 'pl-1': ''"> {{item.Item}}</span>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <input type="text" style="width:100%" ng-model="item.Quantity" class="form-control maskednumber" nodecimal maxlength="5" />
+
+                                        </td>
+                                        <!--<td class="text-center">
+
+                                            <input type="text" style="width:100%" ng-model="item.ReceivingQty" class="form-control maskednumber" nodecimal maxlength="5" />
+
+
+                                        </td>-->
+
+                                        <td class="text-center">
+                                            <input type="text" style="width:100%" ng-model="item.Rate" class="form-control maskednumber" nodecimal maxlength="8" />
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-xs btn-info" ng-click="openDamageComponentEditor(item)">
+                                                Damage details
+                                            </button>
+                                            <div class="text-muted" style="font-size:11px;margin-top:4px;">
+                                                {{getDamageComponentSummary(item)}}
+                                            </div>
+                                        </td>
+                                        <!--<td class="text-center">
+                                            <input type="text" style="width:100%" ng-model="item.Quantity" class="form-control maskednumber" nodecimal maxlength="5" />
+
+                                        </td>-->
+                                        <td class="text-center">
+                                            <input type="text" style="width:100%" ng-model="item.Breakage" class="form-control maskednumber" nodecimal maxlength="5" />
+                                        </td>
+                                        <td class="text-center">
+
+                                            <input type="text" style="width:100%" ng-model="item.BreakageRate" class="form-control maskednumber" nodecimal maxlength="8" />
+
+
+                                        </td>
+                                        <td class="text-center text-danger" style="color:red !important">
+
+                                            <!--{{item.ShortQty}}-->
+                                            <input type="text" style="width:100%" ng-model="item.ShortQty" ng-blur="checkShortQty(item)" class="form-control maskednumber" nodecimal maxlength="5" />
+
+
+                                        </td>
+                                        <td class="text-center text-danger" style="color:red !important">
+
+                                            <!--{{item.ShortQty}}-->
+                                            <input type="text" style="width:100%" ng-model="item.Scrap" class="form-control maskednumber" nodecimal maxlength="5" />
+
+
+                                        </td>
+
+                                        <td class="text-center text-danger" style="color:red !important" ng-if="!disableExcess">
+
+                                            <!--{{item.ExcessQty}}-->
+                                            <input type="text" style="width:100%" ng-model="item.ExcessQty" allownegative ng-blur="checkExcessQty(item)" class="form-control maskednumber" nodecimal maxlength="5" />
+
+                                        </td>
+                                        <td class="text-center">
+                                            <textarea cols="10" ng-model="item.Remarks" class="form-control" maxlength="100" />
+                                        </td>
+                                        <!--<td class="text-center" style="width:50px;">{{item.Breakage * item.BreakageRate}} </td>-->
+                                        <!--<td class="text-center">
+
+
+
+                                            <input type="checkbox" ng-checked="item.ConsiderFullReceive == 1" ng-model="item.ConsiderFullReceive" class="form-check" />
+                                        </td>-->
+                                        <td class="text-center" style="width:50px;">
+
+                                            <a href="#" ng-click="DeleteItem($index)" stop="true">  <i class="fa fa-trash-o text-danger"></i></a>
+                                        </td>
+                                        <!--<td>
+
+                                            <input type="checkbox" class="col-sm-1" ng-model="item.ChargeReturnedDate" />
+                                        </td>-->
+                                    </tr>
+                                    <tr class="tblFooter" ng-if="(GRN.Items | filter:{Deleted:0}).length > 0">
+                                        <td colspan="2" class="sub-total text-right">Total</td>
+                                        <td class="text-right sub-total">{{(GRN.Items | filter:{Deleted:0}) | sum:'Quantity'}}</td>
+                                        <td class="text-right sub-total"></td>
+                                        <td class="text-right sub-total"></td>
+                                        <td class="text-right sub-total">{{(GRN.Items | filter:{Deleted:0}) | sum:'Breakage'}}</td>
+                                        <td class="text-right sub-total"></td>
+                                        <td class="text-right sub-total">{{(GRN.Items | filter:{Deleted:0}) | sum:'ShortQty'}}</td>
+                                        <td class="text-right sub-total">{{(GRN.Items | filter:{Deleted:0}) | sum:'Scrap'}}</td>
+                                        <td class="text-right sub-total" ng-if="!disableExcess">{{(GRN.Items | filter:{Deleted:0}) | sum:'ExcessQty'}}</td>
+                                        <td colspan="2" class="sub-total"></td>
+                                    </tr>
+                                </tbody>
+                                <tr>
+                                    <td rowspan="50" ng-attr-colspan="{{ disableExcess ? 8 : 9 }}" style="background:#fff;">
+                                        <div style="padding:10px;">
+                                            <ul class="qutoationSettingsTab nav nav-tabs" role="tablist">
+                                                <li role="presentation">
+                                                    <a href="#chlOtherDetails" class="active" aria-controls="chlOtherDetails" role="tab"
+                                                       data-toggle="tab">Details</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a href="#chlTnc" ng-click="javascript:void()" aria-controls="chlTnc" role="tab" data-toggle="tab">Other Information</a>
+                                                </li>
+
+                                            </ul>
+                                            <div class="tab-content" style="border: solid 1px #c0c0c0;padding:8px; ">
+
+
+                                                <div role="tabpanel" class="tab-pane active" id="chlOtherDetails">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">
+                                                                    Warehouse
+                                                                </label>
+                                                                <div class="col-sm-8">
+                                                                    <searchableselect style=" max-width: 220px; display: block;" ng-name="warehouse" ng-id="client_value1" data-field="warehouses"
+                                                                                      ng-model="GRN.WarehouseId" data-val="WarehouseId" data-text="Name"></searchableselect>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Vehicle No</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.VehicleNo" style="border: solid 1px #00bcd4; background: #fff; padding-right: 3px;" maxlength="50" />
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Ship From</label>
+                                                                <div class="col-sm-8">
+                                                                    <textarea class="form-control" maxlength="500" ng-model="GRN.ShipFrom" style="height:80px;" placeholder="Ship from (optional)" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Approx. Value</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control maskednumber" ng-model="GRN.ApproximateValue" maxlength="15" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Weight</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control maskednumber" ng-model="GRN.Weight" maxlength="15" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">LR Number</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.LRNumber" style="border: solid 1px #00bcd4; background: #fff; padding-right: 3px;" maxlength="50" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">CR Number</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.CRNumber" style="border: solid 1px #00bcd4; background: #fff; padding-right: 3px;" maxlength="50" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">GR Number</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.GRNumber" style="border: solid 1px #00bcd4; background: #fff; padding-right: 3px;" maxlength="50" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">PO Number</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.PONumber" style="border: solid 1px #00bcd4; background: #fff; padding-right: 3px;" maxlength="50" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Driver</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.Driver" style="border: solid 1px #00bcd4;background:#fff; padding-right: 3px;" maxlength="50" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Sender</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.Sender" tabindex="3" name="val_sender" style="border: solid 1px #00bcd4;background:#fff; padding-right: 3px;" id="val_sender" maxlength="30" />
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-4">Receiver</label>
+                                                                <div class="col-sm-8">
+                                                                    <input type="text" class="form-control" ng-model="GRN.Receiver" tabindex="4" style="border: solid 1px #00bcd4;background:#fff; padding-right: 3px;" maxlength="30" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane" id="chlTnc">
+                                                    <div class="row">
+                                                        <div class="">
+
+                                                            <div class="form-group">
+                                                                <label class="col-sm-12">Remarks</label>
+                                                                <div class="col-sm-12">
+                                                                    <textarea ckeditor="editorOptions" ng-model="GRN.Remarks" data-ck-editor style="height:100px;"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-12">Terms and Conditions</label>
+                                                                <div class="col-sm-12">
+                                                                    <textarea ckeditor="editorOptions" ng-model="GRN.Tnc" data-ck-editor style="height:100px;"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <table style="width:100%;">
+                                            <tr>
+
+                                                <td colspan="2">Freight</td>
+                                                <td style="padding:2px !important;width:100px;">
+                                                    <input type="text" class="form-control maskednumber"
+                                                           style="border: solid 1px #00bcd4;padding-right:3px;"
+                                                           ng-model="GRN.Freight" maxlength="10" />
+
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="ch in GRN.OtherCharges">
+
+                                                <td colspan="2" ng-bind="ch.Name" style="width:200px;"></td>
+                                                <td style="width:100px;padding:2px !important;">
+                                                    <input type="text" class="form-control maskednumber"
+                                                           style="border: solid 1px #00bcd4;padding-right:3px;"
+                                                           ng-model="ch.Amount" maxlength="10" />
+
+                                                </td>
+
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-8 mt-2" style="margin-bottom:10px;">
+
+                        <input type="button" style="width: 100px;" tabindex="100" class="btn btn-primary"
+                               value="Save"
+                               ng-click="Save();" />
+
+                        <input type="button" style="width: 170px;" class="btn btn-primary ml-1"
+                               ng-show="comp.EwayBillEnabled ==true "
+                               value="Save & Create EwayBill" ng-click="Save(true);" />
+
+                        <input type="button" style="width: 100px;" class="btn btn-default ml-1"
+                               value="Cancel"
+                               ng-click="cancelGrn();" />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>
+<script lang="javascript">
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+
+</script>
+
+<div class="modal fade" id="damageComponentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    Damage components
+                    <span ng-if="selectedDamageItem && selectedDamageItem.Item" class="text-muted" style="font-size:14px;font-weight:normal;"> — {{selectedDamageItem.Item}}</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div ng-if="selectedDamageItem" class="well well-sm" style="margin-bottom:14px;padding:12px 14px;">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.03em;">Item</div>
+                            <div style="font-size:17px;font-weight:600;line-height:1.3;">{{selectedDamageItem.Item}}</div>
+                        </div>
+                        <div class="col-sm-4 text-right">
+                            <div class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:0.03em;">Breakage qty</div>
+                            <div style="font-size:17px;font-weight:600;">{{selectedDamageItem.Breakage || 0}}</div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:10px;padding-top:10px;border-top:1px solid #e0e0e0;">
+                        <div class="col-sm-12 text-right">
+                            <span class="text-muted" style="font-size:12px;">Total damage cost (this line)</span>
+                            <strong style="font-size:15px;margin-left:8px;">{{modalDamageGrandTotal() | number:2}}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info" style="margin-bottom:12px;">
+                    Enter <strong>component name</strong>, <strong>quantity</strong>, and <strong>rate</strong>; cost is calculated as quantity × rate. Use <strong>+</strong> / <strong>−</strong> to add or remove rows.
+                </div>
+                <div ng-if="selectedDamageItem">
+                    <table class="table table-condensed table-bordered" style="margin:0;">
+                        <thead>
+                            <tr style="background:#fafbfc;">
+                                <th style="width:36%;padding-left:14px;">Component name</th>
+                                <th style="width:14%;" class="text-right">Qty</th>
+                                <th style="width:14%;" class="text-right">Rate</th>
+                                <th style="width:14%;" class="text-right">Cost</th>
+                                <th style="width:22%;" class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="d in selectedDamageItem.DamageComponentDetails track by d.rowId">
+                                <td style="padding-left:14px;vertical-align:middle;">
+                                    <input type="text" class="form-control input-sm" ng-model="d.name" placeholder="e.g. handle, wheel" maxlength="150" />
+                                </td>
+                                <td class="text-right" style="vertical-align:middle;">
+                                    <input type="text" class="form-control input-sm maskednumber text-right" ng-model="d.quantity" ng-change="onDamageQtyOrRateChange(d)" nodecimal maxlength="8" />
+                                </td>
+                                <td class="text-right" style="vertical-align:middle;">
+                                    <input type="text" class="form-control input-sm maskednumber text-right" ng-model="d.rate" ng-change="onDamageQtyOrRateChange(d)" maxlength="10" />
+                                </td>
+                                <td class="text-right" style="vertical-align:middle;padding-top:12px;">
+                                    <span>{{damageRowCost(d) | number:2}}</span>
+                                </td>
+                                <td class="text-center" style="vertical-align:middle;">
+                                    <button type="button" class="btn btn-xs btn-default" ng-click="addDamageComponentRow()" title="Add row">+</button>
+                                    <button type="button" class="btn btn-xs btn-danger" ng-click="removeDamageComponentRow(d)" ng-disabled="selectedDamageItem.DamageComponentDetails.length <= 1" title="Remove row">−</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="saveDamageComponentEditor()">Save Details</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+
+<div class="col-sm-12">
+
+    <!--  <pageheader heading="Ledger" />-->
+    <div class="col-sm-12">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" data-item="Client" data-all="true" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+
+        </div>
+        <!--<div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+
+        </div>-->
+        <div class="col-sm-2 text-center">
+            <label>From</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2 text-center">
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" class="form-control" tabindex="3" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+            <label>&nbsp;</label>
+            <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Show" ng-click="GetAccountLedger();" />
+                <export data="TransList" url="'ledgerAnalysis.html'"></export>
+            </div>
+        </div>
+
+        <!--<div class="col-sm-1">
+            <label>&nbsp;</label>
+            <input type="button" class="btn btn-primary" tabindex="4" value="Print" ng-click="PrintLedger();" />
+
+        </div>-->
+    </div>
+    <div class="col-sm-12">
+
+        <table class="table table-condensed table-responsive table-list" med-key>
+
+            <tr class="headerRow">
+
+                <th style="width: 4%">#</th>
+                <th style="width: 8%">Code</th>
+                <th style="width: 15%;">Name</th>
+
+
+
+                <th style="width: 8%;" class="text-right">Opening Balance</th>
+                <th style="width: 8%;" class="text-right">Debit</th>
+                <th style="width: 8%;" class="text-right">Credit</th>
+                <th style="width: 8%;" class="text-right">Closing Balance</th>
+            </tr>
+            <tr ng-repeat="item in TransList">
+
+                <td>{{$index + 1 }}</td>
+                <td>{{item.Code }}</td>
+                <td>{{item.Name }}</td>
+
+
+                <td class="text-right">
+                    {{item.OpeningBalance | number:2}}
+                    <span ng-if="item.OBType ==1">DR</span>
+                    <span ng-if="item.OBType ==2">CR</span>
+
+                </td>
+                <td class="text-right">{{item.Debit | number:2}}</td>
+                <td class="text-right">{{item.Credit | number:2}}</td>
+                <td class="text-right">{{item.ClosingBalance  }} </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+
+
+    <script lang="ja">
+
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+
+</div>
+

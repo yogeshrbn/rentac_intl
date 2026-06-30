@@ -1,0 +1,46 @@
+﻿<div class="col-sm-12" id="userList">
+    <div class="col-sm-12 text-right">
+        <input type="button" value="New User" class="btn btn-primary" ng-click="addEditUser();" />
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="table-responsive">
+
+
+        <table class="table table-condensed table-responsive">
+            <tr class="headerRow">
+                <th>#</th>
+                <th>UserName</th>
+                <th>Role</th>
+
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Default Company</th>
+                <th>Actions</th>
+
+            </tr>
+            <tr ng-repeat="user in Users" class="{{user.Active ? 'activeUser' :'in-activeUser'}}">
+                <td>{{$index+1}}</td>
+                <td>{{user.UserName}}</td>
+                <td>{{user.RoleName}}</td>
+
+                <td>{{user.Email}}</td>
+                <td>{{user.Phone}}</td>
+                <td>{{user.Company}}</td>
+                <td class="actions">
+                    <div ng-if="user.RoleId != 1">
+                        <a ng-click="deactivate(user);">
+                            <i class="fa fa-remove"></i>
+                        </a>&nbsp;
+                        <a ng-click="resetPwd(user);" ng-if="user.RoleId != 1">
+                            <i class="fa fa-power-off"></i>
+                        </a>&nbsp;<a ng-click="addEditUser(user);">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+

@@ -1,0 +1,35 @@
+-- Optional SQL-side range filters for contract list (Area, ContractValue, Rate).
+-- The web app already applies these ranges in Api/Controllers/ContractController.Filter after GetAll.
+-- Add this only if you need filtering inside the database for performance or consistency.
+--
+-- Procedures to alter (generate ALTER from SSMS; full bodies are not versioned here):
+--
+-- p_contracts_all  (BAL/DAL/ContractDAL.cs GET_ALL — default contracts list)
+--   Add optional parameters (all NULL = no filter):
+--     @areaMin            FLOAT = NULL
+--     @areaMax            FLOAT = NULL
+--     @contractValueMin   FLOAT = NULL
+--     @contractValueMax   FLOAT = NULL
+--     @rateMin            FLOAT = NULL
+--     @rateMax            FLOAT = NULL
+--   In the main SELECT/WHERE on Contract (alias as in your proc, e.g. c):
+--     AND (@areaMin IS NULL OR c.Area >= @areaMin)
+--     AND (@areaMax IS NULL OR c.Area <= @areaMax)
+--     AND (@contractValueMin IS NULL OR c.ContractValue >= @contractValueMin)
+--     AND (@contractValueMax IS NULL OR c.ContractValue <= @contractValueMax)
+--     AND (@rateMin IS NULL OR c.Rate >= @rateMin)
+--     AND (@rateMax IS NULL OR c.Rate <= @rateMax)
+--
+-- p_contracts_allV1 (ContractDAL GetAll when FilterFor == "sales")
+--   Add the same six parameters and WHERE clauses if this proc returns the same contract list shape.
+--
+-- p_contracts_ops_all (GET_ALL_OPS when FilterFor == "ops")
+--   Add the same parameters only if ops dashboard should honor the same filters.
+--
+-- After altering procs, update BAL/DAL/ContractDAL.cs GetAll to pass:
+--   sql.AddParameter("@areaMin", DbType.Double, ..., filter.AreaMin);
+--   ... (use Nullable or only add when HasValue per your SQL parameter style)
+--   Match parameter names to your ALTER script.
+--
+USE [$AppDb$]
+GO

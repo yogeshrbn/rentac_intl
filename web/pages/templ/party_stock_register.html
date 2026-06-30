@@ -1,0 +1,170 @@
+<!-- 
+<pageheader heading="Party-Wise Stock Register" />-->
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="PartyForStockSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" 
+                              ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+        </div>
+        <div class="col-sm-3">
+            <label>Choose Site</label>
+            <searchableselect id="Searchableselect3" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+        </div>
+        <div class="col-sm-1">
+
+            <label>From</label>
+
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="col-sm-1">
+
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+            </datepicker>
+
+        </div>
+        <div class="col-sm-3">
+            <label>&nbsp;</label>
+            <div>
+                <input type="button" class="btn btn-primary" tabindex="4" value="Find" ng-click="GetPartyStockRegister();" />&nbsp;
+                <input type="button" class="btn btn-warning" tabindex="5" value="Print" ng-click="PartyStockRegisterPrint();" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="form-group">
+
+
+      
+    <div class="col-lg-12">
+        <div class="table-responsive" style="margin-top:7px;">
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+
+                    <th style="width: 100px">Sent Date</th>
+                    <th style="width: 50px">
+                        <!--OB-->
+                    </th>
+                    <th style="width: 50px">Vch</th>
+                    <th class="text-center" ng-repeat="row in MaxRows" style="min-width: 10%; max-width: 15%">{{row}}</th>
+                    <th class="text-right">Total</th>
+
+                </tr>
+                <tr ng-repeat="value in IssuedDates track by $index">
+                    <td>{{value | formatDate}}</td>
+                    <td></td>
+                    <td>
+                        <span ng-repeat="ch in getTransactionChallans(value,1)"
+                              style="width: 100%; display: inline-block;">{{ch}}</span>
+
+                    </td>
+                    <td class="text-center" ng-repeat="row in MaxRows" style="min-width: 10%; max-width: 15%">
+
+                        <span ng-repeat="qty in getIssuedProductQtyOnDate(row,value)"
+                              style="width: 100%; display: table;">{{ qty.Quantity }}</span>
+
+                    </td>
+                    <td class="text-right">{{PartyIssueTans | filter : {TransDate: value} |sum:'Quantity'}}</td>
+                </tr>
+                <tr class="totalRow stock-register">
+                    <td class="total_td sub-total">Rec. Date</td>
+                    <td class="total_td sub-total" colspan="2">Sub Total</td>
+
+                    <td class="text-center total_td sub-total" ng-repeat="row in MaxRows">
+                        {{ProductWiseProductsQtyTotal(row,1)}}
+                    </td>
+                    <td>{{ PartyIssueTans |sum:'Quantity'}}</td>
+                </tr>
+                <tr ng-repeat="value in RecvedDates track by $index">
+                    <td>{{value | formatDate}}</td>
+                    <td></td>
+                    <td>
+                        <span ng-repeat="ch in getTransactionChallans(value,2)"
+                              style="width: 100%; display: inline-block;">{{ch}}</span>
+
+                    </td>
+                    <td class="text-center" ng-repeat="row in MaxRows" style="min-width: 10%; max-width: 15%">
+
+                        <div ng-repeat="qty in getRecvdProductQtyOnDate(row,value)" class="col-sm-8"
+                             style="width: 100%; display: table;">
+
+                            <span class="col-sm-12">{{  qty.Quantity}}</span>
+                            <span class="col-sm-12" ng-if="qty.Breakage>0">
+                                {{  qty.Breakage}}
+                                <span style="font-size: 10px; font-weight: bold;">(br)</span>
+                            </span>
+                        </div>
+
+                    </td>
+                    <td class="text-right">{{(PartyRecTans | filter : {TransDate: value} |sum:'Quantity')+(PartyRecTans | filter : {TransDate: value} |sum:'Breakage')}}</td>
+                </tr>
+                <tr class="totalRow stock-register ">
+                    <td class="total_td sub-total" colspan="3">Sub Total</td>
+
+                    <td class="text-center total_td sub-total " ng-repeat="row in MaxRows">
+                        {{ProductWiseProductsQtyTotal(row,2)}}
+                    </td>
+                    <td class="">{{( PartyRecTans |sum:'Quantity')+( PartyRecTans |sum:'Breakage')}}</td>
+                </tr>
+                <tr class="totalRow stock-register ">
+                    <td class="total_td" colspan="3">Balance</td>
+
+                    <td class="text-center total_td" ng-repeat="row in MaxRows">
+                        {{ProductWiseProductsQtyTotal(row,1) - ProductWiseProductsQtyTotal(row,2)}}
+                    </td>
+                    <td class="text-right">{{ (PartyIssueTans |sum:'Quantity') -(( PartyRecTans |sum:'Quantity')+( PartyRecTans |sum:'Breakage'))}}</td>
+                </tr>
+                <!--    <tr>
+            <td style="width: 100px;" colspan="2">Challan</td>
+            <td class="text-center nopadding" ng-repeat="value in StockDates">
+                <div class="col-sm-6 IssBlock">
+                    <label>Iss</label>
+                    <div class="col-sm-12 nopadding" ng-repeat="item in getTransactionChallans(value,1)">
+                        {{ item}}
+                    </div>
+                </div>
+                <div class="col-sm-6 recBlock">
+                    <label>Rec</label>
+                    <div class="col-sm-12 nopadding" ng-repeat="item in getTransactionChallans(value,2)">
+                        {{ item}}
+
+                    </div>
+                </div>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr ng-repeat="row in MaxRows">
+            <td style="width: 100px;">{{row}}</td>
+            <td style="color:green;text-align:center">{{ProductOpeningBalance(row)}}</td>
+            <td class="text-center nopadding" ng-repeat="value in StockDates">
+                <div class="col-sm-6 IssBlock">
+                    <div class="col-sm-12 nopadding" ng-repeat="item in getIssuedProductQtyOnDate(row,value)">
+                        {{ item}}
+                    </div>
+                </div>
+                <div class="col-sm-6 recBlock">
+                    <div class="col-sm-12 nopadding" ng-repeat="item in getRecvdProductQtyOnDate(row,value)">
+                        {{ - item}}&nbsp;
+                    </div>
+                </div>
+            </td>
+            <td class="total_right_col">{{ProductsQtyTotal(row)}}</td>
+        </tr> -->
+
+
+
+            </table>
+        </div>
+    </div>
+</div>
+

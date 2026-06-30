@@ -1,0 +1,119 @@
+﻿<!--<div class="col-sm-1">
+
+</div>-->
+<div class="col-sm-5">
+    <div class="row" style="display:flex">
+        <!--<div class="col-xs-1">
+            <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');this.blur();">
+                <i class="fa fa-bars fa-fw" style="color: #fff;"></i>
+            </a>
+        </div>-->
+        <div class="col-lg-10 col-xs-11">
+            <select id="ddlCompany" ng-model="Settings.DefaultCompanyId" class="toolbar-company"
+                    style="margin-top: 15px; text-transform: uppercase;"
+                    ng-options="i.CompanyId as (i.Name ) for i in Companies">
+            </select>
+        </div>
+    </div>
+ 
+
+    <!--<searchableselect id="ddlCompany" on-itemselected="CompanySelected(itemId);" data-field="Companies" ng-model="Settings.DefaultCompanyId" data-val="CompanyId" data-text="Name"></searchableselect>-->
+
+</div>
+<div class="col-sm-12">
+    <!--<div class="col-sm-6 page-header-block nopadding">
+        <div>-->
+            <!--   <i class="fa fa-arrow-left fa-2x"></i>-->
+            <!--<i class="fa fa-chevron-circle-left fa-2x" ng-click="goBack();"></i>
+            <div class="page-header-text">$header</div>
+        </div>
+
+    </div>-->
+    <div class="col-sm-6 page-header-block hide nopadding" style="padding-left:0px; padding-right:0px;border-bottom: 36px solid #039be5; border-left: 25px solid transparent; border-right: 25px solid transparent; height: 0;">
+        <div class="col-sm-12" style="padding:0px;text-align:right;">
+            <!--<ul class="toolbar-list" id="toolbarCtrls">
+                <li command="new"> <i class="fa fa-file" title="New"></i>
+                <li command="edit"><i class="fa fa-edit" title="Edit"></i></li>
+                <li command="undo" class="disable-ctl"> <i class="fa fa-undo" title="Undo"></i>
+                <li class="seaparator"><span></span></li>
+                <li command="first"> <i class="fa fa-fast-backward" title="First"></i></li>
+                <li command="previous"><i class="fa fa-step-backward" title="Previous"></i></li>
+                <li command="next"><i class="fa fa-step-forward" title="Next"></i></li>
+                <li command="last"><i class="fa fa-fast-forward" title="Last"></i></li>
+                <li class="seaparator"><span></span></li>
+                <li command="filter"><i class="fa fa-filter" title="Search"></i></li>
+                <li command="print"><i class="fa fa-print" title="Print"></i></li>
+            </ul>-->
+
+
+        </div>
+
+    </div>
+</div>
+<div class="payment-ribbon" ng-if="showlcdMessage == true">
+
+    <label ng-if="showlcdMessage == true && lcd.PackageId > 0 && $scope.lcd.Demo != true">
+        <span ng-if="lcd.RemainingDays > 0">
+            Your package will expire in {{lcd.RemainingDays }} days. <br />
+            For the un-interrupted services click <a ui-sref="support">here</a> to renew.
+        </span>
+        <span ng-if="lcd.RemainingDays <= 0">
+            Your package has been expired. <br />
+            For the un-interrupted services click <a ui-sref="support">here</a> to renew.
+        </span>
+    </label>
+    <label ng-if="lcd.Demo == true">
+        Your demo will expire in {{lcd.RemainingDays }} days. <br />
+        For the un-interrupted services click <a ui-sref="support">here</a> to purchase.
+    </label>
+    <label ng-if="lcd.PackageId == 0">
+        You have not purchased the license yet. <br />
+        For the un-interrupted services click <a ui-sref="support">here</a> to purchase.
+    </label>
+</div>
+<!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Launch demo modal
+</button>-->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!--<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Package Expired</h4>
+            </div>-->
+
+        </div>
+    </div>
+</div>
+<script lang="ja">
+
+    $('#headerCompanyList a').click(function (e) {
+        e.preventDefault();
+    });
+</script>
+<style>
+    /* .btn {
+        background: #039be5;
+        color: #fff;
+        border: none;
+    }*/
+    .payment-ribbon {
+        position: absolute;
+        text-align: center;
+        padding: 16px 15px 10px 15px;
+        left: calc(100vw / 2 - 340px);
+        background: #ffeb8b;
+        left: 48%;
+        top: 40%;
+        color: #e20000;
+        border-radius: 0px 0px 5px 5px;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        height: 60px;
+    }
+
+        .payment-ribbon label {
+            font-weight: normal;
+        }
+</style>

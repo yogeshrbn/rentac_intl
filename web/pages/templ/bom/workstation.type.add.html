@@ -1,0 +1,30 @@
+﻿<div class="clearfix">&nbsp;</div>
+
+<div class="col-lg-6">
+    <form id="frmWorkStationType" name="frmWorkStationType" class="form-horizontal">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3">Type Name</label>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="50" name="type_name" class="form-control" ng-model="WorkStationType.Name" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="control-label col-sm-3">Description</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" maxlength="100" style="height:50px;width:100%" ng-model="WorkStationType.Description"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="col-sm-offset-3 col-sm-9">
+                <button class="btn btn-default" ui-sref="workstationtypes">Cancel</button>
+                <button class="btn btn-primary" ng-click="Save()">Save</button>
+                <button class="btn btn-danger pull-right" ng-show="AccessData.Edit && WorkStationType.WorkStationId > 0" ng-click="delete()">Delete</button>
+
+            </div>
+        </div>
+    </form>
+</div>

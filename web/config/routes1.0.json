@@ -1,0 +1,1159 @@
+﻿[
+ 
+  {
+    "name": "login",
+    "templateUrl": "pages/templ/login.html",
+    "controller": "loginController",
+    "title": "Order Detail",
+    "authorize": false,
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "order-detail"
+    }
+  },
+  {
+    "name": "/signup",
+    "templateUrl": "pages/templ/signup.html",
+    "controller": "SignUpController",
+    "title": "Order Detail",
+    "authorize": false,
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "order-detail"
+    }
+  },
+  {
+    "name": "/signupconfirm",
+    "templateUrl": "templ/signupconfirm.html",
+    "controller": "SignUpController",
+    "title": "Order Detail",
+    "authorize": false,
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "order-detail"
+    }
+  },
+  {
+    "name": "/forgotpwd",
+    "templateUrl": "templ/forgotpwd.html",
+    "controller": "SignUpController",
+    "title": "Order Detail",
+    "authorize": false,
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "order-detail"
+    }
+  },
+  {
+    "name": "/validateotp",
+    "templateUrl": "templ/validateotp.html",
+    "controller": "SignUpController",
+    "title": "Order Detail",
+    "authorize": false,
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "order-detail"
+    }
+  },
+  {
+    "name": "/home",
+    "templateUrl": "templ/dashboard.html",
+    "title": "Dash Board",
+    "controller": "DashboardController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/siteInventory",
+    "templateUrl": "templ/siteInventory.html",
+    "title": "Dash Board",
+    "controller": "ReportsController",
+    "toolbar": "yes",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/issuedList",
+    "templateUrl": "templ/issuedList.html",
+    "title": "Issue Register",
+    "controller": "ItemsIssuedRegister",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/partystockreg",
+    "templateUrl": "templ/party_stock_register.html",
+    "title": "Party Stock Register",
+    "controller": "LedgerController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/partystockregxtab",
+    "templateUrl": "templ/party_stock_registerxtab.html",
+    "title": "Party Stock Register",
+    "controller": "PartyStockRegisterCrossTab",
+    "toolbar": "yes",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/partypendreport",
+    "templateUrl": "templ/party_pend_report.html",
+    "title": "Party-Wise Pendency",
+    "controller": "PartyStockBalanceController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+
+  {
+    "name": "/recvdList",
+    "templateUrl": "templ/recvdList.html",
+    "title": "Item Received Register",
+    "controller": "ItemsReceivedRegister",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+
+  {
+    "name": "/closedSite",
+    "templateUrl": "templ/closedSite.html",
+    "title": "Dash Board",
+    "controller": "ReportsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/payments",
+    "templateUrl": "templ/payments.html",
+    "title": "Dash Board",
+    "controller": "ReportsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/sitepaymentSummary",
+    "templateUrl": "templ/sitepaymentsummary.html",
+    "title": "Dash Board",
+    "controller": "ReportsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+
+  {
+    "name": "/companylist",
+    "templateUrl": "templ/companyList.html",
+    "title": "Companies",
+    "controller": "CompanyController",
+    "toolbar": "no",
+    "newitem": "addeditcompany",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/addeditcompany",
+    "templateUrl": "templ/addEditCompany.html",
+    "title": "Add/Edit Company",
+    "toolbar": "no",
+
+    "controller": "CompanyController",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/clientlist",
+    "templateUrl": "templ/clientList.html",
+    "title": "Accounts",
+    "controller": "LedgerListController",
+    "toolbar": "no",
+    "newitem": "addeditclient",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/addeditclient",
+    "templateUrl": "templ/addeditclient.html",
+    "title": "Add/Edit Account",
+    "toolbar": "no",
+
+    "controller": "LedgerController",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/statistics/activity",
+    "templateUrl": "templ/activity-statistics.html",
+    "title": "Activity Statistics",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "activity-statistics"
+    }
+  },
+  {
+    "name": "/products",
+    "templateUrl": "templ/productlist.html",
+    "title": "Products",
+    "controller": "ProductController",
+    "toolbar": "no",
+    "newitem": "addproduct",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/addproduct",
+    "templateUrl": "templ/addEditProduct.html",
+    "title": "Add/Edit Products",
+    "controller": "ProductController",
+    "toolbar": "no",
+
+    "newitem": "addproduct",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/accgrps",
+    "templateUrl": "templ/accGrp.html",
+    "title": "Account Groups",
+    "controller": "AccountGroupController",
+    "toolbar": "no",
+    "newitem": "addaccgroup",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/addaccgroup",
+    "templateUrl": "templ/addeditAccGroup.html",
+    "title": "Account Groups",
+    "controller": "AccountGroupController",
+    "toolbar": "no",
+    "newitem": "addaccgroup",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/saltlist",
+    "templateUrl": "templ/saltlist.html",
+    "title": "Salt",
+    "controller": "SaltController",
+    "toolbar": "no",
+    "newitem": "addsalt",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/addsalt",
+    "templateUrl": "templ/addeditsalt.html",
+    "title": "Salt",
+    "controller": "SaltController",
+    "toolbar": "no",
+    "newitem": "addeditsalt",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/prodcats",
+    "templateUrl": "templ/prodcatlist.html",
+    "title": "Product Category",
+    "controller": "ProductCategoryController",
+    "toolbar": "no",
+    "newitem": "prodcat",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/prodcat",
+    "templateUrl": "templ/prodcat.html",
+    "title": "Product Category",
+    "controller": "ProductCategoryController",
+    "toolbar": "no",
+    "newitem": "prodcat",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/sizes",
+    "templateUrl": "templ/sizelist.html",
+    "title": "Size List",
+    "controller": "UOMController",
+    "toolbar": "no",
+    "newitem": "addeditsize",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/addeditsize",
+    "templateUrl": "templ/addeditsize.html",
+    "title": "New Size",
+    "controller": "UOMController",
+    "toolbar": "no",
+    "newitem": "addeditsize",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/ledger",
+    "templateUrl": "templ/ledger.html",
+    "title": "Ledger List",
+    "controller": "AccountLedger",
+    "toolbar": "no",
+    "newitem": "ledger",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/ledgerlist",
+    "templateUrl": "templ/ledgerList.html",
+    "title": "Ledger List",
+    "controller": "LedgerController",
+    "toolbar": "no",
+    "newitem": "ledger",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/workorders",
+    "templateUrl": "templ/workorderlist.html",
+    "title": "Sites",
+    "controller": "WorkOrderListController",
+    "toolbar": "no",
+    "newitem": "workorder",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/addSiteBill",
+    "templateUrl": "templ/workorder.html",
+    "title": "Issue Items",
+    "controller": "WorkOrderController",
+    "warnOnLeave": "true",
+    "toolbar": "yes",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/issueChallan",
+    "templateUrl": "templ/issueChallan.html",
+    "title": "Issue Items",
+    "controller": "RentChallanController",
+    "warnOnLeave": "true",
+    "toolbar": "yes",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/purchase",
+    "templateUrl": "templ/purchase.html",
+    "title": "Purchase Entry",
+    "controller": "PurchaseController",
+    "warnOnLeave": "true",
+    "toolbar": "yes",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/purchaseReg",
+    "templateUrl": "templ/purchaseReg.html",
+    "title": "Purchase Register",
+    "controller": "PurchaseRegisterController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/sale",
+    "templateUrl": "templ/saleentry.html",
+    "title": "Credit Sale Entry",
+    "controller": "SaleController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/salesReg",
+    "templateUrl": "templ/salesReg.html",
+    "title": "Sales Register",
+    "controller": "SalesRegisterController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/woInfo",
+    "templateUrl": "templ/woInfo.html",
+    "title": "Site Details",
+    "controller": "WorkOrderInfoController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/sInfo",
+    "templateUrl": "templ/siteInfo.html",
+    "title": "Purchase Challan",
+    "controller": "SiteController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/inv_grn",
+    "templateUrl": "templ/inv_grn.html",
+    "title": "Receive Items",
+    "controller": "InventoryController",
+    "toolbar": "yes",
+    "warnOnLeave": "true",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/invoice",
+    "templateUrl": "templ/invoice.html",
+    "title": "Invoice",
+    "controller": "InvoiceController",
+    "toolbar": "no",
+    "warnOnLeave": "true",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+
+  {
+    "name": "/invoicelist",
+    "templateUrl": "templ/invoicelist.html",
+    "title": "Invoice",
+    "newitem": "invoice",
+    "controller": "InvoiceListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+
+  {
+    "name": "/manbill",
+    "templateUrl": "templ/matLoss.html",
+    "title": "Breakage / Manual Bill",
+    "controller": "ManualBillController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+
+  },
+  {
+    "name": "/challanlist",
+    "templateUrl": "templ/challanList.html",
+    "title": "Challans List",
+    "controller": "ChallanListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/challanEntry",
+    "templateUrl": "templ/challanEntry.html",
+    "title": "Challan Entry",
+    "controller": "ChallanController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/genBill",
+    "templateUrl": "templ/genBill.html",
+    "title": "Generate Bill",
+    "controller": "BillingController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/billList",
+    "templateUrl": "templ/billList.html",
+    "title": "Bill Register",
+    "controller": "BillingListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/dailyTrans",
+    "templateUrl": "templ/dailyTrans.html",
+    "title": "Daily Transactions",
+    "controller": "DailyInvTransController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+
+  {
+    "name": "/woSettings",
+    "templateUrl": "templ/woSettings.html",
+    "title": "Work Order Settings",
+    "controller": "WoSettingsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/settings",
+    "templateUrl": "templ/settings.html",
+    "title": "Settings",
+    "controller": "SettingsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/quickReceipts",
+    "templateUrl": "templ/quickReceipts.html",
+    "title": "Receipt / Payment",
+    "controller": "LedgerTransactionListController",
+    "toolbar": "yes",
+
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/quickReceipt",
+    "templateUrl": "templ/quickReceipt.html",
+    "title": "Receipt / Payment",
+    "controller": "LedgerTransactionController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/bankEntries",
+    "templateUrl": "templ/bankEntries.html",
+    "title": "Bank Entry",
+    "controller": "BankEntryListController",
+    "toolbar": "yes",
+
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/bankEntry",
+    "templateUrl": "templ/bankEntry.html",
+    "title": "Bank Entry",
+    "controller": "BankEntryController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/bankEntryregister",
+    "templateUrl": "templ/bankEntryregister.html",
+    "title": "Bank Entry Register",
+    "controller": "BankEntryRegisterController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/receiptRegister",
+    "templateUrl": "templ/receiptRegister.html",
+    "title": "Receipt Register",
+    "controller": "ReceiptRegisterController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/users",
+    "templateUrl": "templ/users.html",
+    "title": "User Accounts",
+    "controller": "UserController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/roles",
+    "templateUrl": "templ/roles.html",
+    "title": "Role(s)",
+    "controller": "RolesController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/empList",
+    "templateUrl": "templ/emplist.html",
+    "title": "Employee(s)",
+    "controller": "EmployeeListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/vehicleList",
+    "templateUrl": "templ/vehicleList.html",
+    "title": "Vehicle(s)",
+    "controller": "VehicleListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/dueBills",
+    "templateUrl": "templ/dueBills.html",
+    "title": "Due Bill(s)",
+    "controller": "DueBillsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/dueReports",
+    "templateUrl": "templ/dueReports.html",
+    "title": "Due Reports",
+    "controller": "ReportsController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "*"
+      ],
+      "menuCluster": "start"
+    }
+  },
+  {
+    "name": "/access",
+    "templateUrl": "templ/access.html",
+    "title": "Access Denied",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/partyWiseRates",
+    "templateUrl": "templ/partyWiseRates.html",
+    "title": "Party Rate List",
+    "controller": "PartyWiseRateListController",
+    "fileName": "CompanyController.js",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/estRent",
+    "templateUrl": "templ/estRent.html",
+    "title": "Estimated Rent Per Day",
+    "controller": "EstimatedRentController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/ledgerAnalysis",
+    "templateUrl": "templ/ledgerAnalysis.html",
+    "title": "Ledger Analysis",
+    "controller": "LedgerAnalysisController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/itemWiseClientBalance",
+    "templateUrl": "templ/itemWiseClientBalance.html",
+    "title": "Item wise Client Balance",
+    "controller": "ItemWiseClientsBalanceController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/clientWiseItemBalance",
+    "templateUrl": "templ/clientWiseItemBalance.html",
+    "title": "Client wise Item Balance",
+    "controller": "ClientWiseItemsBalanceController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/cashbook",
+    "templateUrl": "templ/cashbook.html",
+    "title": "Cash Book",
+    "controller": "CashbookController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/stockInhand",
+    "templateUrl": "templ/stockInhand.html",
+    "title": "Stock In-hand",
+    "controller": "StockInhandController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/stockSummary",
+    "templateUrl": "templ/stockSummary.html",
+    "title": "Stock Summary",
+    "controller": "StockSummaryController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/drNote",
+    "templateUrl": "templ/dr_cr_note.html",
+    "title": "Debit Note",
+    "controller": "DrCrNotesController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/crNote",
+    "templateUrl": "templ/dr_cr_note.html",
+    "title": "Credit Note",
+    "controller": "DrCrNotesController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/drNotesList",
+    "templateUrl": "templ/dr_cr_notesList.html",
+    "title": "Debit Notes",
+    "controller": "DrCrNotesListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/crNotesList",
+    "templateUrl": "templ/dr_cr_notesList.html",
+    "title": "Credit Note",
+    "controller": "DrCrNotesListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/matTransfer",
+    "templateUrl": "templ/site-to-site-transfer.html",
+    "title": "Material Transfer",
+    "controller": "MaterialTransferController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "editMatTransfer",
+    "url": "/editMatTransfer/:WorkOrderId",
+    "templateUrl": "templ/site-to-site-transfer.html",
+    "title": "Edit Material Transfer",
+    "controller": "MaterialTransferController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/matadjust",
+    "templateUrl": "templ/mat-adjustment.html",
+    "title": "Material Adjustment",
+    "controller": "MaterialAdjustController",
+    "toolbar": "yes",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+
+  },
+  {
+    "name": "/matAdjstList",
+    "templateUrl": "templ/matAdjstList.html",
+    "title": "Material Adjustment List",
+    "controller": "MaterialAdjustListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/gstr-1",
+    "templateUrl": "templ/reports/gst/gstr-1.html",
+    "title": "GSTR-1",
+    "controller": "MaterialAdjustListController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "/subscriptions",
+    "templateUrl": "templ/subscription.html",
+    "title": "Billings",
+    "controller": "SubscriptionController",
+    "toolbar": "no",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  }
+]

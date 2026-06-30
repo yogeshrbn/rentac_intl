@@ -1,0 +1,111 @@
+<div class="">
+    <div class="clearfix">&nbsp;</div>
+    <!--<pageheader heading="Issue Items" />-->
+
+    <div class="col-sm-12">
+
+        <div id="workOrderInfo">
+            <form id="form-workorder" method="post"  class="form-horizontal">
+                <div class="col-sm-6">
+                    <div class="col-sm-8">
+                         
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                Party
+                            </label>
+                            <div class="col-sm-9">
+                                <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Trans.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                Date
+                            </label>
+                            <div class="col-sm-9">
+                                <datepicker date-format="dd/MM/yyyy">
+                                    <input ng-model="Trans.TransactionDate" tabindex="2" type="text" class="form-control" name="val_workOrderDate" />
+                                </datepicker>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                Amount
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" tabindex="6" ng-model="Trans.TransactionAmount" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                Ref/Bill#
+                            </label>
+                            <div class="col-sm-9">
+                                <input ng-model="Trans.TranRefNumber" type="text" tabindex="4" class="form-control" name="Amount" field-required="true" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                Narration
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea  cols="30" style="height:50px;" class="form-control" tabindex="7" ng-model="Trans.Narration" />
+                            </div>
+                        </div>
+                      
+                        <div class="form-group mt-3">
+                            <label class="col-sm-3 control-label">
+                               
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="button" class="btn btn-default" tabindex="8" value="Cancel" ng-click="Cancel();"   />
+                                <input type="button" class="btn btn-primary ml-1" tabindex="8" value="Save" ng-click="addItem();" ng-show="AccessData.Add" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="form-group">
+
+                    <div class="col-sm-7">
+
+                       
+
+
+                        <span class="col-sm-4 ">
+                            <label class="vcenter">
+                                Vch/Challan : {{Trans.VoucherNumber}}
+                            </label>
+                        </span>
+                        <div class="col-sm-4">-->
+                            <!--<input type="text" ng-model="Trans.VoucherNumber" readonly tabindex="3" class="form-control" name="val_workOrderNumber" required />-->
+                        <!--</div>
+                    </div>
+                </div>-->
+                <!--<div class="col-sm-12">
+                    <div class="clearfix">&nbsp;</div>
+                    
+
+                    <div class="row">
+                        <div class="col-sm-8 siteBox">
+
+                            <div class="clearfix">&nbsp;</div>
+                            <div class="col-sm-12">
+                                <input type="button" style="width: 100px;" class="btn btn-primary" ng-show="Items.length >0  && AccessData.Add ? true : false " value="Save" ng-click="Save();" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>-->
+            </form>
+        </div>
+
+    </div>
+    <script lang="ja">
+        $('.tabContainer a').click(function (e) {
+
+            e.preventDefault();
+        });
+
+
+    </script>
+</div>

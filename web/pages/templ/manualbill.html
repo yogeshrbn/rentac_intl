@@ -1,0 +1,201 @@
+﻿<div class="">
+
+    <!--<pageheader heading="Issue Items" />-->
+    <div class="alert alert-success hide" ng-show="Ledgers.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>
+    <div class="col-sm-12">
+
+        <div id="workOrderInfo">
+            <form id="form-workorder" method="post" class="">
+                <div class="form-group">
+
+                    <div class="col-sm-7">
+                        <div class="col-sm-2">
+                            <label class="vcenter">Party</label>
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <searchabletext ng-id="client" data-item="Ledger" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>
+
+                        </div>
+                        <div class="col-sm-1">
+                            <label class="vcenter">Date</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <datepicker date-format="dd/MM/yyyy">
+                                  <input ng-model="WorkOrder.WorkOrderDate" tabindex="2" type="text" class="form-control"  name="val_workOrderDate"/>
+                                </datepicker>
+                            <!--<input type="date" name="val_workOrderDate" ng-model="WorkOrder.WorkOrderDate" class="form-control" required />-->
+                        </div>
+
+                    </div>
+                    <div class="col-sm-5">
+                        <span class="col-sm-4 ">
+                            <label class="vcenter">Vch/Challan #</label>
+                        </span>
+                        <div class="col-sm-4">
+                            <input type="text" ng-model="WorkOrder.Number" readonly tabindex="3" class="form-control" name="val_workOrderNumber" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-7">
+                        <div class="col-sm-2 ">
+                            <label class="vcenter">Site</label>
+                        </div>
+
+                        <div class="col-sm-10">
+                            <input type="text" ng-model="WorkOrder.SiteInfo.Site" tabindex="4" class="form-control" name="site_name" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                   <div class="clearfix">&nbsp;</div>
+                    <div class="row addWithTable" style="height: 240px; overflow-y: auto;">
+
+                        <div class="col-sm-12 addItemBox">
+                            <div class="col-sm-3">
+                                <label>
+                                    Product
+                                </label>
+                                <searchabletext ng-id="itemSelect" tab-index="5" data-item="Product" selected-object="selectedProduct"> </searchabletext>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>
+                                    Quantity
+                                </label>
+                                <input type="text" class="form-control" tabindex="6" ng-model="IssueItem.PurchaseQty" />
+                            </div>
+                            <div class="col-sm-3">
+                                <label>
+                                    Rate
+                                </label>
+                                <input type="text" class="form-control" tabindex="7" ng-model="IssueItem.Rate" />
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="col-sm-12">&nbsp; </label>
+                                <input type="button" class="btn btn-primary" tabindex="8" value="Add" ng-click="addItem();" />
+                            </div>
+                        </div>
+                        <table class="table table-condensed table-responsive tableInput" med-key ng-delete="DeleteItem(index)">
+
+                            <tr class="headerRow">
+                                <th style="width: 15px;">#</th>
+                                <th>Item</th>
+
+                                <!--     <th>Size</th>-->
+                                <th>Qty</th>
+                                <th>Rate</th>
+                                <!--<th>Total</th>-->
+                                <th width="150px">Amount</th>
+                            </tr>
+                            <tr ng-repeat="item in WorkOrder.Items" ng-delete="DeleteItem(index);">
+                                <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">{{$index+1}}
+                                </td>
+                                <td>{{item.Item.Name}}
+                                </td>
+
+                                <td>{{item.PurchaseQty}}
+
+                                </td>
+                                <td>{{item.Rate}}
+                                </td>
+
+                                <td class="text-right">{{item.PurchaseQty * item.Rate |number:2  }}
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="row">
+                        <div class="col-sm-8 siteBox">
+                            <div class="col-sm-12 paymentBox">
+                                <div class="col-sm-3">
+                                    <label>Party Payment</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label>Mode:</label>&nbsp;
+                                <input type="radio" name="paymentMode" ng-model="Trans.EntryType" ng-value="1" />
+                                    Cash
+                                <input type="radio" name="paymentMode" ng-model="Trans.EntryType" ng-value="2" />
+                                    Cheque
+                                </div>
+                                <div class="col-sm-12">
+                                <hr class="nopadding" />
+                                    </div>
+                                <div class="col-sm-4">
+                                    <label>Amount</label>
+                                    <input type="text" class="form-control" ng-model="Trans.TransactionAmount"/>
+                                </div>
+                                <div class="col-sm-4" ng-if="Trans.EntryType==2">
+                                    <label>Cheque #</label>
+                                    <input type="text" class="form-control" ng-model="Trans.TranRefNumber"/>
+                                </div>
+                                <div class="col-sm-4" ng-if="Trans.EntryType==2">
+                                    <label>Cheque Date</label>
+                                    <input type="text" class="form-control" ng-model="Trans.ChequeDate"/>
+                                </div>
+                                 <div class="col-sm-4">
+                                    <label>Remarks</label>
+                                    <input type="text" class="form-control" ng-model="Trans.Description"/>
+                                </div>
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+                            <div class="col-sm-12">
+                                <input type="button" style="width:100px;" class="btn btn-primary" ng-show="WorkOrder.Items.length >0 ? true : false " value="Save" ng-click="Save();" />
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <table class="table  table-responsive text-bold">
+                                <tr>
+                                    <td class="text-right">SubTotal</td>
+                                    <td class="text-right" width="80px">{{ SubTotal(0)|number:2}}</td>
+                                </tr>
+                                <tr>
+
+                                    <td class="text-right">Freight</td>
+                                    <td class="text-right" width="150px">
+                                        <input type="text" class="form-control maskednumber text-right" ng-model="WorkOrder.SiteInfo.Freight" />
+                                    </td>
+                                </tr>
+                              <!--  <tr ng-repeat="tax in WorkOrder.Taxes">
+
+                                    <td class="text-right">
+                                        <input type="checkbox" ng-model="tax.Applicable" />
+                                        {{tax.Name}}({{tax.Rate  |number:2 }}%)</td>
+                                    <td class="text-right" width="100px">{{tax.Applicable && (WorkOrder.SubTotal1  * tax.Rate/100.00) || 0 |number:2}}</td>
+                                </tr>-->
+
+                                <tr>
+
+                                    <td class="text-right">Total</td>
+                                    <td class="text-right" width="150px">{{ SubTotal(1)|number:2}}</td>
+                                </tr>
+                            </table>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+
+
+
+
+    </div>
+    <script lang="ja">
+        $('.tabContainer a').click(function (e) {
+            e.preventDefault();
+        });
+
+    </script>
+</div>

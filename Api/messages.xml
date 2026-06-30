@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Messages>
+  <Message>
+    <code>100</code>
+    <description>Bill genrated already for the given date.</description>
+  </Message>
+  <Message>
+    <code>101</code>
+    <description>Transaction failed.</description>
+  </Message>
+</Messages>

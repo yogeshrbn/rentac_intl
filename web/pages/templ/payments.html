@@ -1,0 +1,55 @@
+﻿<div class="col-sm-12">
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+
+
+        <label>Date From</label>
+        <!-- <input type="text" id="val_productName" name="val_productName" ng-model="Report.Site" class="form-control" />-->
+        <input type="date" class="form-control" ng-model="Journal.FromDate" />
+
+    </div>
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+        <label>To</label>
+
+        <input type="date" class="form-control" ng-model="Journal.ToDate" />
+
+    </div>
+
+    <div class="col-sm-2 col-lg-2  col-md-2 ">
+        <label class="col-sm-12">&nbsp;</label>
+        <input type="button" value="Show Report" class="btn btn-primary" ng-click="PaymentReceived();" />
+
+    </div>
+
+</div>
+<div class="clearfix">&nbsp;</div>
+
+<div class="col-sm-12">
+    <table class="table table-condensed table-responsive">
+
+        <tr class="headerRow">
+            <th>Site</th>
+            <th>Job#</th>
+
+            <th>Amount Received</th>
+            <th>Cheque</th>
+            <th>Tran#</th>
+            <th>Bank</th>
+            <th>Date</th>
+            <th>Remarks</th>
+
+        </tr>
+        <tr ng-repeat="item in PaymentReceived">
+            <td>{{item.Site}}</td>
+            <td>{{item.JobNumber}}</td>
+
+            <td>{{item.Amount}}</td>
+            <td>{{item.ChequeNumber}}</td>
+            <td>{{item.TransactionId}}</td>
+            <td>{{item.Bank}}</td>
+            <td>{{item.EntryDate}}</td>
+
+            <td>{{item.Remarks}}</td>
+
+
+        </tr>
+</div>

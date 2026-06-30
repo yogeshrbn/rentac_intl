@@ -1,0 +1,434 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP New Features</title>
+    <!-- Bootstrap 3 CSS -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
+    <!-- Font Awesome for icons -->
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+    <style>
+      
+
+        .container-317 {
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding-top: 15px;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+            .features-header h2 {
+                color: #2c3e50;
+                font-weight: 600;
+                margin-bottom: 5px;
+                font-size: 18px;
+            }
+
+            .features-header p {
+                color: #7f8c8d;
+                font-size: 12px;
+                margin: 0;
+            }
+
+        .filter-section {
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            margin: 2px;
+            border-radius: 15px;
+            transition: all 0.3s;
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+            .filter-btn.active {
+                background-color: #3498db;
+                color: white;
+            }
+
+        .feature-card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+
+            .feature-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            }
+
+        .feature-icon {
+            font-size: 16px;
+            color: #3498db;
+            margin-right: 8px;
+        }
+
+        .feature-header {
+            padding: 12px 12px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .feature-title {
+            flex: 1;
+        }
+
+        .feature-header h4 {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.3;
+        }
+
+        .feature-body {
+            padding: 10px 12px;
+        }
+
+        .feature-footer {
+            padding: 6px 12px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #f0f0f0;
+            font-size: 10px;
+            color: #7f8c8d;
+        }
+
+        .badge-new {
+            background-color: #e74c3c;
+            color: white;
+            padding: 1px 5px;
+            border-radius: 2px;
+            font-size: 9px;
+            margin-left: 5px;
+        }
+
+        .badge-upcoming {
+            background-color: #f39c12;
+            color: white;
+            padding: 1px 5px;
+            border-radius: 2px;
+            font-size: 9px;
+            margin-left: 5px;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background-color: #ecf0f1;
+            padding: 1px 5px;
+            border-radius: 2px;
+            font-size: 9px;
+            margin-right: 3px;
+            margin-bottom: 5px;
+        }
+
+        .feature-description {
+            font-size: 11px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            height: 32px;
+            overflow: hidden;
+        }
+
+        .expanded {
+            height: auto;
+        }
+
+        .read-more {
+            color: #3498db;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .feature-image {
+            height: 5px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+
+        .feature-image-1 {
+            background-color: #3498db;
+            background-image: linear-gradient(45deg, #3498db, #2ecc71);
+        }
+
+        .feature-image-2 {
+            background-color: #9b59b6;
+            background-image: linear-gradient(45deg, #9b59b6, #e74c3c);
+        }
+
+        .feature-image-3 {
+            background-color: #f39c12;
+            background-image: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-317">
+        <div class="features-header">
+            <h2>ERP New Features</h2>
+            <p>Latest updates and improvements</p>
+        </div>
+
+        <div class="filter-section">
+            <div class="text-center">
+                <button class="btn btn-default filter-btn active" data-filter="all">All</button>
+                <button class="btn btn-default filter-btn" data-filter="recent">Recent</button>
+                <button class="btn btn-default filter-btn" data-filter="upcoming">Upcoming</button>
+            </div>
+        </div>
+
+        <div id="features-container">
+            <!-- Feature 1 -->
+            <div class="feature-item" data-category="recent">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-1"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-bar-chart"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>Bill Payment Reports <span class="badge-new">NEW</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>
+                                Now see all bills and all payments side-wise on one screen and check the outstanding.
+                                You can also pull it site-wise.
+                            </p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">Finance</span>
+                            <span class="feature-tag">Reports</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Added: Oct 8, 2023
+                    </div>
+                </div>
+            </div>
+            <!-- Feature 2 -->
+            <div class="feature-item" data-category="recent">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-1"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-bar-chart"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>Balance Cost Sheet <span class="badge-new">NEW</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>
+                                Check the balance cost by quantity, weight and its cost as per rates set in the masters and site-rates.
+                            </p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">Finance</span>
+                            <span class="feature-tag">Reports</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Added: Oct 8, 2023
+                    </div>
+                </div>
+            </div>
+            <!-- Feature 2 -->
+            <div class="feature-item" data-category="recent">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-2"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>Measurement Bill <span class="badge-new">NEW</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>Now generate per sqft or sqmtr bill as per your choice. Access it inside transactions > Measurement Bill.</p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">Billing</span>
+                            <span class="feature-tag">Portal</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Added: Oct 10, 2023
+                    </div>
+                </div>
+            </div>
+            <!-- Feature 2 -->
+            <div class="feature-item" data-category="recent">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-2"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>Adjust Advance amount in Bill <span class="badge-new">NEW</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>Accept advance from parties via receipt voucher and adjust while creating bill.</p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">HR</span>
+                            <span class="feature-tag">Portal</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Added: Oct 10, 2023
+                    </div>
+                </div>
+            </div>
+            <!-- Feature 4 -->
+            <div class="feature-item" data-category="recent">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-2"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>Bill To Site <span class="badge-new">NEW</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>Now bill to site can be setup while creating site.</p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">HR</span>
+                            <span class="feature-tag">Portal</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Added: Oct 10, 2023
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-item" data-category="upcoming">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-3"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-cubes"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>HRMS System <span class="badge-upcoming">UPCOMING</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>Smart Human Resource Management System to manage attendance,payroll and hiring of your staff.</p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">Inventory</span>
+                            <span class="feature-tag">AI</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Expected: Jan 2026
+                    </div>
+                </div>
+            </div>
+            <!-- Feature 4 -->
+            <div class="feature-item" data-category="upcoming">
+                <div class="feature-card">
+                    <div class="feature-image feature-image-3"></div>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fa fa-cubes"></i>
+                        </div>
+                        <div class="feature-title">
+                            <h4>Smart Inventory <span class="badge-upcoming">UPCOMING</span></h4>
+                        </div>
+                    </div>
+                    <div class="feature-body">
+                        <div class="feature-description">
+                            <p>AI-powered inventory forecasting to predict demand and optimize stock levels.</p>
+                        </div>
+                        <span class="read-more">Read more</span>
+                        <div class="feature-tags">
+                            <span class="feature-tag">Inventory</span>
+                            <span class="feature-tag">AI</span>
+                        </div>
+                    </div>
+                    <div class="feature-footer">
+                        Expected: Feb 2026
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
+
+    <script>
+        $(document).ready(function () {
+            // Filter functionality
+            $('.filter-btn').click(function () {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+
+                var filter = $(this).data('filter');
+
+                if (filter === 'all') {
+                    $('.feature-item').show();
+                } else {
+                    $('.feature-item').hide();
+                    $('.feature-item[data-category*="' + filter + '"]').show();
+                }
+            });
+
+            // Read more functionality
+            $('.read-more').click(function () {
+                var description = $(this).siblings('.feature-description');
+                description.toggleClass('expanded');
+
+                if (description.hasClass('expanded')) {
+                    $(this).text('Read less');
+                } else {
+                    $(this).text('Read more');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!--  <pageheader heading="Bill register" />-->
+    <div class="col-sm-3">
+        <label>Choose Party</label>
+
+        <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>-->
+        <!--<searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code"
+                        selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>-->
+
+        <searchableselect name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+    </div>
+<div class="col-sm-3">
+    <label>Site</label>
+    <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                      data-text="SiteAddress"></searchableselect>
+
+</div>
+
+<div class="col-sm-1">
+
+    <label>From</label>
+
+    <datepicker date-format="dd/MM/yyyy">
+        <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+    </datepicker>
+</div>
+<div class="col-sm-1" >
+
+    <label>To</label>
+    <datepicker date-format="dd/MM/yyyy">
+        <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+    </datepicker>
+
+</div>
+<div class="col-sm-4">
+    <label style="display:block;">&nbsp;</label>
+    <input type="button" class="btn btn-primary" tabindex="4" value="Search" ng-click="GetReceiptRegister();" />&nbsp;
+    <a href="#addsecuritydeposit" class="btn btn-primary" ng-show="AccessData.Add" >Add</a>
+ 
+    <!--<input type="button" class="btn btn-primary" tabindex="4" value="Print" ng-click="Print();" />&nbsp;-->
+
+
+
+</div>
+
+
+
+<div class="form-group">
+
+    <div class="clearfix"></div>
+     
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="col-lg-12">
+        <div class="table-responsive" style="margin-top:7px;">
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+                    <th style="width: 30px;" class="text-center">S.No</th>
+                    <th style="width: 150px;" sort-header="Receipts" sort-field="CrLedger">Party</th>
+                    <th style="width: 80px;"  sort-header="Receipts" sort-field="ReceiptNumber">Ref/Bill#</th>
+                    <th style="width: 50px;"  sort-header="Receipts" sort-field="TransactionDate">Date</th>
+                    <th class="text-right" style="width: 80px;"  sort-header="Receipts" sort-field="TransactionAmount">Amount</th>
+                    <th style="width: 250px;">Narration</th>
+                    <th style="width:100px;" class="text-center">Action</th>
+
+
+                </tr>
+                <tr id="tr{{item.LedgerTransactionId}}" ng-repeat="item in Receipts">
+                    <td  class="text-center">{{$index+1}}</td>
+                    <td>
+                        {{item.CrLedger}}
+                        <span class="badge badge-success" ng-if="item.EntryType == 29">Refund</span>
+                    </td>
+                    <td>
+                        {{item.ReceiptNumber}}
+                    </td>
+                    <td>{{item.TransactionDate | formatDate: 'dd-MM-yyyy'}}</td>
+                    <td style="text-align: right;">{{item.TransactionAmount |number:2 }}</td>
+                    <td>
+                        {{item.Narration}}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+
+                            <i class="fa fa-cog fa-2x text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a href="#" ng-click="edit(item.LedgerTransactionId)" stop="true"><i class="fa fa-edit text-primary fa-2x"></i>Edit</a></li>
+
+                                <li><a href="#" ng-click="PrintTransaction(item.LedgerTransactionId);" stop="true"><i class="fa fa-print text-primary fa-2x"></i>Print</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#" ng-click="DeleteTran(item)" stop="true"><i class="fa fa-trash text-danger fa-2x"></i>Delete</a></li>
+
+                                <!--<li><a href="#" ng-click="SendEmail(item.GRNId);" stop="true"><i class="fa fa-envelope-o text-success fa-2x"></i>Email To Client</a></li>-->
+
+                            </ul>
+                        </div>
+                        <!--<a href="javascript:void()" title="Edit" ng-click="edit(item.LedgerTransactionId)"><i class="fa fa-edit fa-2x"></i></a>&nbsp;
+
+                        <a href="javascript:void()" title="Delete" ng-click="delete(item.LedgerTransactionId)"><i class="fa fa-trash fa-2x text-danger"></i></a>&nbsp;
+
+                        <a href="javascript:void()" title="Download Pdf" ng-click="PrintTransaction(item.LedgerTransactionId)"><i class="fa fa-print fa-2x"></i></a>-->
+                        <!--<input type="button" class="btn btn-primary" tabindex="4" value="Print" ng-click="Print(item.LedgerTransactionId);" />&nbsp;-->
+                    </td>
+
+
+                </tr>
+
+            </table>
+        </div>
+        <script lang="ja">
+            $('table a').click(function (e) {
+              
+                e.preventDefault();
+
+            });
+        </script>
+    </div>
+</div>
+

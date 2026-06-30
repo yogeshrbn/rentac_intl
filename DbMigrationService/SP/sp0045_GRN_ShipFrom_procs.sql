@@ -1,0 +1,21 @@
+-- GRN.ShipFrom column: run PreRun/table040_GRN_ShipFrom.sql via DbUp first.
+--
+-- Alter existing procedures (script from SSMS) — do not add new procedure names.
+--
+-- p_GRN_insV1
+--   Add parameter @shipFrom NVARCHAR(500) = NULL
+--   INSERT into GRN must include ShipFrom column.
+--
+-- p_GRN_upd
+--   Add parameter @shipFrom NVARCHAR(500) = NULL
+--   UPDATE GRN SET ... ShipFrom = @shipFrom WHERE ...
+--
+-- p_grn_byId
+--   Include ShipFrom in SELECT so edit screen loads the field.
+--
+-- p_GRNHeader (optional)
+--   Include ShipFrom in SELECT if receive slip / print should show it.
+--
+-- BAL/DAL/GRNDAL.cs passes @shipFrom for both insert and update.
+USE [$AppDb$]
+GO

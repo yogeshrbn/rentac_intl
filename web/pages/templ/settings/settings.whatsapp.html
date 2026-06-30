@@ -1,0 +1,65 @@
+﻿<div class="row">
+    <div class="col-sm-12">
+        <div class="callout-heading">
+            <h4>Whatsapp Setup</h4>
+            <p>
+                Setup your whatsapp. Once you setup your own
+
+            </p>
+        </div>
+    </div>
+    <form class="form-horizontal" id="frmEmailSetup">
+
+        <div class="col-sm-10">
+            <div class="form-group">
+                <label class="control-label col-sm-4">Enter App Name</label>
+                <div class="col-sm-8">
+                    <input type="text" name="smtp_server" ng-model="NewApp.Name" maxlength="50" class="form-control" />
+                    <span class="text-info">Get the secret key from interakt developer settings</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-10">
+            <div class="form-group">
+
+                <div class="col-sm-offset-4 col-sm-8">
+                    <button class="btn btn-primary" ng-click="createApp()">Create App</button>
+
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="col-sm-6 table-responsive">
+        <table class="table table-condensed">
+            <tr>
+                <th class="headerRow">App</th>
+                <th class="headerRow text-center">Status</th>
+                <th class="headerRow text-center">SignUp Link</th>
+                <th class="headerRow text-center">Actions</th>
+            </tr>
+            <tr ng-repeat="item in Apps">
+                <td>
+
+                    <label> {{item.Name}}</label>
+
+                    <!--<br />
+                    <span>{{item.App_Id}}</span>-->
+                </td>
+                <td class="text-center">
+                    {{item.Live == true ? 'Live':'Pending'}}
+                </td>
+                <td class="text-center">
+                    <a href="{{item.Embed_Link}}" target="_blank">{{item.Embed_Link}}</a>
+                </td>
+                <td class="text-center">
+                    <i class="fa fa-connectdevelop fa-2x" ng-if="!item.Callback_URL" ng-click="activateCallback(item)"></i>
+                    <i class="fa fa-refresh fa-2x" ng-click="RefreshAppDetails(item)"></i>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

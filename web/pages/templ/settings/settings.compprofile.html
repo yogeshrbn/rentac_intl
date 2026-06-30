@@ -1,0 +1,104 @@
+﻿<div class="row">
+    <div class="col-sm-12">
+        <div class="alert alert-warning">Note: All * marked fields are mandatory</div>
+        <form class="form-horizontal" method="post" id="frm-rbnclientprofileSettings">
+            <div class="form-group">
+                <label for="inputPassword3" class="col-sm-4 control-label">Company</label>
+                <div class="col-sm-8">
+                    <label class="control-label">{{clientInfo.Name}}</label>
+                    <!--<input type="text" class="form-control" ng-model="clientInfo.Name" id="inputPassword3" placeholder="Company name">-->
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">Email<i class="required">*</i></label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.Email" name="val_email" placeholder="Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label mandatory">
+                        Address-1<i class="required">*</i>
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.Address1" name="val_address1" placeholder="Address of the comapny">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">State<i class="required">*</i></label>
+                    <div class="col-sm-8">
+                        <!--<input type="text" class="form-control" ng-model="clientInfo.Stateid" id="val_rbnStateId" name="val_rbnStateId"
+                        placeholder="State">-->
+                        <searchableselect name="val_rbnStateId" tabindex="3" data-field="States" ng-model="clientInfo.Stateid" data-val="StateId" data-text="StateName"></searchableselect>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">Mobile<i class="required">*</i></label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.Mobile" name="val_mobile" placeholder="Mobile">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">Address-2</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.Address2" placeholder="Address of the comapny">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">City<i class="required">*</i></label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.City" name="val_city" placeholder="City">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">Pin Code<i class="required">*</i></label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.PinCode" name="val_pinCode" placeholder="Postal code">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <hr />
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-4 control-label">GST No.</label>
+                    <div class="col-sm-8">
+
+                        <input type="text" ng-disabled="clientInfo.NoGst == 1 ? true:null" class="form-control" name="val_gst"
+                               placeholder="GST" ng-model="clientInfo.GST">
+                        <input type="checkbox" ng-model="clientInfo.NoGst" /> <label>I Do not have GST No</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label">SPOC Name<i class="required">*</i></label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" ng-model="clientInfo.SpocName" name="val_spocName" placeholder="SPOC Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-4 control-label"></label>
+                    <div class="col-sm-8 right">
+                        <button type="button" class="btn btn-primary" value="Save" ng-click="updInfo();">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-3 control-label">PAN</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" ng-model="clientInfo.PAN"
+                               name="val_pan" placeholder="PAN">
+                    </div>
+                </div>
+            </div>
+
+
+
+            
+        </form>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th
+
+        {
+            font-size: 10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table class="table table-condensed table-responsive">
+        <tr ng-repeat-start="(key,value) in data | groupBy: 'ClientName'" style="background:#E3F2FD;">
+            <td>
+                <div class="col-sm-12">
+
+                    <label>{{$index+1}}) - {{key}}</label>
+                    <i   style="cursor: pointer;" data-toggle="collapse" data-target="#tr{{$index}}"></i>
+
+
+                </div>
+            </td>
+
+        </tr>
+        <tr ng-repeat-end class="childRows">
+            <td>
+                <div class="row row-eq-height" style="margin-left: 0px;min-height: 150px">
+                    <div class="col-sm-4">
+                        <label>Address</label> : {{value[0].Address}} <br />
+                        <label>Phone</label> : <a href="tel:{{value[0].Phone}}">{{value[0].Phone}}</a> <br />
+
+                        <label>Email</label> : <a href="mailto:{{value[0].Email}}">{{value[0].Email}}</a><br />
+                        <div class="row" style="bottom: 0px; padding-top:5px;">
+                            <div class="col-sm-6">
+                                <!--<button class="btn btn-primary" tabindex="4">
+                                    <i class="fa fa-envelope-o"></i> Email
+                                </button>-->
+                            </div>
+                            <div class="col-sm-6">
+                                <!--<button class="btn btn-primary" tabindex="4">
+                                    <i class="fa fa-comment-o"></i> SMS
+                                </button>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="collapse in" id="tr{{$index}}" style="border-left: solid 1px #e4e4e4;">
+                            <table class="table table-condensed table-responsive table-list" style="margin-bottom: 1px;float:right;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Item</th>
+                                    <th>OP</th>
+                                    <th>Issue</th>
+                                    <th>Receive</th>
+                                    <th>Balance</th>
+                                </tr>
+                                <tr ng-repeat="item in value">
+                                    <td style="width: 90px">{{$index+1}}</td>
+                                    <!--<td style="width: 40px;"></td>-->
+                                    <td style="width: 52%">{{item.Product}}</td>
+
+                                    <td class="text-right" style="width: 8%">{{item.OpeningBalance|number:2}}</td>
+                                    <td class="text-right" style="width: 14%">{{item.IssuedQty|number:2}}</td>
+                                    <td class="text-right" style="width: 14%">{{item.ReceivedQty|number:2}}</td>
+                                    <td class="text-right" style="width: 14%">{{item.ClosingBalance|number:2}}</td>
+                                </tr>
+                                <tr class="tblFooter">
+                                    <td colspan="2" class="sub-total">Total</td>
+                                    <td class="text-right sub-total"> <label>{{value  | sum:'OpeningBalance'| number:2}} </label> </td>
+                                    <td class="text-right sub-total"> {{value  | sum:'IssuedQty' | number:2}}  </td>
+                                    <td class="text-right sub-total"> {{value  | sum:'ReceivedQty'| number:2}}  </td>
+                                    <td class="text-right sub-total"> {{value  | sum:'ClosingBalance'| number:2}}  </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </td>
+
+
+        </tr>
+    </table>
+</div>

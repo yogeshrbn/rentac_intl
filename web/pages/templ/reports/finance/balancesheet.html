@@ -1,0 +1,115 @@
+<div>
+    <div class="clearfix">&nbsp;</div>
+    <div class="col-sm-10">
+        <form id="frmGstr1">
+            <div class="col-sm-12">
+
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 text-left">From</label>
+                        <div class="col-sm-8">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+                            </datepicker>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 text-left">To</label>
+                        <div class="col-sm-8">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Filter.To" type="text" tabindex="2" class="form-control" />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+
+
+                        <button type="button" class="btn btn-primary" ng-click="show();"><i class="fa fa-eye"></i> Show</button>
+
+                        <button type="button" class="btn btn-primary" ng-click="exportToExcel();"><i class="fa fa-file-excel-o"></i> Excel</button>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+
+    </div>
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <div class="col-sm-6">
+                <table class="table table-condensed ">
+                    <tr class="headerRow">
+                        <th colspan="2" class="text-center">Liability</th>
+                    </tr>
+                    <tr class="headerRow">
+                        <th style="width:50%">Particular</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+
+                    <tr ng-repeat="item in ReportData.Groups | filter:{AccType:'Liability'}">
+                        <td><label>  {{item.Group}}</label></td>
+                        <td class="text-right"><label>{{(item.Amount ) |number:2 }}</label>  </td>
+                    </tr>
+
+                    <tr ng-if="ReportData.NetLoss > 0">
+                        <td><label>Net Loss</label></td>
+                        <td class="text-right"> <label> {{ReportData.NetLoss |number:2}}</label> </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="col-sm-6">
+                <table class="table table-condensed ">
+                    <tr class="headerRow">
+                        <th colspan="2" class="text-center">Asset</th>
+                    </tr>
+                    <tr class="headerRow">
+                        <th style="width:50%">Particular</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+
+                    <tr ng-repeat="item in ReportData.Groups | filter:{AccType:'Asset'}">
+                        <td><label>  {{item.Group}}</label></td>
+                        <td class="text-right"><label>{{(item.Amount ) |number:2 }}</label>  </td>
+                    </tr>
+
+
+                </table>
+            </div>
+            <div class="col-sm-6">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background-color: #d7d7d7">
+                    <label style="margin-bottom:0px;">Total</label>
+                    <label style="margin-bottom:0px;">
+                        {{ReportData.TotalLiability | number:2}}
+                    </label>
+                </div>
+
+            </div>
+            <div class="col-sm-6">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background-color: #d7d7d7">
+                    <label style="margin-bottom:0px;">Total</label>
+                    <label style="margin-bottom:0px;">
+                        {{ReportData.TotalAsset |  number:2}}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

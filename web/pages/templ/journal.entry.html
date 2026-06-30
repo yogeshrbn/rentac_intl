@@ -1,0 +1,105 @@
+<div class="">
+    <div class="clearfix">&nbsp;</div>
+    <!--<pageheader heading="Issue Items" />-->
+
+    <div class="col-sm-12">
+
+        <div id="workOrderInfo">
+            <form id="form-workorder" method="post" class="form-horizontal">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label">
+                            Voucher # : {{Trans.ReceiptNumber}}
+                        </label>
+                        <div class="col-sm-6">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            Date
+                        </label>
+                        <div class="col-sm-4">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Trans.TransactionDate" tabindex="2" type="text" class="form-control" name="val_workOrderDate" />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-10" style="margin-top:40px;">
+
+
+                    <table class="table table-condensed " style="margin-bottom:30px;">
+                        <tr class="headerRow">
+                            <th class="text-center" style="width:80px;">DR/CR</th>
+                            <th style="width:70%;">Party</th>
+                            <th>Amount</th>
+
+                        </tr>
+                        <tr>
+                            <th>
+                           
+                                <select class="form-control" ng-model="Trans.TransactionType">
+                                    <option ng-value="1" ng-selected="Trans.TransactionType == 1">DR</option>
+                                    <option ng-value="2" ng-selected="Trans.TransactionType == 2">CR</option>
+                                </select>
+                            </th>
+                            <th>
+                                <div style="width:50%">
+                                    <searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Trans.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+                                </div>
+                            </th>
+                            <th  class="text-right"><input type="text" class="form-control maskednumber no-border" tabindex="6" ng-model="Trans.TransactionAmount" /></th>
+
+                        </tr>
+                        <tr>
+                            <th style="">
+                                <label style="margin-left:10px;" ng-if="Trans.TransactionType == 1">CR</label>
+                                <label style="margin-left:10px;" ng-if="Trans.TransactionType == 2">DR</label>
+                            </th>
+                            <th>
+                                <div style="width:50%">
+                                    <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Trans.RefLedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+                                </div>
+                            </th>
+                            <th class="text-right" style="padding-right:14px;">
+                                {{Trans.TransactionAmount}}
+                            </th>
+                        </tr>
+                    </table>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            Ref#
+                        </label>
+                        <div class="col-sm-4">
+                            <input ng-model="Trans.TranRefNumber" type="text" tabindex="4" class="form-control" name="Amount" field-required="true" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            Narration
+                        </label>
+                        <div class="col-sm-4">
+                            <textarea cols="30" style="height:50px;" class="form-control" tabindex="7" ng-model="Trans.Narration" />
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <div class="col-sm-9 col-sm-offset-2">
+                            <input type="button" class="btn btn-default" tabindex="8" value="Cancel" ng-click="Cancel();" />
+                            <input type="button" class="btn btn-primary ml-1" tabindex="8" value="Save" ng-click="CreateTransaction();" ng-show="AccessData.Add" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script lang="ja">
+        $('.tabContainer a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+</div>

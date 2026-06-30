@@ -1,0 +1,131 @@
+﻿<style>
+    .widget-simple {
+        padding: 0px;
+    }
+
+    .widget {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    #page-content {
+        padding: 0px;
+    }
+
+    .content-header {
+        display: none;
+    }
+
+    footer {
+        display: none;
+    }
+</style>
+
+<div class="wrapper col-lg-5 col-md-5 col-sm-6 col-xs-12 login-left hidden-xs">
+    <div class="login-brand">
+        <a href="http://rentac.ind.in">  <img src="../img/brand-logo.png" style="width: 170px;"></a>
+    </div>
+
+
+    <div class="center-col">
+        <div class="login-form">
+            <h2>
+
+                Complete renting Solution
+            </h2>
+
+        </div>
+    </div>
+</div>
+<div class="wrapper col-lg-7 col-md-7 col-sm-6 col-xs-12 login-right" ng-if="pwdChanged==false && linkStatus ==1">
+    <div class="center-col">
+        <div id="" class="login-form box-shadow">
+
+            <h2 style="width:60%;">
+                Reset Password 
+            </h2>
+
+            <div class="form-container" style="padding: 30px;">
+                <form class="form-horizontal" id="frmForgotResetPwd" name="frmForgotResetPwd">
+
+
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-4 control-label">New Password</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" name="val_password" ng-model="pwd.Password" placeholder="New Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-4 control-label">Confirm Password</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" name="val_confirmPassword" ng-model="pwd.ConfirmPassword" placeholder="Confirm Password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-7">
+                            <!--<button type="submit" class="btn btn-secondary" ui-sref="login" >Back To Login</button>-->
+                            <button type="button" class="btn btn-primary" ng-click="resetPassword();">Change Password</button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="wrapper col-lg-7 col-md-7 col-sm-6 col-xs-12 login-right" ng-if="pwdChanged==true && linkStatus ==1">
+    <div class="center-col">
+        <div id="" class="login-form box-shadow">
+
+            <h2 style="width:80%; border:none;" class="text-success">
+                <i class="fa fa-check-circle-o text-success"></i>
+                Congratulations!
+            </h2>
+
+            <div class="form-container" style="padding: 30px;">
+
+                <div class="form-group text-center">
+
+                    <label>Your password has been reset successfully.</label>
+                    <br />
+                    <label>Click login button below to login</label>
+                    <br />
+                    <a class="btn btn-primary mt-2" ng-href="#login">Login Now</a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="wrapper col-lg-7 col-md-7 col-sm-6 col-xs-12 login-right" ng-if="pwdChanged==false && linkStatus !=1 ">
+    <div class="center-col">
+        <div id="" class="login-form box-shadow">
+
+            <h2 style="width:80%; border:none;" class="text-danger">
+                <i class="fa fa-warning"></i>
+                Verification!
+            </h2>
+
+            <div class="form-container" style="padding: 30px;">
+
+                <div class="form-group text-center">
+                    <label ng-if="linkStatus == 2">Invalid verification link.</label>
+                    <label ng-if="linkStatus == '3'">Verification link has been expired.</label>
+                    <br />
+                    <label>Click the button below to re-generate link</label>
+                    <br />
+                    <a class="btn btn-primary mt-2" ng-href="#forgotpwd">Forgot Password</a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+

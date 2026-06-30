@@ -1,0 +1,67 @@
+<div class="col-sm-12">
+
+    <div class="filter-flex d-flex" style=" justify-content: space-between;">
+        <div class="form-group flex-item flex-20">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="PartyForStockSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+
+        </div>
+        <div class="form-group flex-item  flex-20">
+            <label>Choose Site</label>
+            <searchableselect id="Searchableselect3" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+        </div>
+        <div class="form-group flex-item flex-10">
+            <label>From</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="form-group flex-item flex-10">
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+            </datepicker>
+
+        </div>
+        <div class="form-group flex-item flex-20">
+            <label>Select Report</label>
+            <select class="form-control" ng-model="Filter.ReportType">
+                <option value="1" ng-selected="'true'">Party Register</option>
+                <option value="2">Party Challans</option>
+                <option value="3">Party Receipts</option>
+                <option value="4">Payments</option>
+                <option value="5">Breakage Report</option>
+                <option value="6">Lost Report</option>
+                <option value="7">Excess Report</option>
+            </select>
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+           
+
+            <input type="button" class="btn btn-primary pull-right" tabindex="4" value="Search" ng-click="getReport(false);" />&nbsp;
+            <input type="button" class="btn btn-primary pull-right" tabindex="4" value="Print" ng-click="getReport(true);" />&nbsp;
+
+        </div> 
+
+
+
+
+    </div>
+    <div class="col-sm-12">
+
+
+        <ng-include ng-if="Filter.ReportType == 1" src="'templ/reports/inventory/challanwiseparty.register.html?d=12123'"></ng-include>
+        <ng-include ng-if="Filter.ReportType == 2" src="'templ/reports/inventory/party.challans.html?d=1223'"></ng-include>
+        <ng-include ng-if="Filter.ReportType == 3"  src="'templ/reports/inventory/party.receipts.html?d=12132'"></ng-include>
+        <ng-include ng-if="Filter.ReportType == 4" src="'templ/reports/inventory/party.payments.html?d=43221'"></ng-include>
+        <ng-include ng-if="Filter.ReportType == 5" src="'templ/reports/inventory/party.breakage.html?d=44546'"></ng-include>
+        <ng-include ng-if="Filter.ReportType == 6" src="'templ/reports/inventory/party.lost.html?d=6'"></ng-include>
+        <ng-include ng-if="Filter.ReportType == 7" src="'templ/reports/inventory/party.excess.html?d=7'"></ng-include>
+
+
+
+    </div>
+</div>
+

@@ -1,0 +1,23 @@
+-- Optional phone for un-registered party on Quotation header.
+-- Run DDL from PreRun/table054_Quotation_UnregisteredPartyPhone.sql via DbUp first.
+--
+-- Full procedure bodies for p_Quotation_ins / p_Quotation_upd / p_getQuotation_byId are not fully versioned in this repo.
+-- Export current definitions from SQL Server, merge the changes below, then deploy (CREATE OR ALTER).
+--
+-- =============================================================================
+-- p_Quotation_ins / p_Quotation_upd
+--   Add parameter (match BAL/DAL/BillingDAL.cs AddQuotation after @unregisteredPartyAddress):
+--     @unregisteredPartyPhone NVARCHAR(50) = NULL
+--   INSERT/UPDATE dbo.Quotation must set column:
+--     UnregisteredPartyPhone = NULLIF(LTRIM(RTRIM(@unregisteredPartyPhone)), '')
+--   (or persist empty string per your convention; Dapper maps to string.)
+--
+-- p_getQuotation_byId (and any header SELECT used for quotation by number, e.g. p_getQuotation_byNumber)
+--   Add to SELECT list (alias to match QuotationDTO):
+--     q.UnregisteredPartyPhone
+--   (adjust table alias if not `q`.)
+--
+-- Dapper loads into QuotationDTO; list/preview APIs must include the column if they SELECT from Quotation.
+-- =============================================================================
+USE [$AppDb$]
+GO

@@ -1,0 +1,65 @@
+<!--<li ng-repeat="item in Alerts" >
+    <a ui-sref="{{item.route}}" style="text-overflow:ellipsis;overflow:hidden;">-->
+<!--<i class="fa fa-clock-o fa-fw pull-right"></i>-->
+<!--<span class="badge pull-right">10</span>-->
+<!--{{item.Subject}}
+    </a>
+
+</li>-->
+<div class="col-md-12">
+    <div class="row mb-1">
+        <div class="col-sm-12">
+            <div class="flex-container" style="align-items: flex-end;">
+                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+
+                    <label>From</label>
+
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.From" type="text" class="form-control" />
+                    </datepicker>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+
+                    <label>To</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.To" type="text" class="form-control" />
+                    </datepicker>
+
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+
+                    <label>Status</label>
+                    <select class="form-control" ng-model="Filter.Status">
+                        <option selected value="all">--ALL--</option>
+                        <option value="read">Read</option>
+
+                    </select>
+
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+
+
+                    <button class="btn btn-primary" ng-click="getAll()">Find</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <tr class="headerRow">
+                <th class="text-center" style="width:50px;">S.No</th>
+                <th>Subject</th>
+                <th>Created On</th>
+                <th class="text-center">Action</th>
+            </tr>
+            <tr ng-repeat="item in Alerts">
+                <td class="text-center">{{$index+1}}</td>
+                <td ng-class="item.Status != 'read' ? 'text-bold' : ''">{{item.Subject}}</td>
+                <td>{{item.CreatedOn | formatDate}}</td>
+                <td class="text-center">
+                    <a href="javacript:void()" ng-if="item.Status != 'read'" ng-click="markRead(item)">Read</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

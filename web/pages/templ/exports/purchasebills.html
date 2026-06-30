@@ -1,0 +1,60 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th
+
+        {
+            font-size: 10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th style="width: 50px;">Vch#</th>
+            <th style="width: 50px;">Bill#</th>
+            <th style="width: 250px;">Party</th>
+            <th style="width: 100px;">Date</th>
+            <th style="text-align: right; width: 100px;">Amount</th>
+            <th style="text-align: right; width: 100px;">Freight</th>
+            <th style="text-align: right; width: 100px;">Tax</th>
+            <th style="text-align: right; width: 100px;">Net Amount</th>
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>
+                <span class="text-primary">{{item.VoucherNumber}}</span>
+            </td>
+            <td>
+                {{item.BillNumber}}
+            </td>
+            <td>
+                {{item.PartyName}}
+            </td>
+            <td>{{item.PurchaseDate |date: 'dd-MM-yyyy'}}</td>
+            <td style="text-align: right;">{{item.SubTotal |number:2 }}</td>
+            <td style="text-align: right;">{{item.Freight |number:2 }}</td>
+            <td style="text-align: right;"><span class="text-primary" ng-click="PurchaseItemsTax(item)">{{item.TaxAmount |number:2 }}</span> </td>
+            <td style="text-align: right;">{{item.Total |number:2 }}</td>
+        </tr>
+    </table>
+</div>

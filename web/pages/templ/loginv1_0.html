@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <form role="form">  
+    <div class="row" style="min-height:500px;">  
+        <div class="col-md-4">  
+               
+        </div>  
+        <div class="col-md-4 loginBox" >  
+            <h2 class="form-login-heading col-md-12">Login</h2>  
+            <div class="col-md-12 PaddingTop">  
+                <input type="text" class="form-control" placeholder="Username" data-ng-model="loginData.userName" required autofocus>  
+            </div>  
+            <div class="col-md-12 PaddingTop">  
+                <input type="password" class="form-control" placeholder="Password" data-ng-model="loginData.password" required>  
+            </div>  
+            <div class="col-md-12 PaddingTop">  
+                <button class="btn btn-md btn-info btn-block" type="submit" data-ng-click="login()">Login</button>  
+            </div>  
+            <div data-ng-hide="message == ''">  
+                {{message}}  
+            </div>  
+        </div>  
+  
+        <div class="col-md-4">  
+               
+        </div>  
+    </div>  
+</form>  
+</body>
+</html>

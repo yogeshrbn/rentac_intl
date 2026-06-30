@@ -1,0 +1,936 @@
+@using ReportViewer.Helpers
+@using BAL.DTO
+@{
+
+
+    Layout = null;
+    var data = ViewBag.BillData;
+    var balance = ViewBag.Balance;
+    var challans = ViewBag.ChallansWithDate;
+    var imagepath = data.Tables[0].Rows[0]["CompanyLogo"];
+    var signature = data.Tables[0].Rows[0]["Signature"];
+    var balanceTable = ViewBag.BalanceTable;
+    var firstRow = data.Tables[0].Rows[0];
+
+    var taxes = data.Tables[1];
+    var breakageItems = data.Tables[2];
+
+    var lossItems = data.Tables[3];
+    var charges = data.Tables[4];
+
+    var billingConfig = BillingConfigViewHelper.AsEnumerable(ViewBag.ConfigData);
+    var invoiceTitle = BillingConfigViewHelper.GetValue(billingConfig, "invoiceTitle", "TAX Invoice");
+    var billPeriodText = BillingConfigViewHelper.GetValue(billingConfig, "billPeriodText", "Bill Period");
+    var showCompanyPhoneMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyPhone");
+    var showCompanyEmailMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyEmail");
+    var showCompanyWebsiteMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyWebsite");
+    var showMSMENumberMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showMSMENumber");
+    var showClientMobileMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientMobile");
+    var showClientEmailMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientEmail");
+    var showClientPinMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientPin");
+    var showPONumberMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showPONumber");
+    var showDetailedDayCalculation = BillingConfigViewHelper.GetBool(billingConfig, "showDetailedDayCalculation", true);
+    var printDamageComponentsDetails = BillingConfigViewHelper.GetBool(billingConfig, "printDamageComponentsDetails", false);
+    var getGroupItemsOnPrint = BillingConfigViewHelper.GetGroupItemsOnPrint(billingConfig, "groupItemsOnPrint", false);
+    var repeatCompanyDetailsOnEachPage = BillingConfigViewHelper.GetBool(billingConfig, "repeatCompanyDetailsOnEachPage", false);
+    var repeatTableHeader = BillingConfigViewHelper.GetBool(billingConfig, "repeatTableHeader", false);
+
+    var breakageDamageDetailsList = ViewBag.BreakageDamageDetails as List<BreakageDamageDetailDTO>;
+
+    var subTotal = data.Tables[0].Compute("Sum(SubTotal)", "");
+    var rowsToSpanAtBottom = 2 + charges.Rows.Count;
+    if (Convert.ToDecimal(firstRow["discount"]) > 0)
+    {
+        rowsToSpanAtBottom = rowsToSpanAtBottom + 1;
+    }
+    var minDate = data.Tables[0].Compute("Min(From)", "");
+    //var //lastDate = data.Tables[0].Compute("Max(To)", "");
+    var lastDate = data.Tables[0].Rows[0]["BillTo"];
+    var IGST = data.Tables[0].Compute("Sum(IGST)", "");
+    var CGST = data.Tables[0].Compute("Sum(CGST)", "");
+    var SGST = data.Tables[0].Compute("Sum(SGST)", "");
+    decimal lossCharges = 0;
+    decimal breakageCharges = 0;
+    decimal total = 0;
+    var excessQty = data.Tables[0].Select("ExcessQty > 0");
+    if (lossItems != null && lossItems.Rows.Count > 0)
+    {
+        IGST += lossItems.Compute("Sum(IGST)", "");
+        SGST += lossItems.Compute("Sum(SGST)", "");
+        CGST += lossItems.Compute("Sum(CGST)", "");
+        lossCharges = lossItems.Compute("Sum(Amount)", "");
+        rowsToSpanAtBottom++;
+    }
+    if (breakageItems != null && breakageItems.Rows.Count > 0)
+    {
+        IGST += breakageItems.Compute("Sum(IGST)", "");
+        SGST += breakageItems.Compute("Sum(SGST)", "");
+        CGST += breakageItems.Compute("Sum(CGST)", "");
+        breakageCharges = breakageItems.Compute("Sum(SubTotal)", "");
+        rowsToSpanAtBottom++;
+    }
+    total = subTotal + +IGST + CGST + SGST + lossCharges + breakageCharges;
+    total += firstRow["Freight"] + firstRow["FreightTax"] + firstRow["ChargesTax"];
+    if (firstRow["Freight"] > 0)
+    {
+        rowsToSpanAtBottom += 1;
+    }
+    if (firstRow["FreightTax"] > 0)
+    {
+        if (IGST == 0)
+        {
+            SGST += firstRow["FreightTax"] / 2;
+            CGST += firstRow["FreightTax"] / 2;
+
+        }
+        else
+        {
+            IGST += firstRow["FreightTax"];
+        }
+    }
+    if (firstRow["ChargesTax"] > 0)
+    {
+        if (IGST == 0)
+        {
+            SGST += firstRow["ChargesTax"] / 2;
+            CGST += firstRow["ChargesTax"] / 2;
+
+        }
+        else
+        {
+            IGST += firstRow["ChargesTax"];
+        }
+    }
+    if (charges != null && charges.Rows.Count > 0)
+    {
+        total += charges.Compute("Sum(Amount)", "");
+    }
+    total -= (firstRow["discount"] + firstRow["breakageDiscount"] + firstRow["lossDiscount"]);
+    var totalBeforeRoundOf = total;
+    total = Math.Round(total, MidpointRounding.AwayFromZero);
+    var roundOf = Math.Abs(totalBeforeRoundOf - total);
+    if (IGST > 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+    if (SGST > 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+    if (CGST > 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+    if (roundOf != 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Report layout test — Template 4</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            color: #111;
+        }
+
+        .report {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ----- Report header: once at start of document ----- */
+        .report-header {
+            padding: 16px 20px;
+            /* border-bottom: 3px solid #1a4d8c;*/
+        }
+
+            .report-header h1 {
+                margin: 0 0 6px 0;
+                font-size: 18pt;
+                color: #1a4d8c;
+            }
+
+            .report-header .meta {
+                font-size: 10pt;
+                color: #444;
+            }
+
+        /* ----- Bill period + Bill To / Ship To (inside thead; repeats each printed page) ----- */
+        .report-table thead .thead-period-row td,
+        .report-table thead .thead-billship-row td {
+            border: none !important;
+            padding: 0 0 8px 0;
+            vertical-align: top;
+        }
+
+        .report-table thead .bill-ship-period {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+            .report-table thead .bill-ship-period td.compAddr {
+                font-size: 14px !important;
+                font-weight: bold;
+                padding: 4px 2px 8px 2px;
+                vertical-align: top;
+            }
+
+        .report-table thead .bill-ship-inner {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .report-table thead .address-table {
+            width: 100%;
+        }
+
+        .report-table thead .addresstd {
+            font-size: 11px !important;
+            font-weight: normal;
+            text-align: left;
+        }
+
+        /* ----- Main printable table: thead = page header, tfoot = page footer ----- */
+        .report-table-wrap {
+            /*  padding: 0 12px 12px;*/
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+            /* Required for repeating header on each printed page (Chrome / wkhtmltopdf) */
+            .report-table thead {
+                display: table-header-group;
+            }
+
+            .report-table th,
+            .report-table td {
+                border: 1px solid #333;
+                padding: 6px 8px;
+                vertical-align: top;
+            }
+
+            .report-table thead th {
+                background: #e8eef5;
+                font-weight: bold;
+                font-size: 10pt;
+            }
+
+        .page-header-row td {
+            color: #000;
+            font-weight: bold;
+            font-size: 11pt;
+            padding: 2px;
+            border: none !important;
+        }
+
+        .totals-inner .table-cell {
+            font-size: 11pt;
+            padding: 6px 8px;
+        }
+
+        .totals-inner .border {
+            border: 1px solid #000;
+        }
+
+        .totals-inner .bold {
+            font-weight: bold;
+        }
+
+        .detail-row:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .fw-bold {
+            font-weight: bold;
+        }
+
+        .report-table tbody .noborder_b {
+            border-top: none;
+        }
+
+        /* Grows via fillSpacerRows() to absorb slack above report footer (screen / PDF) */
+        .report-table tbody .spacer-row td {
+            border: 1px solid #333;
+            vertical-align: top;
+            min-height: 6px;
+        }
+
+        .report-table thead .table-cell {
+            border: 1px solid #333;
+        }
+
+        /* ----- Report footer: totals, signatory, terms (once after line-items table) ----- */
+        .report-footer {
+            /*  margin: 0 12px 20px;
+            padding: 14px 16px;*/
+            border: 1px solid #000;
+            /* border-radius: 4px;*/
+            font-size: 10pt;
+            color: #000;
+        }
+
+            .report-footer strong {
+            }
+
+            .report-footer .footer-totals-grid {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: stretch;
+                /*  border: 1px solid #000;*/
+                margin-bottom: 12px;
+                background: #fff;
+            }
+
+            .report-footer .footer-totals-left {
+                flex: 1 1 58%;
+                min-width: 220px;
+                padding: 12px 10px;
+                border-right: 1px solid #000;
+                vertical-align: top;
+            }
+
+            .report-footer .footer-totals-right {
+                flex: 1 1 38%;
+                min-width: 200px;
+                padding: 0;
+                vertical-align: top;
+            }
+
+            .report-footer .footer-bank-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                align-items: flex-start;
+                margin-top: 10px;
+            }
+
+            .report-footer .footer-signed-qr {
+                text-align: center;
+                padding: 12px 0;
+                border: 1px solid #000;
+                border-top: none;
+                background: #fff;
+            }
+
+            .report-footer .footer-signatory {
+                border: 1px solid #000;
+                border-top: none;
+                padding: 12px;
+                background: #fff;
+            }
+
+            .report-footer .footer-terms {
+                margin-top: 14px;
+                padding-top: 12px;
+                border-top: 1px solid #ccc;
+            }
+
+        @@page {
+            size: A4;
+            margin: 12mm 12mm 14mm 12mm;
+        }
+
+        @@media print {
+            body {
+                background: #fff;
+            }
+
+            .report {
+                max-width: none;
+                margin: 0;
+                min-height: 0;
+            }
+
+            .report-header {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            /* Do not set page-break-inside:avoid on thead rows — it blocks header repetition */
+            .report-table thead tr {
+                page-break-inside: auto !important;
+                break-inside: auto !important;
+            }
+
+            .report-footer .invoice-final-section {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .report-table tbody tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+                .report-table tbody tr.invoice-line-row {
+                    page-break-inside: avoid;
+                    break-inside: avoid;
+                }
+
+                .report-table tbody tr.spacer-row {
+                    page-break-inside: auto;
+                    break-inside: auto;
+                }
+
+            .report-footer {
+                page-break-before: avoid;
+                break-before: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+    </style>
+    @*@Html.Raw(ViewBag.Style as string ?? "")*@
+</head>
+<body>
+    <div class="report">
+
+        <!-- ========== REPORT HEADER (once per report) ========== -->
+        <header class="report-header">
+            @*<h1>Dummy rent bill — layout test</h1>
+                <div class="meta">
+                    Report ID: RB-DEMO-2026-001 · Generated: @DateTime.Now.ToString("yyyy-MM-dd HH:mm") ·
+                    Company: Acme Rentals Pvt Ltd · GSTIN: 27AAAAA0000A1Z5
+                </div>*@
+        </header>
+
+        <div class="report-table-wrap">
+            <table class="report-table">
+                <colgroup>
+                    <col style="width: 301px;" />
+                    <col style="width: 80px;" />
+                    <col style="width: 70px;" />
+                    <col style="width: 40px;" />
+                    <col style="width: 50px;" />
+                    <col style="width: 60px;" />
+                    <col style="width: 80px;" />
+                </colgroup>
+                <!-- ========== PAGE HEADER (repeats on each printed page with thead) ========== -->
+                <thead>
+                    <tr class="page-header-row">
+                        <td colspan="7">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width:70%;">
+                                        <img src="@imagepath" style="max-width:140px" />
+                                    </td>
+                                    <td>
+                                        <table style="width:100%;">
+
+                                            <tr>
+                                                <td  style="text-align: right; font-size: 14px !important; "><strong>PAN: </strong>@firstRow["CompanyPAN"]</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: right; font-size: 14px !important;"><strong>GSTIN: </strong>@firstRow["CompanyGST"]  </td>
+                                            </tr>
+                                            @if (BillingConfigViewHelper.ShouldShowContactField(showMSMENumberMode, firstRow["MSMENumber"]))
+                                            {
+                                                <tr>
+                                                    <td style="text-align: right; font-size: 14px !important;"><strong>MSME Number: </strong>@firstRow["MSMENumber"]  </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="thead-period-row">
+                        <td colspan="7">
+                            <table class="bill-ship-period">
+                                <tr>
+                                    <td class="compAddr">@billPeriodText: @BAL.Objects.Utils.FormatDate(minDate) - @BAL.Objects.Utils.FormatDate(lastDate)</td>
+                                    <td class="compAddr" style="text-align:right;">Invoice No: @firstRow["InvoiceNumber"] &nbsp; Date: @BAL.Objects.Utils.FormatDate(@firstRow["InvoiceDate"])</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="thead-billship-row">
+                        <td colspan="7">
+                            <table class="bill-ship-inner" width="100%" style="border-collapse: collapse; margin: 0;">
+                                <tr>
+                                    <td style="vertical-align: top; text-align: left; border: solid 1px #000; padding: 3px; font-weight: normal; width: 50%;">
+                                        <label style="font-weight:bold;font-size:12pt;">Bill To</label>
+                                        <div>
+                                            @if (Convert.ToInt16(firstRow["BillFromSiteAddress"]) == 1)
+                                            {
+                                                <table style="width:100%;" class="address-table">
+                                                    <tr><td class="addresstd"><strong>@firstRow["ClientBillToName"]</strong></td></tr>
+                                                    <tr><td class="addresstd">@firstRow["SiteProject"] @firstRow["SiteAddress"] @firstRow["SiteAddress2"]</td></tr>
+                                                    <tr>
+                                                        <td class="addresstd">
+                                                            @firstRow["City"] (@firstRow["SiteState"])@if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["SiteZipCode"]))
+                                                            {<text> Pin:- @firstRow["SiteZipCode"] </text>}
+                                                        </td>
+                                                    </tr>
+                                                    @if (!String.IsNullOrEmpty(Convert.ToString(firstRow["SiteGST"])))
+                                                    {
+                                                        <tr><td class="addresstd">GSTIN: @firstRow["SiteGST"]</td></tr>
+                                                    }
+                                                    @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]) || BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                                    {
+                                                        <tr>
+                                                            <td class="addresstd">
+                                                                @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                                                                {
+                                                                    <span> Mobile: @firstRow["ClientPhone"];</span>
+                                                                }
+                                                                @if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                                                {
+                                                                    <span> Email: @firstRow["ClientEmail"];</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <table style="width:100%;" class="address-table">
+                                                    <tr><td class="addresstd"><strong>@firstRow["ClientBillToName"]</strong></td></tr>
+                                                    <tr><td class="addresstd">@firstRow["ClientAddress1"] @firstRow["ClientAddress2"]</td></tr>
+                                                    <tr>
+                                                        <td class="addresstd">
+                                                            @firstRow["ClientCity"] (@firstRow["ClientStateName"])@if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["ClientZipCode"]))
+                                                            {<text> Pin:- @firstRow["ClientZipCode"] </text>}
+                                                        </td>
+                                                    </tr>
+                                                    <tr><td class="addresstd">GSTIN: @firstRow["ClientGST"]</td></tr>
+                                                    @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]) || BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                                    {
+                                                        <tr>
+                                                            <td class="addresstd">
+                                                                @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                                                                {
+                                                                    <span> Mobile: @firstRow["ClientPhone"];</span>
+                                                                }
+                                                                @if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                                                {
+                                                                    <span> Email: @firstRow["ClientEmail"];</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </table>
+                                            }
+                                        </div>
+                                        @if (BillingConfigViewHelper.ShouldShowStringField(showPONumberMode, firstRow["billPONumber"]))
+                                        {
+                                            <div style="margin-top:6px;">
+                                                <strong>Customer PO Number:</strong> @firstRow["billPONumber"]
+                                                <strong>| PO Date:</strong> @BAL.Objects.Utils.CheckDateAndReturnDefault(Convert.ToString(firstRow["billPODate"]), "")
+                                            </div>
+                                        }
+                                    </td>
+                                    <td style="text-align: left; border: solid 1px #000; font-weight: normal; padding: 3px; vertical-align: top; width: 50%;">
+                                        <label style="font-weight:bold;font-size:12pt;">Ship To</label>
+                                        <table style="width:100%">
+                                            <tr><td class="addresstd"><strong>@firstRow["ClientBillToName"]</strong></td></tr>
+                                            <tr><td class="addresstd">@firstRow["SiteProject"]</td></tr>
+                                            <tr><td class="addresstd">@firstRow["SiteAddress"] @firstRow["SiteAddress2"]</td></tr>
+                                            <tr>
+                                                <td class="addresstd">
+                                                    @firstRow["City"] @firstRow["SiteState"]@if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["SiteZipCode"]))
+                                                    {<text> Pin:- @firstRow["SiteZipCode"] </text>}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="addresstd">
+                                                    @if (!String.IsNullOrEmpty(Convert.ToString(firstRow["ContactPerson"])))
+                                                    {
+                                                        <span> Contact: @firstRow["ContactPerson"];</span>
+                                                    }
+                                                    @if (!String.IsNullOrEmpty(Convert.ToString(firstRow["ContactPersonPhone"])))
+                                                    {
+                                                        <span> Mob: @firstRow["ContactPersonPhone"];</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            @if (ViewBag.ShowChallans == true && !String.IsNullOrEmpty(challans))
+                                            {
+                                                <tr><td class="addresstd" style="border-top: solid 1px;"><label style="font-weight:bold;font-size:12px;">Challans</label></td></tr>
+                                                <tr>
+                                                    <td style="font-size:11px;">
+                                                        @challans
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="table-cell" style="width:300px;border-right:none;">Description</th>
+                        <th class="table-cell" style="width: 120px; border-left: none;">@billPeriodText</th>
+                        <th class="table-cell" style="width:70px;">SAC Code</th>
+                        <th class="table-cell" style="width:40px;">Days</th>
+                        <th class="table-cell" style="width:50px;">Number</th>
+                        <th class="table-cell" style="width:60px;">Rate</th>
+                        <th class="table-cell" style="width:80px;">Amount</th>
+                    </tr>
+                </thead>
+
+                <!-- ========== DETAILS (body; flows across pages) ========== -->
+                <tbody class="table-body">
+                    @{
+                        foreach (var g in ViewBag.UniqueItems)
+                        {
+                            string borderCss = "firstRow";
+                            string item = "";
+                            int x = 0;
+                            bool itemPrinted = false;
+                            foreach (var row in data.Tables[0].Select("ProductId = " + g.ToString()))
+                            {
+                                if (x == 0)
+                                {
+                                    item = Convert.ToString(row["Item"]);
+                                }
+                                else
+                                {
+                                    if (itemPrinted == true)
+                                    {
+                                        item = "";
+                                    }
+                                }
+                                x++;
+                                if (Convert.ToDouble(row["SubTotal"]) == 0)
+                                {
+                                    if (ViewBag.hideZeroAmountItem)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                itemPrinted = true;
+                                var variance = (Convert.ToInt32(row["CB"]) - Convert.ToInt32(row["Quantity"]));
+                                <tr class="table-row invoice-line-row">
+                                    <td class="@borderCss noborder_b" style="padding: 7px 3px; border-left: solid 1px;">
+                                        @if (variance != 0)
+                                        {
+                                            if (showDetailedDayCalculation && !String.IsNullOrEmpty(Convert.ToString(row["qtyCalculation"])))
+                                            {
+                                                <div style="font-size: 16px !important; ">
+                                                    @item (
+                                                    @row["qtyCalculation"]
+                                                    ) =   @row["CB"]
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div style="font-size: 16px !important; ">
+                                                    @item (
+                                                    @variance
+                                                    @(Convert.ToInt32(row["Quantity"]) > 0 ? "+" : "")  @row["Quantity"]
+                                                    ) =   @row["CB"]
+                                                </div>
+                                            }
+                                        }
+                                        @if (variance == 0)
+                                        {
+                                            <span style="font-size: 16px; width: 100%; ">
+                                                @item
+                                            </span>
+                                        }
+                                        @if (Convert.ToInt16(row["rateCalcType"]) == 2 && Convert.ToInt32(row["Days"]) > 1)
+                                        {
+                                            <span style="font-size:12px;margin-left:5px;margin-top:8px;width:100%;display:block">
+                                                @row["Days"]-Days @@ @row["MasterRentRate"]/-PM
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="@borderCss noborder_bl text-center">@row["Period"]</td>
+                                    <td class="@borderCss noborder_bl text-center" style="border-left: solid 1px; text-align: center; vertical-align: middle">
+                                        @if (item != "")
+                                        {
+                                            @row["SACCode"]
+                                        }
+                                    </td>
+                                    <td class="border noborder_bl table-cell text-center" style="vertical-align:middle">
+                                        @if (showDetailedDayCalculation && Convert.ToInt16(row["rateCalcType"]) == 2 && Convert.ToInt32(row["Days"]) == 1)
+                                        {
+                                            @row["DaysInMonth"]
+                                        }
+                                        else
+                                        {
+                                            @row["Days"]
+                                        }
+                                    </td>
+                                    <td class="border table-cell text-center" style="vertical-align:middle">
+                                        @row["CB"]
+                                    </td>
+                                    <td class="table-cell text-center" style="vertical-align:middle">
+                                        @row["Rate"]
+                                    </td>
+                                    <td class="table-cell text-right" style="vertical-align:middle">
+                                        @row["SubTotal"].ToString("N", System.Globalization.CultureInfo.InvariantCulture)
+                                    </td>
+                                </tr>
+                                { borderCss = ""; }
+                            }
+                            if (getGroupItemsOnPrint)
+                            {
+                                decimal totalSubtotal = Convert.ToDecimal(data.Tables[0].Compute("Sum(SubTotal)", "ProductId =  " + g.ToString()));
+                                <tr class="table-row">
+                                    <td colspan="2" class="border noborder_bl table-cell text-center" style="border-top:none;"></td>
+                                    <td class="border noborder_bl table-cell text-right fw-bold" colspan="4"><strong>Total</strong></td>
+                                    <td class="table-cell text-right"><strong>@totalSubtotal.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</strong></td>
+                                </tr>
+                            }
+                        }
+                    }
+                    <tr class="table-row spacer-row">
+                        <td class="table-cell" colspan="7" style="padding:4px 8px; line-height:1;">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ========== REPORT FOOTER: totals + Authorized Signatory + terms ========== -->
+        <footer class="report-footer" style="border-top:none;">
+            <div class="footer-totals-grid invoice-final-section">
+
+                <div class="footer-totals-right">
+                    <table class="totals-inner" style="width:100%; border-collapse:collapse; font-size:12pt;">
+                        <tr class="table-row">
+                            <td class="table-cell border bold" style="border-left:none; border-top:none; font-weight:bold;text-align:right">Sub Total</td>
+                            <td class="table-cell border noborder_bl text-right" style="border-top:none;width:100px;">@Convert.ToDecimal(subTotal).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                        </tr>
+                        @if (Convert.ToDecimal(firstRow["Freight"]) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Freight</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(firstRow["Freight"]).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (breakageCharges > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Breakage</td>
+                                <td class="table-cell border noborder_bl text-right">@breakageCharges.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (lossCharges > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Loss Charges</td>
+                                <td class="table-cell border noborder_bl text-right">@lossCharges.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @foreach (var charge in charges.Rows)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">@charge["Name"]</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(charge["Amount"]).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (Convert.ToDecimal(IGST) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">IGST</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(IGST).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (Convert.ToDecimal(CGST) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">CGST</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(CGST).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (Convert.ToDecimal(SGST) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">SGST</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(SGST).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (Convert.ToDecimal(firstRow["discount"]) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Discount</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(firstRow["discount"]).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (Convert.ToDecimal(firstRow["lossDiscount"]) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Loss Discount</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(firstRow["lossDiscount"]).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (Convert.ToDecimal(firstRow["breakageDiscount"]) > 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Breakage Discount</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(firstRow["breakageDiscount"]).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        @if (roundOf != 0)
+                        {
+                            <tr class="table-row">
+                                <td class="table-cell border bold" style="border-left: none; text-align: right">Round Off</td>
+                                <td class="table-cell border noborder_bl text-right">@roundOf.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                            </tr>
+                        }
+                        <tr class="table-row">
+                            <td class="table-cell border bold" style="border-bottom: solid 1px; border-left: none; text-align: right">Total</td>
+                            <td class="table-cell text-right" style="border-bottom:solid 1px;">@Convert.ToDecimal(total).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="footer-totals-left">
+                <strong>In Words:</strong> @BAL.Objects.Utils.AmountToWords(Convert.ToDecimal(total))
+                @if (ViewBag.LastBill != null && Convert.ToInt16(firstRow["printLastBillDetails"]) == 1)
+                {
+                    <div style="margin-top:10px;">
+                        <ul style="list-style:none;">
+                            <li><u>Last Bill Details:</u></li>
+                            <li style="padding-top:8px;">Invoice#: @ViewBag.LastBill.InvoiceNumber | Date: @BAL.Objects.Utils.FormatDate(ViewBag.LastBill.InvoiceDate) | Amount: @Math.Round(ViewBag.LastBill.Total, MidpointRounding.AwayFromZero)</li>
+                        </ul>
+                    </div>
+                }
+                @if (ViewBag.PrintBalanceMaterial == true && balanceTable != null)
+                {
+                    <ul style="list-style:none; margin-top:10px;">
+                        <li><u>Balance Qty:</u></li>
+                        @foreach (var b in balanceTable)
+                        {
+                            <li>@b.Product : @b.Quantity</li>
+                        }
+                    </ul>
+                }
+                <div class="footer-bank-row">
+                    <div style="flex:1; min-width:0;">
+                        @if (ViewBag.PrintBankDetails && ViewBag.CompanyInfo != null)
+                        {
+                            <ul style="list-style:none;">
+                                <li><b>Bank Details</b></li>
+                                <li>Bank ACC. No: @ViewBag.CompanyInfo.BankAccNumber</li>
+                                <li>Bank: @ViewBag.CompanyInfo.BankName</li>
+                                <li>Branch: @ViewBag.CompanyInfo.BankBranch</li>
+                                <li>IFSC Code: @ViewBag.CompanyInfo.IFSCCode</li>
+                            </ul>
+                        }
+                    </div>
+                    @if (ViewBag.PrintQrCode)
+                    {
+                        <div style="flex-shrink:0;">
+                            @if (!String.IsNullOrEmpty(Convert.ToString(firstRow["QrCode"])))
+                            {
+                                <img src="@firstRow["QrCode"]" style="width:120px;height:120px;border:none" alt="" />
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (firstRow["SignedQrCode"] != DBNull.Value)
+            {
+                <div class="footer-signed-qr invoice-final-section">
+                    <table style="margin:0 auto;">
+                        <tr>
+                            <td><img src="@firstRow["SingedQrCode"]" style="width:120px;height:120px;" alt="" /></td>
+                        </tr>
+                    </table>
+                </div>
+            }
+            <div class="footer-signatory invoice-final-section">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+                    <div style="flex:1; min-width:0;">@Html.Raw(firstRow["Tnc"])</div>
+                    <div style="text-align:right; flex-shrink:0;">
+                        <div style="font-size:13pt;font-weight:bold;">For:- @firstRow["Company"]</div>
+                        <div style="margin-top:8px;"><img src="@signature" style="max-width:150px;max-height:50px;" alt="" /></div>
+                        <div style="padding-top:12px; font-size:14pt;font-weight:bold;">Authorized Signatory</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-terms">
+                
+            </div>
+        </footer>
+    </div>
+    <script>
+        (function () {
+            function a4HeightPx() {
+                return Math.round(297 * 96 / 25.4);
+            }
+            /** Grow tbody tr.spacer-row so .report fills viewport / A4 height (pushes report footer down). */
+            function fillSpacerRows() {
+                var page = document.querySelector('.report');
+                var spacers = document.querySelectorAll('tbody tr.spacer-row');
+                if (!page || !spacers.length) return;
+                for (var s = 0; s < spacers.length; s++) {
+                    var row = spacers[s];
+                    row.style.height = '';
+                    var cells = row.querySelectorAll('td');
+                    for (var i = 0; i < cells.length; i++) {
+                        cells[i].style.height = '';
+                    }
+                }
+                var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+                var target = vh > 400 ? vh : a4HeightPx();
+                var sh = page.scrollHeight;
+                var extra = target - sh - 12;
+                if (extra <= 2) return;
+                var n = spacers.length;
+                var per = Math.floor(extra / n);
+                var rem = extra % n;
+                for (var k = 0; k < n; k++) {
+                    var r = spacers[k];
+                    var add = per + (k < rem ? 1 : 0);
+                    var base = r.offsetHeight || 6;
+                    var h = base + add;
+                    r.style.height = h + 'px';
+                    var cs = r.querySelectorAll('td');
+                    for (var j = 0; j < cs.length; j++) {
+                        cs[j].style.height = h + 'px';
+                    }
+                }
+            }
+            function schedule() {
+                fillSpacerRows();
+                setTimeout(fillSpacerRows, 120);
+                setTimeout(fillSpacerRows, 450);
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', schedule);
+            } else {
+                schedule();
+            }
+            window.addEventListener('load', fillSpacerRows);
+            window.addEventListener('resize', fillSpacerRows);
+            window.addEventListener('beforeprint', fillSpacerRows);
+        })();
+    </script>
+    @* NReco/wkhtmltopdf: use --print-media-type and e.g. --javascript-delay 500 so fillSpacerRows runs after layout. *@
+</body>
+</html>

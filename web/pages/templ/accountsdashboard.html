@@ -1,0 +1,78 @@
+<div class="content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding:10px 10px 10px;">
+                <div class="row" style="margin-bottom:8px;">
+                    <div class="col-sm-8">
+                        <h2 style="margin-top:0;">Accounts Dashboard</h2>
+                        <p class="text-muted" style="margin-bottom:0;">Revenue overview for the current month.</p>
+                    </div>
+                    <div class="col-sm-4 text-right" style="padding-top:8px;">
+                        <button type="button" class="btn btn-default btn-sm" ng-click="reloadAccountsKpis()" ng-disabled="accountsLoading">
+                            <i class="fa fa-refresh" ng-class="{'fa-spin': accountsLoading}"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="alert alert-warning" ng-if="accountsError" style="margin-bottom:14px;">
+                    {{accountsError}}
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-6 col-md-3" ng-repeat="w in revenueWidgets track by w.key">
+                        <div class="ceo-dashboard-widget operations-dashboard-widget" ng-class="w.panelClass" style="margin-bottom:14px; padding:14px 12px; border:1px solid #ddd; border-radius:4px;">
+                            <div class="operations-dashboard-widget-head">
+                                <div class="operations-dashboard-widget-icon"><i class="fa" ng-class="w.icon"></i></div>
+                                <div class="operations-dashboard-widget-meta">
+                                    <div class="operations-dashboard-widget-title">{{w.title}}</div>
+                                    <div class="operations-dashboard-widget-hint" ng-if="w.hint">{{w.hint}}</div>
+                                </div>
+                            </div>
+                            <div class="operations-dashboard-widget-value">{{w.value}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; padding:12px; border:1px solid #ddd; border-radius:4px; background:#fff;">
+                    <h3 style="margin:0 0 12px; font-size:16px;">Ageing Summary</h3>
+                    <div class="row">
+                        <div class="col-sm-8" style="margin-bottom:10px;">
+                            <div style="max-height:320px; overflow:auto; border:1px solid #eee; border-radius:4px;">
+                                <table class="table table-condensed" style="margin-bottom:0;">
+                                    <thead>
+                                        <tr class="headerRow">
+                                            <th style="width:200px;">Site</th>
+                                            <th class="text-right" style="width:100px;">Project Value</th>
+                                            <th class="text-right" style="width:100px;">Billed</th>
+                                            <th class="text-right" style="width:100px;">Received</th>
+                                            <th class="text-right" style="width:100px;">Pending</th>
+                                            <th class="text-right" style="width:50px;">Ret. %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="r in siteOutstandingRows track by (r.ContractId + '-' + $index)">
+                                            <td  style="width:200px;">
+                                                <div>{{r.PartyName}}</div>
+                                                <small class="text-muted">{{r.Site}}</small>
+                                            </td>
+                                            <td class="text-right">{{formatCurrency(r.ProjectValue)}}</td>
+                                            <td class="text-right">{{formatCurrency(r.Billed)}}</td>
+                                            <td class="text-right">{{formatCurrency(r.Received)}}</td>
+                                            <td class="text-right">{{formatCurrency(r.Pending)}}</td>
+                                            <td class="text-right">{{(r.RetentionPercent || 0) | number:2}}%</td>
+                                        </tr>
+                                        <tr ng-if="!siteOutstandingRows || siteOutstandingRows.length === 0">
+                                            <td colspan="6" class="text-center">No outstanding records found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div style="height:320px;">
+                                <canvas id="accountsAgeingPieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

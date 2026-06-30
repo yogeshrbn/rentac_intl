@@ -1,0 +1,61 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th
+
+        {
+            font-size: 10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th style="width: 200px;">Client</th>
+            <th style="width: 200px;">Site</th>
+            <th style="width: 100px;">Contact Person</th>
+            <th style="width: 50px;">Phone</th>
+            <th style="width: 50px;">Approx. Amount</th>
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>{{item.Client}}</td>
+            <td style="max-width: 200px; text-overflow: ellipsis; word-break: break-word;"
+                class="overflow-td">
+                {{item.SiteAddress}}
+            </td>
+
+            <td>{{item.ContactPerson}}</td>
+            <td>{{item.ContactPersonPhone}}</td>
+            <td>{{item.Amount |number:2}}</td>
+
+        </tr>
+        <tr class="headerRow">
+            <td colspan="4" class="headerRow text-right">
+                <label>Total </label>
+            </td>
+            <td class="text-right">
+                {{data | sum:'Amount' | number:2}}
+            </td>
+        </tr>
+    </table>
+</div>

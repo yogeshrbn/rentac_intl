@@ -1,0 +1,156 @@
+<!--<pageheader heading="Daily Transactions" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+        </div>
+        <div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+        </div>
+        <div class="col-sm-2">
+
+            <label>From</label>
+
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" tabindex="2" type="text" class="form-control" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" tabindex="3" type="text" class="form-control" />
+            </datepicker>
+
+        </div>
+        <div class="col-sm-1">
+            <label>&nbsp;</label>
+            <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="getReport(false);" />
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Print" ng-click="getReport(true);" />
+                <!--<export data="Issued" data2="Received" url="'dailyTrans.html'"></export>-->
+            </div>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+<div class="form-group">
+
+
+
+    <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+
+    </div>-->
+    <div class="col-md-12">
+        <div class="col-sm-12 bg-color-1 mt-1" style="padding: 2px 0px 0px; border-radius: 2px; border-bottom: solid 2px #3e3e3e;">
+            <div class="form-group">
+                <label class="col-sm-2">Opening Balance</label>
+
+                <label ng-if="ReportData.openingBalance">
+                    {{  ReportData.openingBalance | abs}} {{ReportData.openingBalance >= 0 ? 'CR': 'DR'}}
+                </label>
+                <label ng-if="!ReportData">
+                    0
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6 nopadding  table-responsive">
+            <table class="table table-condensed">
+                <tr class="headerRow">
+                    <th style="width: 80px;" class="text-center">S.No</th>
+                    <th>BillNo</th>
+                    <th style="width: 80px;">Date</th>
+                    <th style="width: 80px;">BillAmount</th>
+                    <!--<th style="width: 120px;">PaymentDate</th>
+                    <th style="width: 160px;">PaidAmount</th>
+                    <th style="width: 160px;">PayMode</th>
+                    <th style="width: 160px;">ChequeNo</th>
+                    <th style="width: 160px;">Remarks</th>-->
+                </tr>
+                <tr ng-repeat="item in ReportData.reportData">
+                    <td class="text-center">{{$index+1
+                    }}</td>
+                    <td>{{item.InvoiceNumber}}</td>
+                    <td>{{item.InvoiceDate |formatDate }}</td>
+                    <td>
+                        {{item.Total |number:2 }}
+                    </td>
+
+
+
+                    </tr>
+
+                    </table>
+
+</div>
+        <div class="col-md-6 nopadding  table-responsive">
+            <table class="table table-condensed">
+                <tr class="headerRow">
+                    <th style="width: 120px;">PaymentDate</th>
+                    <th style="width: 160px;">PaidAmount</th>
+                    <th style="width: 160px;">PayMode</th>
+                    <th style="width: 160px;">ChequeNo</th>
+                    <th style="width: 160px;">Remarks</th>
+                </tr>
+                <tr ng-repeat="item in ReportData.payments">
+
+                    <td>{{item.TransactionDate |formatDate}}</td>
+                    <td class="text-right">
+                        {{item.TransactionAmount |number:2}}
+                    </td>
+                    <td>
+                        <span ng-if="item.TransactionMode == 1">Cash</span>
+                        <span ng-if="item.TransactionMode == 2">Bank</span>
+                        <span ng-if="item.TransactionMode == 3">Cheque</span>
+                        <span ng-if="item.TransactionMode == 4">NEFT/RTGS</span>
+                        <span ng-if="item.TransactionMode == 5">OTHERS</span>
+                        <span ng-if="item.TransactionMode == 6">UPI</span>
+                    </td>
+                    <td>{{item.ChequeNumber}}</td>
+                    <td>{{item.Narration }}</td>
+
+
+                </tr>
+
+            </table>
+
+            <div class="col-sm-12 pr-0 table-responsive">
+             
+                    <table class="table table-condensed">
+                        <tr>
+                            <th colspan="2" class="headerRow text-center">Summary</th>
+                        </tr>
+                        <tr>
+                            <th class="text-right headerRow">Total Billed Amount</th>
+                            <th class="text-right" style="width:40%">
+                                {{ReportData.totalBilled  | number: 2}}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="text-right headerRow">Total Paid Amount</th>
+                            <th class="text-right"> {{ReportData.totalPaidAmount | number: 2}}</th>
+                        </tr>
+                        <tr>
+                            <th class="text-right headerRow"><span class="text-danger">Due Amount</span></th>
+                            <th class="text-right"><span class="text-danger"> {{ReportData.balance  | number: 2}}</span></th>
+                        </tr>
+                    </table>
+                
+            </div>
+
+        </div>
+
+     
+    </div>
+</div>
+

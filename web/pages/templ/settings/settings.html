@@ -1,0 +1,59 @@
+﻿<!--<pageheader heading="Settings"></pageheader>-->
+ 
+    <div style="display:flex">
+        <div class="settingsLeftCol" style="height:calc(100vh - 114px)">
+
+            <ul class="nav nav-pills nav-stacked" role="tablist">
+                <!--<li role="presentation" class="active"><a href="#itemInfo" role="tab" data-toggle="tab"><i class="fa fa-angle-right" aria-hidden="true"></i>  Default Company</a></li>-->
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.general"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>General Settings</span></a></li>
+
+                <!--<li role="presentation"><a ui-sref="settings.company"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Profile</span> </a></li>-->
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.bill"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Billing</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.delch"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Delivery Challans</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.rech"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Receving Challans</span></a></li>
+
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.privacy"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Privacy</span></a></li>
+
+
+                <li role="presentation"  ui-sref-active="active">
+                    <!--<a href="#demo" data-toggle="collapse"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i><span>Taxes</span></a>-->
+                    <a href="#demo" data-toggle="collapse"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i><span>Taxes</span></a>
+                    <div id="demo" class="collapse ml-1">
+                        <ul class="nav" role="tablist">
+                            <li>
+                                <a ui-sref="settings.gst">GST Settings</a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.eInvoice"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>E-Invoicing</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.ewayBill"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>E-way Bill</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.quotation"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Quotations</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.pi"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Proforma invoice</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.email"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Email Setup</span></a></li>
+                <li role="presentation"  ui-sref-active="active"><a ui-sref="settings.integrations"><i class="fa fa-arrow-circle-o-right fa-2x" aria-hidden="true"></i> <span>Integrations</span></a></li>
+
+            </ul>
+        </div>
+        <div class="col-lg-9 col-md-7 col-sm-12  col-xs-12 col-sm-12 settingsRightCol" style="width:80%;padding-left:0px;padding-right:0px;">
+
+            <!--<div role="tabpanel" class="tab-pane active" id="itemInfo">
+            <div class="row">
+                <div class="col-sm-5">
+                    <defaltcompany></defaltcompany>
+                </div>
+            </div>
+
+        </div>-->
+            <div ui-view></div>
+
+        </div>
+    </div>
+ 
+<script lang="ja">
+
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+</script>

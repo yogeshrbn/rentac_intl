@@ -1,0 +1,283 @@
+<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+
+
+    <div class="col-lg-12">
+
+
+        <form class="">
+            <div class="flex-container">
+                <div class="col-sm-2 col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label">Type</label>
+
+                        <select class="form-control" ng-model="filter.DocType">
+                            <option value="">--ALL--</option>
+                            <option value="inv">--TAX Invoice--</option>
+                            <option value="chl">--Delivery Challans--</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-2 col-xs-12">
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                          ng-id="client_value" ng-model="filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                    </div>
+                </div>
+                <div class="col-sm-1 col-xs-12">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control" ng-model="filter.Status">
+                            <option value=""  >--ALL--</option>
+                            <option value="new">NEW</option>
+                            <option value="act">ACT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-2 col-xs-12">
+                    <div class="form-group">
+                        <label >From</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="filter.From" tabindex="3" type="text" class="form-control" id="txtFrom" required placeholder="Select Date" />
+                        </datepicker>
+                    </div>
+                </div>
+                <div class="col-sm-2 col-xs-12">
+                    <div class="form-group">
+                        <label  >To</label>
+                        <datepicker date-format="dd/MM/yyyy">
+                            <input ng-model="filter.To" tabindex="3" type="text" class="form-control" id="txtFrom" required placeholder="Select Date" />
+                        </datepicker>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <div style="margin-top: 23px; display: flex; justify-content: space-between;">
+
+                        <button type="button" value="Fetch From Portal" class="btn btn-primary  mr-1" ng-click="find();">Find</button>
+                        <button type="button" value="Fetch From Portal" class="btn btn-primary  mr-1" ng-click="fetchFromPortal();">Pull From Portal</button>
+                        <div>
+                            <export data="ewayBills" url="'e-wayBill.html'"></export>
+                        </div>
+                       
+                    </div>
+                </div>
+                <!--<div class="col-sm-1 col-xs-12">
+                    <div style="margin-top:25px;">
+                       
+                    </div>
+                </div>-->
+            </div>
+
+        </form>
+
+
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <tr class="filterRow">
+
+                <tr class="headerRow">
+                    <th style="width:50px;" class="text-center">S.No</th>
+                    <th width="110px"   sort-header="ewayBills" sort-field="EwayBillNo">Ewaybill No</th>
+                    <th width="100px"  sort-header="ewayBills" sort-field="DocNumber">Doc No</th>
+                    <th width="100px"  sort-header="ewayBills" sort-field="DocType">Doc Type</th>
+                    <th  sort-header="ewayBills" sort-field="CustomerName">Customer</th>
+                    <!--<th width="200px"  sort-header="ewayBills" sort-field="TransporterName">Transporter</th>-->
+                    <th width="100px"  sort-header="ewayBills" sort-field="CreatedOn">Date</th>
+                    <th width="100px"  sort-header="ewayBills" sort-field="SubTypeId">Sub Type</th>
+                    <!--<th>Distance</th>-->
+                    <!--<th>Tran. Mode</th>-->
+                    <th width="80px"  sort-header="ewayBills" sort-field="Status">Status</th>
+                    <th width="90px">Actions</th>
+
+
+                </tr>
+                <tr dir-paginate="item in ewayBills | itemsPerPage: PAGE_SIZE |filter: search:strict">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>
+                        {{item.EwayBillNo}}
+                    </td>
+                    <td>{{item.DocNumber}}</td>
+                    <td>{{item.DocType}} | {{item.DocSubType}}
+                    </td>
+                    <td>{{item.CustomerName}}</td>
+                    <!--<td>
+                        {{item.TransporterName}}
+                    </td>-->
+                    <td>
+                        {{item.CreatedOn | date}}
+                    </td>
+                    <td>{{GetSubTypeName(item.SubTypeId)}}</td>
+
+
+
+                    <!--<td>{{item.Distance}}KM</td>
+    <td>{{GetTransModeName(item.TransportationMode)}}</td>-->
+
+
+
+                    <td>{{item.Status}}</td>
+                    <td>
+                        <a ng-if="item.EwayBillNo == null" href="#" ng-click="edit(item);" ng-show="AccessData.Edit"><span class="fa fa-edit fa-2x text-primary"></span></a>&nbsp;&nbsp;
+                        <!--<a ng-click="Print(item);"><i class="fa fa-print fa-2x text-danger"></i></a>-->
+                        <!--<a ng-click="Remove(item.LedgerId);"><i class="fa fa-times fa-2x text-danger"></i></a>-->
+                        <a ng-click="PushToPortal(item);" ng-if="item.EwayBillNo == null"><i class="fa fa-plane fa-2x text-info"></i></a>&nbsp;
+                        <a href="#" ng-click="showPeview(item);"><i class="fa fa-eye fa-2x text-info"></i></a>
+                    </td>
+                </tr>
+                <tr ng-if="ewayBills.length == 0">
+                    <td colspan="9" class="text-center">
+                      <img src="/img/nodata.svg" style="width:300px;" />
+                    </td>
+                </tr>
+            </table>
+            <dir-pagination-controls></dir-pagination-controls>
+        </div>
+    </div>
+
+    <div class="modal right fade" id="ewayDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:50%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Preview</h4>
+                </div>
+                <div class="modal-body">
+                    <loadingcircle ng-show="EwayBillPreview == null"></loadingcircle>
+                    <div class="row">
+                        <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                            <div class="col-sm-3">
+                                <a href="#" data-toggle="modal" data-target="#vehicleDialog">+ Add Vechicle Details</a>
+                            </div>
+                            <div class="col-sm-3">
+                                <a href="#" ng-click="showChangeTPForm()">Change Transporter</a>
+                            </div>
+                            <div class="col-sm-3">
+                                <a href="#" data-toggle="modal" class="text-danger" data-target="#cancelDialog">Cancel e-Way Bill</a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="rpt" style="zoom: 0.8;">
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" ng-click="printPdf()">Print</button>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="vehicleDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:36%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Add Vehicle</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div ng-include src="'templ/ewaybill.addVehicle.html'"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" ng-click="addVehicle();">Save</button>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="cancelDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:36%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Cancel E-way Bill</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div ng-include src="'templ/ewaybill.cancel.html?d=new Date()'"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" ng-click="CancelBill();">Save</button>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="changeTransporter" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:36%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Change Transporter</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div ng-include src="'templ/ewaybill.changeTransporter.html?d=new Date()'"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" ng-click="ChangeTransporter();">Save</button>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="dlgPortalBills" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Portal Bills</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-condensed">
+                            <tr class="headerRow">
+                                <th>Eway B. No</th>
+                                <th>Eway B. Date</th>
+                                <th>DocNo</th>
+                                <th>Status</th>
+                                <th>Action</th>
+
+                            </tr>
+                            <tr ng-repeat="item in portalBills">
+                                <td>{{item.EwayBillNo}}</td>
+                                <td>{{item.EwayBillDate | date}}</td>
+                                <td>{{item.DocNumber}}</td>
+                                <td>{{item.Status}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" ng-click="mapLocally(item)">Map</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" ng-click="ChangeTransporter();">Save</button>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

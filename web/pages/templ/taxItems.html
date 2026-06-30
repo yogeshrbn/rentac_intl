@@ -1,0 +1,38 @@
+﻿  <!--<div class="modal right fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" >-->
+<!--<div class="modal-dialog" role="document">
+    <div class="modal-content">-->
+
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="closeSliderModal()" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel2">&nbsp;</h4>
+        </div>
+
+        <div class="modal-body">
+            <table class="table  table-responsive">
+                <tr class="headerRow">
+                    <th>Product</th>
+                    <th class="text-right">Amount</th>
+                    <th class="text-right">Tax %</th>
+                    <th class="text-right">Tax Amount</th>
+                   
+                </tr>
+                 <tr ng-repeat="tax in AppliedTaxes">
+                    <td>{{tax.Item}}</td>
+                    <td class="text-right">{{tax.Amount |number:2}}</td>
+                    <td class="text-right">{{tax.TaxRate}}({{ tax.TaxName}})</td>
+                    <td class="text-right">{{tax.TaxAmount |number:2}}</td>
+                    
+                </tr>
+                
+            </table>
+            <div class="text-right">
+                <input type="button" class="btn btn-danger" ng-click="closeSliderModal();" value="Close" />
+            </div>
+      </div>
+       
+   <!--   </div>
+    < 
+</div>-->
+<!-- modal-dialog -->
+      <!--</div>-->
+<!-- modal -->

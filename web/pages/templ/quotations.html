@@ -1,0 +1,196 @@
+<!--  <pageheader heading="Bill register" />-->
+<style type="text/css">
+    @media (max-width:522px) {
+        .right .modal-dialog {
+            width: 100% !important;
+        }
+
+        .d-sm-block {
+            display: block !important;
+        }
+
+            .d-sm-block .btn {
+                width: 48%;
+                margin-bottom: 7px;
+            }
+    }
+</style>
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-2">
+    <label>Choose Party</label>
+    <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>-->
+    <searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"
+                      description-field="Code" data-primarytext="TradeName"></searchableselect>
+</div>
+<div class="col-sm-2">
+    <label>Type</label>
+    <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>-->
+
+    <searchableselect name="client" tabindex="2" data-field="QuotationTypes"
+                      ng-model="Filter.QuotationType" data-val="TypeId" data-text="Name"></searchableselect>
+</div>
+<div class="col-sm-2 col-xs-12">
+    <label>Status</label>
+    <searchableselect name="client" tabindex="2" data-field="QuotationStatuses"
+                      ng-model="Filter.StatusId" data-val="Id" data-text="Name"></searchableselect>
+</div>
+<div class="col-sm-2 col-xs-12">
+
+    <label>From</label>
+
+    <datepicker date-format="dd/MM/yyyy">
+        <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+    </datepicker>
+</div>
+<div class="col-sm-2">
+
+    <label>To</label>
+    <datepicker date-format="dd/MM/yyyy">
+        <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+    </datepicker>
+
+</div>
+
+<div class="col-sm-2">
+    <label class="col-sm-12 hidden-xs">&nbsp;</label>
+    <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <!--<label class="col-sm-12">&nbsp;</label>-->
+            <input type="button" class="btn btn-primary" tabindex="4" value="Search" ng-click="find();" />&nbsp;
+            <a href="" ng-if="_stateData.category == 'quotation'" class="btn btn-primary" ng-show="AccessData.Add" ng-click="goNewQuotation($event)">New</a>
+            <a href="" ng-if="_stateData.category == 'pi'" class="btn btn-primary" ng-show="AccessData.Add" ng-click="goNewQuotation($event)">New</a>
+        </div>
+        <div>
+            <!--<export data="Register" url="'salebills.html'"></export>-->
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="form-group">
+
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <div id="quotationListTableWrap" class="table-responsive" style="margin-top:7px;height:550px;overflow-y:auto;">
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+                    <th style="width:50px;" class="text-center">S.No</th>
+                    <th style="width: 140px;" sort-header="Register" sort-field="QuotationNumber">Vch#</th>
+
+                    <th style="width: 350px;" sort-header="Register" sort-field="Client">Party</th>
+                    <th style="width: 100px;" sort-header="Register" sort-field="QuotationDate">Date</th>
+                    <th style="text-align: right; width: 100px;" sort-header="Register" sort-field="SubTotal">Amount</th>
+                    <th style="text-align: right; width: 80px;" sort-header="Register" sort-field="Freight">Freight</th>
+                    <th style="text-align: right; width: 80px;" sort-header="Register" sort-field="TaxAmount">Tax</th>
+                    <th style="text-align: right; width: 100px;" sort-header="Register" sort-field="Total">Net Amount</th>
+                    <th style="text-align: center; width: 50px;">Actions</th>
+
+                </tr>
+                <tbody dir-paginate="item in Register | itemsPerPage: PAGE_SIZE" pagination-id="quotationsList" total-items="TotalItems" current-page="CurrentPage">
+                    <tr id="quotation-row-{{item.QuotationId}}">
+                        <td class="text-center">
+                            {{(CurrentPage - 1) * PAGE_SIZE + $index + 1}}
+                        </td>
+                        <td>
+                            <span class="text-primary" ng-click="ShowSalesItems(item);">{{item.QuotationNumber}}</span>
+                        </td>
+
+                        <td ng-class="item.LedgerId == 0 ? 'text-warning' : ''">
+                            {{item.Client}}
+                            <span ng-if="item.UnregisteredPartyPhone">
+                                <br />
+                                <span class="badge badge-success">
+
+                                 Phone:   {{item.UnregisteredPartyPhone}}
+                                </span>
+                            </span>
+                        </td>
+                        <td>{{item.QuotationDate |date: 'dd-MM-yyyy'}}</td>
+                        <td style="text-align: right;">{{item.SubTotal |number:2 }}</td>
+                        <td style="text-align: right;">{{item.Freight |number:2 }}</td>
+                        <td style="text-align: right;"><span class="text-primary" ng-click="SalesItemsTax(item)">{{item.TaxAmount |number:2 }}</span> </td>
+                        <td style="text-align: right;">{{item.Total |number:2 }}</td>
+                        <th style="text-align: center; width: 50px;">
+                            <!--<span class="fa fa-file-excel-o text-primary" title="Export to excel" ng-click="print(item,1);"></span>-->
+                            <a href="javascript:void()"><i class="fa fa-eye  fa-2x" ng-click="preview(item)"></i> </a>
+                            <a href="javascript:void()" ng-click="showEmailDialog(item)"><i class="fa fa-share-alt fa-2x"></i> </a>
+
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-between" style="margin-top:8px;">
+            <div class="text-muted small" ng-if="Register.length > 0">Showing {{(CurrentPage - 1) * PAGE_SIZE + 1}} - {{(CurrentPage - 1) * PAGE_SIZE + Register.length}} of {{TotalItems}}</div>
+            <dir-pagination-controls pagination-id="quotationsList" on-page-change="onPageChange(newPageNumber)"></dir-pagination-controls>
+        </div>
+    </div>
+</div>
+
+<div class="modal right fade" id="previewDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:50%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Preview</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0px;">
+                <loadingcircle ng-show="Preview == 1"></loadingcircle>
+                <div class="row">
+                    <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                        <div class="d-flex d-sm-block" style=" justify-content: space-between; flex-direction: row;">
+                            <button class="btn btn-primary btn-sm" ng-click="edit(SelectedItem)">Edit</button>
+                            <button class="btn btn-danger btn-sm" ng-click="delete(SelectedItem)">Delete</button>
+                            <button ng-if="_stateData.category == 'quotation'" class="btn btn-primary btn-sm" ng-click="createContract(SelectedItem)">Create Contract</button>
+                            <button ng-if="_stateData.category == 'quotation' && SelectedItem && (!SelectedItem.LedgerId || SelectedItem.LedgerId === 0)" class="btn btn-primary btn-sm" ng-click="createPartyFromPreview()">Create Party</button>
+
+                            <button class="btn btn-primary btn-sm" ng-click="qToSale(SelectedItem)">Convert To Sale Bill</button>
+                            <button class="btn btn-primary btn-sm" ng-click="printPdf()">Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="rpt" style="zoom: 0.8; overflow-y: auto; max-height: 93vh;">
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+
+                <div class="d-flex d-sm-block" style=" justify-content: space-between; flex-direction: row;">
+                    <div ng-show="SelectedItem.StatusId != 3" class="d-flex d-sm-block"
+                         style=" justify-content: space-between; flex-direction: row; width:55%">
+                        <label class="control-label">Change Status</label>
+                        <!--<select class="form-control" style="margin-right:10px; width:175px" ng-model="StatusToUpdate">
+                            <option ng-value="0">--select--</option>
+                            <option ng-value="2" ng-if="SelectedItem.StatusId == 1">Shared</option>
+                            <option ng-value="4" ng-if="SelectedItem.StatusId == 2">Approved By Client</option>
+                            <option ng-value="5" ng-if="SelectedItem.StatusId == 2 || SelectedItem.StatusId == 4">Rejected By Client</option>
+                        </select>-->
+                        <searchableselect name="client" tabindex="2" data-field="QuotationStatuses"
+                                          ng-model="SelectedItem.StatusId" data-val="Id" data-text="Name"></searchableselect>
+                        <button class="btn btn-success" ng-click="UpdateStatus(SelectedItem)">Change Status</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary btn-sm" ng-click="printPdf()">Print</button>
+                        <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!--<div ng-include="'templ/dialogs/sendemail-dialog.html'" id="emailDialogBox" style="visibility:hidden;" >
+
+</div>-->

@@ -1,0 +1,56 @@
+﻿<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+    <!-- <pageheader heading="Company List" />-->
+    <!--<div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>-->
+    <div class="col-lg-12">
+
+        <div class="d-flex" style="align-items:center;justify-content:space-between;">
+            <div class="d-flex mb-1 mr-1">
+                <input type="text" class="form-control mr-1" placeholder="Find by name" ng-model="Search.Name" />
+
+                <input type="button" value="Find" class="btn btn-primary  mr-1" ng-click="find();" />
+
+                <a ui-sref="bomadd" class="btn btn-primary" ng-show="AccessData.Add">New BOM</a>
+
+            </div>
+            <div>
+                <export data="Companies" url="'companies.html'"></export>
+            </div>
+        </div>
+        <div class="table-responsive">
+
+            <table class="table table-condensed table-responsive " med-key>
+
+                <tr class="headerRow">
+                    <th style="width:80px" class="text-center">S.No</th>
+                    <th  style="width:80px" sort-header="BOM" sort-field="Code">Code</th>
+                    <th  sort-header="BOM" sort-field="Product">Product</th>
+                    <th style="width:150px" sort-header="BOM" sort-field="CreatedOn">Created On </th>
+                    <th  style="width:80px" class="text-center">Actions</th>
+
+
+                </tr>
+                <tr ng-repeat="item in BOM">
+
+                    <td  class="text-center">
+                        {{$index+1}}
+                    </td>
+                    <td>{{item.Code}}</td>
+                    <td>
+                       {{item.Product}}
+                    </td>
+                    <td>{{item.CreatedOn | date}}</td>
+                    
+                    <td class="text-center">
+                        <a href="javascript:void()" ng-click="editBom(item)"  ng-show="AccessData.Edit"><span class="fa fa-edit text-primary fa-2x"></span></a> 
+                      
+                    </td>
+                </tr>
+               
+            </table>
+           
+        </div>
+    </div>
+</div>

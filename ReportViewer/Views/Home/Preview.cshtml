@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<style>
+    @ViewBag.Style
+    .title {
+        color:red;
+    }
+</style>
+<main>
+    @Html.RenderXml(ViewBag.XML as string, ViewBag.RepFileName as string,ViewBag.CssPath as string)
+</main>

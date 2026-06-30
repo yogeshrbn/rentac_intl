@@ -1,0 +1,34 @@
+﻿<table class="table table-condensed table-responsive">
+    <tr class="filterRow hidden-xs headerRow">
+        <th colspan="2">
+            <input type="text" class="form-control" placeholder="Find by code" ng-model="searchText" />
+        </th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div style="max-height:600px;overflow:auto;">
+                <table class="table table-condensed table-responsive" med-key>
+                    <tbody>
+                        <tr ng-repeat="a in filteredAccounts = (accounts | filter: filterByAll)" ng-click="onPartySelected(a)">
+                            <td colspan="2">{{a.Name + ' - ' }} <b>{{ a.Project + ' ' + a.SiteAddress}}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>
+<!--
+    <div class="col-sm-3">
+        <label>Choose Party</label>
+        <searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Filter.LedgerId"
+                          data-val="LedgerId" data-text="Name"
+                          description-field="Code"></searchableselect>
+    </div>
+    <div class="col-sm-3">
+        <label>&nbsp;</label>
+        <div>
+            <input type="button" class="btn btn-primary" tabindex="3" value="Get Rates" ng-click="GetRates();" />
+        </div>
+    </div>
+-->

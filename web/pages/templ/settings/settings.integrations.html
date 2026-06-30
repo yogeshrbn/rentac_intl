@@ -1,0 +1,51 @@
+﻿<div class="col-sm-12">
+    <form class="form-horizontal" id="frmEmailSetup" ng-controller="IntegrationController">
+        <div class="col-sm-12">
+            <div class="callout-heading">
+                <h4>Integrations and Marketplace</h4>
+                <p>
+                    Integrate with below apps to boostup your business and stay connected with your customers.
+
+                </p>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="col-sm-1">
+                    <img src="../img/whatsapp.svg" />
+                </div>
+                <div class="col-sm-10">
+                    <label>WhatsApp Business</label><br />
+                    <span>
+                        Integrate with WhatsApp Business, an instant messaging platform with more than 2 billion users, and communicate with your customers about their orders, invoices, and payments.
+                    </span>
+                </div>
+                <div class="col-sm-1">
+                    <!--<button class="btn btn-success" data-target="#dlgWhatsapp" data-toggle="modal">Connect</button>-->
+                    <button class="btn btn-success"  ui-sref="settings.whatsapp" >Connect</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="dlgWhatsapp" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modalLabel">Setup WhatsApp</h4>
+                    </div>
+                    <div class="modal-body" ng-include src="'templ/settings/settings.whatsapp.html'">
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" ng-click="ChangeTransporter();">Save</button>
+                        <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>

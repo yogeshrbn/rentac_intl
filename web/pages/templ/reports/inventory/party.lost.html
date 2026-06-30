@@ -1,0 +1,42 @@
+
+
+<div class="table-responsive mt-2" ng-if="ReportData && ReportData.length">
+    <table class="table table-condensed">
+        <thead>
+            <tr class="headerRow">
+                <th>Party</th>
+                <th>Site</th>
+                <th>Challan#</th>
+                <th>Challan date</th>
+                <th class="text-right">Lost</th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="g in varianceReportGroups track by $index">
+            <tr class="group-banner" style="background-color:#f5f5f5;">
+                <td colspan="5"><strong>{{g.Client}}</strong><span ng-if="g.SiteName"> — {{g.SiteName}}</span></td>
+            </tr>
+            <tr ng-repeat="row in g.rows track by $index">
+                <td>{{row.Client}}</td>
+                <td>{{row.SiteName}}</td>
+                <td>{{row.GRN}}</td>
+                <td>{{row.ReceivingDate | date:'dd-MM-yyyy'}}</td>
+                <td class="text-right">{{row.ShortQty}}</td>
+            </tr>
+            <tr class="subtotal-row stock-register">
+                <td colspan="3" class="text-right total_td sub-total"><em>Subtotal</em></td>
+                <td class="text-center total_td sub-total">
+                    <button type="button" class="btn btn-xs btn-primary" ng-click="generatePiFromVarianceGroup(g, 'lost')">Generate PI</button>
+                </td>
+                <td class="text-right total_td sub-total" style="text-align: right;">{{g.subtotal}}</td>
+            </tr>
+        </tbody>
+        <tfoot ng-if="ReportData && ReportData.length">
+            <tr class="totalRow stock-register">
+                <td colspan="4" class="text-right"><strong>Grand total</strong></td>
+                <td class="text-right"><strong>{{varianceGrandTotal}}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div ng-if="ReportData !== undefined && (!ReportData || ReportData.length === 0)" class="text-muted mt-2">No records for the selected filters.</div>
+

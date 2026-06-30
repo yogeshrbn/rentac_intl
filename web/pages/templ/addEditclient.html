@@ -1,0 +1,362 @@
+<div class="form-group">
+
+    <!--   <pageheader heading="Add/Edit Account" />-->
+    <div class="clearfix">&nbsp;</div>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#clientInfo" aria-controls="clientInfo" role="tab" data-toggle="tab" ng-click="tab =1">General Info</a></li>
+        <li role="presentation"><a href="#accountInfo" aria-controls="accountInfo" role="tab" data-toggle="tab" ng-click="tab =2">Account Details</a></li>
+        <!--<li role="presentation" ng-hide="Ledger.Props.LedgerId==0"><a href="#rates" aria-controls="rates" role="tab" data-toggle="tab">Item Rates</a></li>-->
+        <li role="presentation" ng-hide="Ledger.Props.LedgerId==0"><a href="#sites" aria-controls="sites" role="tab" data-toggle="tab" ng-click="tab =3">Sites</a></li>
+    </ul>
+    <form id="form-client" method="post" class="form-horizontal form-bordered">
+        <div class="tab-content">
+
+            <div role="tabpanel" class="tab-pane active" id="clientInfo">
+
+                <div class="form-group">
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Legal Name</label>
+                        <input type="text" id="val_clientName" tabindex="1" name="val_clientName" maxlength="80" ng-model="Ledger.Props.Name" class="form-control" placeholder="Legal Name">
+
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <div class="input-group">
+                            <div style="display: flex; justify-content: space-between;">
+                                <label>Trade Name</label>
+                                <span class="input-group-addon" style="background:none;border:none;padding-left:8px;">
+                                    <label class="checkbox-inline nopadding" style="font-weight:normal;margin:0;">
+                                        <input type="checkbox" ng-model="Ledger.Props.UseTradeNameForBilling" ng-true-value="1" ng-false-value="0"> Use for billing
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                        
+                      
+                        <div class="input-group" style="width:100%;">
+                            <input type="text" id="val_clientName" tabindex="1" name="val_clientTradeName" maxlength="80" ng-model="Ledger.Props.TradeName" class="form-control" placeholder="Trade Name">
+
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
+                                <label>Group</label>
+                                <label style="display:block;font-weight:normal;" ng-if="Ledger.Props.SysDefined == 1"> {{AccountGroup}}</label>
+                                <!--ng-disabled="{{Ledger.Props.SysDefined == 1 ? 'true': null}}"-->
+                                <searchableselect tab-index="13" ng-name="val_ledgergroup" ng-id="val_ledgergroup"
+                                                  ng-if="Ledger.Props.SysDefined != 1"
+                                                  data-field="AccGroups" ng-model="Ledger.Props.AccountGroup"
+                                                  data-val="AccountGroupId" data-text="Name"></searchableselect>
+                            </div>
+                            <div class="col-lg-8 col-md-4 col-sm-4">
+                                <div class="col-lg-4 nopadding">
+                                    <label>Opening Bal</label>
+                                    <input type="text" id="Text9" tabindex="14" name="val_openingBalance" ng-model="Ledger.Props.OpeningBal" class="form-control maskednumber col-lg-5" maxlength="10" />
+                                </div>
+                                <div class="col-lg-5">
+                                    <label>&nbsp;</label>
+                                    <div>
+                                        <input type="radio" tabindex="15" value="1" ng-model="Ledger.Props.TransType" />&nbsp; Dr
+                                        <input type="radio" ng-model="Ledger.Props.TransType" value="2" style="margin-left:10px;" />&nbsp; Cr
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Account Code</label>
+                        <input type="text" id="val_Code" 
+                                 ng-disabled="Config.partycodegenmode == 'auto' ? 'true': null"
+                               name="val_Code" tabindex="2" ng-model="Ledger.Props.Code" class="form-control" maxlength="20" />
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Contact Person Name</label>
+                        <input type="text" id="Tel2" tabindex="2" ng-model="Ledger.Props.ContactPersonName" class="form-control" maxlength="30" />
+                    </div>
+                    <!--<div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Contact Person Designation</label>
+                        <input type="text" id="Url2" tabindex="3" ng-model="Ledger.Props.ContactPersonDesignation" class="form-control" />
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Contact Person OffPhone</label>
+                        <input type="text" id="Tel3" tabindex="4" ng-model="Ledger.Props.ContactPersonOffPhone" class="form-control" />
+                    </div>-->
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Contact Person Mobile</label>
+                        <input type="text" id="Url3" tabindex="5" ng-model="Ledger.Props.ContactPersonMobile" class="form-control maskednumber" phoneformat="true" maxlength="10" />
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Credit Days</label>
+                        <input type="number" min="0" id="creditDays" ng-model="Ledger.Props.CreditDays" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+
+                        <div class="panel  panel-primary">
+                            <div class="panel-heading">
+                                <span>Billing Address</span>
+                            </div>
+                            <div class="panel-body" id="billing">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <label>Address1</label>
+                                    <input type="text" id="val_address1" tabindex="6" name="val_address1" ng-model="Ledger.Props.BillingAddress.Address1" class="form-control" maxlength="100" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Address2</label>
+                                    <input type="text" id="txtAddress2" tabindex="7" ng-model="Ledger.Props.BillingAddress.Address2" class="form-control" maxlength="100" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>City</label>
+                                    <input type="text" id="Text6" tabindex="8" name="val_address1" ng-model="Ledger.Props.BillingAddress.City" class="form-control " maxlength="30" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>State</label>
+                                    <!--<input type="text" id="Text7" tabindex="9" ng-model="Ledger.Props.BillingAddress.State" class="form-control" />-->
+
+                                    <state ng-model="Ledger.Props.BillingAddress.StateId"></state>
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Email</label>
+                                    <input type="text" tabindex="10" ng-model="Ledger.Props.BillingAddress.Email" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Zip Code</label>
+                                    <input type="tel" id="txtFax" tabindex="11" ng-model="Ledger.Props.BillingAddress.ZipCode" class="form-control maskednumber text-left" style="text-align:left" nodecimal maxlength="6" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Web</label>
+                                    <input type="text" tabindex="12" ng-model="Ledger.Props.BillingAddress.Web" class="form-control" maxlength="50" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <span>Shipping Address</span>
+
+                                <span class="pull-right" ng-click="copyBillingAddress();">Copy Billing Address</span>
+                            </div>
+                            <div class="panel-body" id="shipping">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <label>Address1</label>
+                                    <input type="text" id="Text8" tabindex="13" name="val_address1" ng-model="Ledger.Props.ShippingAddress.Address1" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Address2</label>
+                                    <input type="text" id="Text10" tabindex="14" ng-model="Ledger.Props.ShippingAddress.Address2" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>City</label>
+                                    <input type="text" id="Text11" tabindex="15" name="val_address1" ng-model="Ledger.Props.ShippingAddress.City" class="form-control" maxlength="30" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>State</label>
+
+                                    <state ng-model="Ledger.Props.ShippingAddress.StateId"></state>
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Email</label>
+                                    <input type="text" tabindex="17" ng-model="Ledger.Props.ShippingAddress.Email" class="form-control" maxlength="50" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Zip Code</label>
+                                    <input type="tel" id="Tel4" tabindex="18" ng-model="Ledger.Props.ShippingAddress.ZipCode" class="form-control maskednumber text-left" style="text-align:left" nodecimal maxlength="6" />
+                                </div>
+                                <div class="col-lg-6 col-md-4 col-sm-4">
+                                    <label>Web</label>
+                                    <input type="text" tabindex="19" ng-model="Ledger.Props.ShippingAddress.Web" class="form-control" maxlength="50" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4 hide">
+                    <label>Default Rate</label>
+                    <input type="text" id="Text3" tabindex="20" placeholder="00.000" ng-model="Ledger.Props.DefaultRate" class="form-control" />
+                </div>
+                <div class="col-lg-6 col-md-4 col-sm-4">
+                </div>
+                <!--<div class="col-lg-12">
+                    <br />
+                    <input type="button" class="btn btn-primary" value="Save Account" ng-click="Save();" ng-show="AccessData.Add" />
+                    <input type="button" class="btn btn-secondary" tabindex="10" value="Cancel" ui-sref="clientlist" />
+                </div>-->
+            </div>
+            <div role="tabpanel" class="tab-pane" id="accountInfo">
+                <div class="form-group">
+
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>GST No</label>
+                        <div class="input-group" style="margin:0px;">
+                            <input type="text" id="Text1" tabindex="16" ng-model="Ledger.Props.GSTNo" maxlength="15" class="form-control" placeholder="Your username..">
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button" ng-click="verifyGST()">Verify</button>
+                            </span>
+                        </div>
+                    </div>
+                    <!--<div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Aadhar Card No</label>
+                        <input type="text" id="Text2" tabindex="17" ng-model="Ledger.Props.AadharCard" class="form-control" maxlength="12" />
+                    </div>-->
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>TIN</label>
+                        <input type="text" id="Tel1" tabindex="18" ng-model="Ledger.Props.TIN" class="form-control" maxlength="10" />
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>TAN</label>
+                        <input type="text" id="Url1" tabindex="19" ng-model="Ledger.Props.TAN" class="form-control" maxlength="10" />
+                    </div>
+
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>IT PAN No</label>
+                        <input type="text" id="Text4" tabindex="20" ng-model="Ledger.Props.PAN" class="form-control" maxlength="10" />
+                    </div>
+                    <div class="col-lg-6 col-md-4 col-sm-4">
+                        <label>Service Tax No</label>
+                        <input type="text" id="Text5" tabindex="21" ng-model="Ledger.Props.ServiceTaxNumber" class="form-control" placeholder="Your username.." maxlength="15">
+                    </div>
+
+                </div>
+
+            </div>
+            <!--<div role="tabpanel" class="tab-pane" id="rates">
+                <div class="col-sm-12">
+                    <div class="col-sm-2">
+                        <label>Default Rent Rate</label>
+
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <table class="table table-condensed table-responsive">
+                        <tr class="headerRow">
+                            <th style="width: 100px;">Code</th>
+                            <th style="width: 250px;">Item</th>
+                            <th style="width: 100px;">Unit</th>
+                            <th style="width: 100px;">Rent Rate
+                                  <input type="number" ng-model="Ledger.Props.DefaultRate" min="0" class="form-control" ng-change="ChangeDefaultRentRate();" />
+                            </th>
+                            <th style="width: 100px;">Loss Rate
+                                 <input type="number" ng-model="Ledger.Props.DefaultLossRate" class="form-control" ng-change="ChangeDefaultLossRate();" />
+                            </th>
+                            <th style="width: 100px;">Dmg Rate
+                                 <input type="number" ng-model="Ledger.Props.DefaultDmgRate" class="form-control" ng-change="ChangeDefaultDmgRate();" />
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr ng-repeat="item in Ledger.Products">
+                            <td style="width: 100px;">{{item.ProductCode}} </td>
+                            <td>{{item.Product}} </td>
+                            <td style="width: 100px;">
+                                <searchableselect id="ddlUOM" tab-index="2" ng-model="item.Unit" data-field="UOM" data-val="UOMId" data-text="UOM"></searchableselect>
+                            </td>
+                            <td style="width: 100px;">
+                                <input type="text" class="form-control maskednumber" min-value="0.00" placeholder="000.00" ng-model="item.RentRate" />
+                            </td>
+                            <td style="width: 100px;">
+                                <input type="text" class="form-control maskednumber" placeholder="000.00" ng-model="item.LossRate" />
+                            </td>
+                            <td style="width: 100px;">
+                                <input type="text" class="form-control maskednumber" placeholder="000.00" ng-model="item.DamageRate" />
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-lg-12">
+                    <br />
+                    <input type="button" class="btn btn-primary" value="Save Rates" ng-click="SaveRates();" ng-show="AccessData.Add"/>
+                </div>
+            </div> -->
+            <div role="tabpanel" class="tab-pane" id="sites" ng-controller="ClientSiteController">
+                <div class="col-sm-11">
+                    <table class="table table-responsive">
+
+                        <tr class="headerRow">
+                            <th>#</th>
+                            <th>Project</th>
+                            <th>Address</th>
+                            <th>PO Number</th>
+                            <th>PO Date</th>
+
+                            <th>City</th>
+                            <th>State</th>
+                            <th class="text-center">Docs</th>
+                            <!--<th>GST No</th>-->
+                            <th style="width:80px;" class="text-center"> </th>
+                        </tr>
+
+
+
+                        <tr ng-repeat="site in Sites">
+                            <td>{{$index+1}}</td>
+                            <td>{{site.Project}}</td>
+                            <td>
+                                {{site.SiteAddress}}  {{site.Address2}}<br />
+                                <i ng-if="site.Closed == 1" class="text-danger">
+                                    {{site.ClosedRemarks}}
+                                </i>
+                            </td>
+                            <td>{{site.PONumber}}</td>
+                            <td>{{site.PODate | formatDate}}</td>
+                            <td>{{site.City}}</td>
+                            <td>{{site.StateName}}</td>
+                            <td class="text-center">
+                                <span ng-repeat="n in [1,2,3,4,5]">
+                                    <a href="" ng-if="siteDocName(site, n)" title="Download document {{n}}"
+                                       ng-click="downloadSiteDocument(site, n); $event.preventDefault()"><i class="fa fa-paperclip text-primary"></i></a>
+                                </span>
+                                <span ng-if="!siteDocName(site,1) && !siteDocName(site,2) && !siteDocName(site,3) && !siteDocName(site,4) && !siteDocName(site,5)" class="text-muted">—</span>
+                            </td>
+
+
+                            <td class="text-center">
+
+
+                                <div class="btn-group" ng-show="AccessData.Edit">
+
+                                    <a href="javascript:void()" title="Edit Site" ng-if="site.Closed ==0"><i class="fa fa-edit fa-2x text-primary" ng-click="EditSite(site);"></i></a>
+                                    <a href="javascript:void()" title="Close Site" ng-if="site.Closed ==0" class="ml-1"><i class="fa fa-eye-slash fa-2x text-primary text-danger" ng-click="CloseSite(site);"></i></a>
+                                    <a href="javascript:void()" title="Open Site" ng-if="site.Closed ==1" class="ml-1"><i class="fa fa-eye fa-2x text-primary text-success" ng-click="CloseSite(site);"></i></a>
+
+
+
+                                </div>
+                                <b ng-if="site.Closed == 1">
+                                    CLOSED
+                                </b>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <input type="button" class="btn btn-secondary" tabindex="10" value="Cancel" ui-sref="clientlist" />
+                    <input type="button" value="Add New Site" class="btn btn-primary" ng-click="NewSite();" ng-show="AccessData.Add" />
+
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="col-sm-10" ng-if="tab !=3">
+        <input type="button" class="btn btn-secondary" tabindex="10" value="Cancel" ui-sref="clientlist" />
+        <input type="button" class="btn btn-primary ml-1" value="Save Account" ng-click="Save();" ng-show="AccessData.Add" cmd="add" />
+
+    </div>
+    <div class="clearfix">&nbsp;</div>
+
+
+    <script lang="javascript">
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+        $('table').click(function (e) {
+
+            e.preventDefault();
+
+        });
+    </script>
+</div>

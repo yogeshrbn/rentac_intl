@@ -1,0 +1,65 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th {
+                   font-size:10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th style="width: 80px;">Date</th>
+            <th style=" width: 100px;">Reason</th>
+
+            <th style="width: 70px;">Ref. Number</th>
+            <th style="width: 150px;">Remarks</th>
+            <th style="width: 150px;">Created By</th>
+
+            <th style=" width: 70px;">Created Time</th>
+
+
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>
+
+                {{item.PostingDate |date: 'dd-MM-yyyy'}}
+
+            </td>
+
+            <td>{{item.PostingTypeName }}</td>
+            <td>{{item.VoucherId }}</td>
+            <td>{{item.Remarks }}</td>
+            <td>
+                {{item.CreatedByName}}
+            </td>
+
+
+
+            <td>
+                {{item.CreatedOn |date: 'dd-MM-yyyy HH:mm'}}
+            </td>
+
+        </tr>
+    </table>
+</div>

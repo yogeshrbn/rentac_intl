@@ -1,0 +1,131 @@
+﻿.pos-autocomplete {
+    position: relative;
+}
+
+pos-autocomplete .pos-inputgroup {
+    width: 100%;
+}
+
+.pos-autocomplete .pos-inputgroup, input {
+    font-size: 14px;
+    height: 35px !important;
+}
+
+.pos-autocomplete .pos-inputgroup, button {
+    height: 35px;
+}
+
+
+.autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: none;
+}
+
+    .autocomplete-results.active {
+        display: block;
+    }
+
+.autocomplete-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .autocomplete-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .autocomplete-item.selected {
+        background-color: #e3f2fd;
+    }
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.item-details {
+    font-size: 12px;
+    color: #666;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-left: 10px;
+}
+
+.item-stock {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 10px;
+}
+
+.stock-available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.stock-low {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.stock-out {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.barcode-indicator {
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    margin-left: 5px;
+}
+
+.search-header {
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    font-size: 12px;
+    color: #6c757d;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.no-results {
+    padding: 15px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.category-badge {
+    background-color: #17a2b8;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    margin-left: 5px;
+}
+
+.recent-searches {
+    border-top: 1px solid #dee2e6;
+}

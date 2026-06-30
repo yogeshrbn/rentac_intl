@@ -1,0 +1,126 @@
+<!--<pageheader heading="Party-Wise Pendency Register" />-->
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" data-item="Client" data-all="true" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+        </div>
+        <div class="col-sm-3">
+            <label>Choose Site</label>
+            <searchableselect id="Searchableselect3" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+        </div>
+        <div class="col-sm-1">
+
+            <label>From</label>
+
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-1">
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-3">
+            <label>&nbsp;</label>
+            <div>
+                <input type="button" class="btn btn-primary" tabindex="3" value="Find" ng-click="GetBalance();" />
+                <input type="button" class="btn btn-primary" tabindex="3" value="Print Report " ng-click="Print();" />
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="form-group">
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <div class="table-responsive" style="margin-top:7px;">
+            <table class="table table-condensed ">
+
+                <tr class="headerRow">
+
+                    <th style="width: 5%">#</th>
+                    <th style="width: 10%;">Party</th>
+                    <th style="width: 20%;">Item</th>
+                    <th class="text-right" style="width: 12%">Weight(kg)</th>
+                    <th class="text-right" style="width: 11%">Op. Balance</th>
+                    <th class="text-right" style="width: 10%">Sent</th>
+                    <th class="text-right" style="width: 10%">Rec</th>
+                    <!--<th class="text-right" style="width: 10%">Bre</th>-->
+
+                    <th class="text-right" style="width: 10%;">Balance</th>
+                    <th class="text-right">Weight Bal.(kg)</th>
+
+                </tr>
+                <tr ng-repeat-start="(key,value) in BalanceItems | groupBy: 'Client'">
+                    <td colspan="7">
+                        <div class="col-sm-12">
+
+                            <label>{{$index+1}}) - {{key}}</label>
+
+                            <div ng-show="ShowClientDetail($index,key);">
+                                <span>Contact Person:{{Clients[$index].ClientInfo.ContactPersonName}}</span>
+                                <span>&nbsp;|&nbsp;Mobile:{{Clients[$index].ClientInfo.ContactPersonMobile}}, {{Clients[$index].ClientInfo.ContactPersonOffPhone}}</span>
+                            </div>
+
+                        </div>
+                    </td>
+
+                </tr>
+                <tr ng-repeat-end class="childRows">
+                    <td colspan="7">
+                        <table class="table table-condensed table-responsive" style="margin-bottom: 1px;">
+                            <tr ng-repeat="item in value">
+                                <td style="width: 100px">{{$index+1}}</td>
+                                <!--<td style="width: 40px;"></td>-->
+                                <td style="width: 25%">{{item.Item}}</td>
+                                <!--<td class="text-right">{{item.Size | number :2}}</td>-->
+                                
+                                <td class="text-right" style="width: 12%">{{item.OPB}}</td>
+                                <td class="text-right" style="width: 10%">{{item.SentQty}}</td>
+                                <td class="text-right" style="width: 10%">{{item.RecQty + item.Breakage}}</td>
+                                <!--<td class="text-right" style="width: 10%">{{item.Breakage}}</td>-->
+                               
+
+                            <td class="text-right" style="width: 10%">{{item.ClosingBalance}}</td>
+                            <!--<td class="text-right">{{item.SizeBalance| number :2 }}</td>-->
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="total_td">SubTotal</td>
+                            <!--<td class="total_td">{{value | sum:'Weight'}}</td>-->
+                            <td class="total_td">{{value | sum:'OPB'}}</td>
+                            <td class="total_td">{{value | sum:'SentQty'}}</td>
+                            <td class="total_td">{{value | sum:'RecQty'}}</td>
+                            <!--<td class="total_td">{{value | sum:'Breakage'}}</td>-->
+
+                            <td class="total_td">{{value | sum:'ClosingBalance'}}</td>
+                          <!--  <td class="total_td">{{value | sum:'SizeBalance'}}</td>-->
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr ng-if="BalanceItems" class="totalRow">
+                <td colspan="3">Grand Total</td>
+               <!-- <td>{{BalanceItems | sum:'Weight'}}</td>-->
+                <td>{{BalanceItems | sum:'OPB'}}</td>
+                <td>{{BalanceItems | sum:'SentQty'}}</td>
+                <td>{{BalanceItems | sum:'RecQty'}}</td>
+                <!--  <td>{{BalanceItems | sum:'Breakage'}}</td>-->
+
+                <td>{{BalanceItems | sum:'ClosingBalance'}}</td>
+             <!--   <td>{{BalanceItems | sum:'SizeBalance'}}</td>-->
+            </tr>
+
+
+        </table>
+
+        </div>
+    </div>
+</div>
+

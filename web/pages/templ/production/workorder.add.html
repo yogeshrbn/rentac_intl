@@ -1,0 +1,259 @@
+﻿<div class="clearfix">&nbsp;</div>
+
+<div class="col-sm-12">
+
+    <div id="workOrderInfo">
+        <form id="form-workorder" name="workOrderForm" method="post" class="form-horizontal"   novalidate>
+            <div class="row">
+                <div class="col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group" ng-class="{'has-error': workOrderForm.client_value1.$invalid && (workOrderForm.client_value1.$dirty || workOrderForm.$submitted)}">
+                                <label for="inputEmail3" class="col-sm-5 control-label">
+                                    Client
+                                    <i class="required">*</i>
+                                </label>
+                                <div class="col-sm-7">
+                                    <searchableselect ng-name="client_value1" ng-id="client_value1" data-field="clients"
+                                                      ng-model="formData.LedgerId" data-val="LedgerId" data-text="Name"
+                                                      required></searchableselect>
+                                    <div class="help-block" ng-if="workOrderForm.client_value1.$invalid && (workOrderForm.client_value1.$dirty || workOrderForm.$submitted)">
+                                        <span ng-if="workOrderForm.client_value1.$error.required">Client is required</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group" ng-class="{'has-error': workOrderForm.mainItem.$invalid && (workOrderForm.mainItem.$dirty || workOrderForm.$submitted)}">
+                                <label for="inputEmail3" class="col-sm-5 control-label">Item To Manufacture / Setup<i class="required">*</i></label>
+                                <div class="col-sm-7">
+                                    <searchabletext ng-id="itemSelect" local-data="manufacturableItems" title-field="Product" name="itemSelect" search-fields="Product,Code"
+                                                    selected-object="onItemSelected" data-entry="1"
+                                                    ng-model="formData.productId" required> </searchabletext>
+                                    <span>Item to be manufactured or repacked</span>
+                                
+                                    <div class="help-block" ng-if="!formData.productId && (workOrderForm.$submitted)">
+                                        <span ng-if="workOrderForm.itemSelect.$error.required">Item to manufacture is required</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group" ng-class="{'has-error': workOrderForm.val_productName.$invalid && (workOrderForm.val_productName.$dirty || workOrderForm.$submitted)}">
+                                <label for="inputEmail3" class="col-sm-5 control-label">Quantity   <i class="required">*</i></label>
+                                <div class="col-sm-7">
+                                    <input type="number" id="val_quantity"
+                                           tabindex="1" name="val_quantity" ng-model="formData.quantity"
+                                           class="form-control" required min="0.01" step="0.01" />
+                                    <span>Quantity of item obtained after manufacturing / repacking from given quantities of raw materials</span>
+                                    <div class="help-block" ng-if="workOrderForm.val_quantity.$invalid && (workOrderForm.val_quantity.$dirty || workOrderForm.$submitted)">
+                                        <span ng-if="workOrderForm.val_quantity.$error.required">Quantity is required</span>
+                                        <span ng-if="workOrderForm.val_quantity.$error.number">Must be a valid number</span>
+                                        <span ng-if="workOrderForm.val_quantity.$error.min">Quantity must be greater than 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group" ng-class="{'has-error': workOrderForm.val_salesOrder.$invalid && (workOrderForm.val_salesOrder.$dirty || workOrderForm.$submitted)}">
+                                <label for="inputEmail3" class="col-sm-3 control-label">Sales Order</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="val_salesOrder" tabindex="1" name="val_salesOrder"
+                                           ng-model="formData.salesOrder" class="form-control" maxlength="50"   />
+                                    <!--<div class="help-block" ng-if="workOrderForm.val_salesOrder.$invalid && (workOrderForm.val_salesOrder.$dirty || workOrderForm.$submitted)">
+                                        <span ng-if="workOrderForm.val_salesOrder.$error.required">Sales Order is required</span>
+                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4>+ Required Items</h4>
+                    <div class="alert alert-warning" ng-if="formData.requiredItems.length === 0 && workOrderForm.$submitted">
+                        At least one required item must be added
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <tr class="headerRow">
+
+                                <th colspan="2" style="border-right:none;">
+                                    Item
+                                 
+                                    <searchabletext ng-id="newRequiredItem" local-data="manufacturableItems" title-field="Product" name="newRequiredItem" search-fields="Product,Code"
+                                                    selected-object="onRequiredItemSelected" data-entry="1"
+                                                    ng-model="newRequiredItem.ProductId"> </searchabletext>
+                                </th>
+                                <th style="width:200px;border-right:none;border-left:none;" class="text-right">
+                                    Quantity
+                                    <input class="form-control maskednumber" ng-model="newRequiredItem.Quantity"
+                                           id="txtbomQty" tabindex="2" type="number" min="0.01" step="0.01" />
+
+                                </th>
+                                <th colspan="3" style="vertical-align:bottom;border-left:none;">
+                                    <button type="button" class="btn btn-primary" ng-click="addRequiredItem()"
+                                            stopfocus="true" tabindex="4"
+                                            ng-disabled="!newRequiredItem.item.ProductId || !newRequiredItem.Quantity || newRequiredItem.Quantity <= 0">
+                                        Add
+                                    </button>
+
+                                </th>
+                            </tr>
+                            <tr class="headerRow">
+                                <th class="text-center" style="width:50px;">S.No</th>
+                                <th style="width:250px;">Item</th>
+                                <th class="text-right">Quantity</th>
+                                <th class="text-right">Consumed Qty</th>
+                                <th class="text-right">Returned Qty</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                            <tr ng-repeat="item in formData.requiredItems">
+                                <td class="text-center">{{$index+1}}</td>
+                                <td>
+                                    {{item.Product}}
+                                    <i style=" font-size: 9px; color: #f900e4;" ng-if="item.BOMId > 0">BOM</i>
+                                </td>
+                                <td class="text-right">
+                                    <input type="number" class="form-control maskednumber" ng-model="item.Quantity"
+                                           min="0.01" step="0.01" required />
+                                    <div class="help-block" ng-if="item.Quantity <= 0">
+                                        Quantity must be greater than 0
+                                    </div>
+                                </td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-danger btn-xs" ng-click="removeRequiredItem($index)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <h4>+ Operations</h4>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <tr class="headerRow">
+
+                                <th colspan="2" style="border-right:none;">
+                                    Item
+                                    <searchableselect ng-name="val_operation" ng-id="val_operation" data-field="operations"
+                                                      ng-model="newOperation.OperationId" data-val="OperationId" data-text="Name"></searchableselect>
+                                </th>
+                                <th style="width: 200px; border-right: none; border-left: none;" class="text-right">
+                                    Quantity
+                                    <input class="form-control maskednumber" ng-model="newOperation.Quantity"
+                                           id="txtOpQty" tabindex="2" type="number" min="0" step="1" />
+
+                                </th>
+                                <th colspan="2" style="vertical-align:bottom;border-left:none;">
+                                    <button type="button" class="btn btn-primary" ng-click="addOperation();"
+                                            stopfocus="true" tabindex="4"
+                                            ng-disabled="!newOperation.OperationId">
+                                        Add
+                                    </button>
+
+                                </th>
+                            </tr>
+                            <tr class="headerRow">
+                                <th style="width:50px;" class="text-center">S.No</th>
+                                <th style="width:250px;">Operation</th>
+                                <th class="text-right">Quantity</th>
+                                <th></th>
+                                <th style="width:150px;" class="text-center">Actions</th>
+                            </tr>
+                            <tr ng-repeat="op in formData.operations">
+                                <td>{{$index + 1}}</td>
+                                <td>{{op.Name}}</td>
+                                <td class="text-right">{{op.Quantity}}</td>
+                                <td>
+                                </td>
+                                <td class="text-center">
+                                    <a href="javascript:void()" ng-click="removeOperation($index)"><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-12 control-label">Planned Start Date</label>
+                            <div class="col-sm-12">
+                                <datepicker date-format="dd/MM/yyyy"  >
+                                    <input ng-model="formData.plannedStartDate" type="text" class="form-control"
+                                           id="val_planStartDate" name="val_planStartDate" 
+                                            />
+                                </datepicker>
+                                <div class="help-block" ng-if="workOrderForm.val_planStartDate.$invalid && workOrderForm.$submitted">
+                                    <span ng-if="workOrderForm.val_planStartDate.$error.required">Planned Start Date is required when Actual Start Date is set</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-12 control-label">Actual Start Date</label>
+                            <div class="col-sm-12">
+                                <datepicker date-format="dd/MM/yyyy">
+                                    <input ng-model="formData.actualStartDate" type="text" class="form-control"
+                                           id="val_actualStartDate" name="val_actualStartDate" />
+                                </datepicker>
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-12 control-label">Planned End Date</label>
+                            <div class="col-sm-12">
+                                <datepicker date-format="dd/MM/yyyy"  >
+                                    <input ng-model="formData.plannedEndDate" type="text" class="form-control"
+                                           id="val_planEndDate" name="val_planEndDate"   
+                                           ng-required="workOrderForm.val_planStartDate" />
+                                </datepicker>
+                                <div class="help-block" ng-if="workOrderForm.val_planEndDate.$invalid && workOrderForm.$submitted">
+                                    <span ng-if="workOrderForm.val_planEndDate.$error.required">Planned End Date is required when Planned Start Date is set</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-12 control-label">Actual End Date</label>
+                            <div class="col-sm-12">
+                                <datepicker date-format="dd/MM/yyyy"  >
+                                    <input ng-model="formData.actualEndDate" type="text" class="form-control"
+                                           id="val_estimatedDate" name="val_estimatedDate"  />
+                                </datepicker>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <button class="btn btn-default" ui-sref="workorders" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+
+
+</div>
+

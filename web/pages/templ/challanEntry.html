@@ -1,0 +1,301 @@
+﻿<div class="">
+
+    <!--<pageheader heading="Issue Items" />-->
+    <div class="alert alert-success hide" ng-show="Ledgers.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>
+    <div class="col-sm-12" style="background: #caedff; border: solid 1px #60cbff;">
+        <div class="col-sm-2">
+            <label class="vcenter">Challan Type</label>
+
+        </div>
+        <div class="col-sm-8 vcenter">
+            <input type="radio" name="challanType" />
+            Delievery
+             <input type="radio" name="challanType" style="margin-left: 20px;" />
+            Purchase
+        </div>
+    </div>
+    <div class="col-sm-12">
+
+        <div id="workOrderInfo">
+            <form id="form-workorder" method="post" class="">
+                <div>
+                    <div class="form-group">
+
+                        <div class="col-sm-7">
+                            <div class="col-sm-3">
+                                <label class="vcenter">Party</label>
+                            </div>
+
+                            <div class="col-sm-5">
+
+                                <!--<searchabletext ng-id="client" data-item="Ledger" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+                                <searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="Challan.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="vcenter">Date</label>
+                            </div>
+                            <div class="col-sm-3">
+                                <datepicker date-format="dd/MM/yyyy">
+                                  <input ng-model="Challan.Date" tabindex="2" type="text" class="form-control"  name="val_workOrderDate"/>
+                                </datepicker>
+                                <!--<input type="date" name="val_workOrderDate" ng-model="WorkOrder.WorkOrderDate" class="form-control" required />-->
+                              
+                            </div>
+
+                        </div>
+                        <div class="col-sm-5">
+                            <span class="col-sm-4">
+                                <label class="vcenter">State</label>
+                            </span>
+                            <div class="col-sm-8">
+                                <searchableselect name="val_states" on-loaded="stateLoaded();" tabindex="3" data-field="States" ng-model="Challan.State" data-val="StateName" data-text="StateName"></searchableselect>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="Challan.WorkOrderId==0 || Edit==true">
+                        <div class="col-sm-7">
+                            <div class="col-sm-3">
+                                <label class="vcenter">Site</label>
+                            </div>
+
+                            <div class="col-sm-9">
+                                <input type="text" ng-model="Challan.Site" tabindex="4" class="form-control" name="site_name" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="col-sm-4 ">
+                                <label class="vcenter">Job#</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="Challan.Number" class="form-control" name="val_clientAmount" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7">
+                            <div class="col-sm-3">
+                                <label class="vcenter">Vehicle</label>
+                            </div>
+
+                            <div class="col-sm-9">
+                                <input type="text" ng-model="Challan.Vehicle" tabindex="4" class="form-control" name="site_name" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="col-sm-4 ">
+                                <label class="vcenter">Driver</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="Challan.Driver" class="form-control" name="val_clientAmount" required />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-12 addItemBox">
+                        <!-- <div class="col-sm-3">
+                                <label>
+                                    Product
+                                </label>
+                                <searchabletext ng-id="itemSelect" tab-index="5" data-item="Product" selected-object="selectedProduct"> </searchabletext>
+                            </div>-->
+                        <div class="col-sm-3">
+                            <label>
+                                Product
+                            </label>
+                            <!--<searchabletext ng-id="itemSelect" tab-index="5" data-item="Product" selected-object="selectedProduct"> </searchabletext>-->
+                            <searchableselect ng-id="product" name="val_product[]" tabindex="2" data-field="ProductRates" on-itemselected="itemSelected(itemId)" ng-model="TransItem.ProductId" data-val="ProductId" data-text="Product"></searchableselect>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                Size
+                            </label>
+                            <searchableselect ng-id="itemSize" name="itemSize[]" tab-index="5" data-field="ProductSizes" ng-model="TransItem.ProductSizeId" data-val="ProductSizeId" data-text="Size"> </searchableselect>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>
+                                Quantity
+                            </label>
+                            <input type="text" class="form-control" tabindex="6" ng-model="TransItem.Quantity" />
+                        </div>
+                        <div class="col-sm-3 hide">
+                            <label>
+                                Rate
+                            </label>
+                            <input type="text" class="form-control" tabindex="7" ng-model="TransItem.Rate" />
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-sm-12">&nbsp; </label>
+                            <input type="button" class="btn btn-primary" tabindex="8" value="Add" ng-click="addItem();" ng-show="AccessData.Add" />
+                        </div>
+                    </div>
+                    <div class="addWithTable" style="height: 240px; overflow-y: auto;">
+                        <table class="table table-condensed table-responsive tableInput" med-key ng-delete="DeleteItem(index)">
+
+                            <tr class="headerRow">
+                                <th style="width: 15px;">#</th>
+                                <th>Item</th>
+
+                                <th>Size</th>
+                                <th>Qty</th>
+                                <!--  <th>Rate</th>
+                                
+                                <th width="150px">Amount</th>-->
+                            </tr>
+                            <tr ng-repeat="item in Challan.Items" ng-delete="DeleteItem(index);">
+                                <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">{{$index+1}}
+                                </td>
+                                <td>{{item.Product}}
+                                </td>
+                                <td>{{item.Size}}
+                                </td>
+                                <td>
+                                    <input type="text" ng-model="item.Quantity" class="form-control" /><!-- {{item.Quantity}}-->
+
+                                </td>
+                                <!-- <td>{{item.Rate}}
+                                </td>
+
+                                <td class="text-right">{{item.Amount  }}
+
+                                </td>-->
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9 siteBox">
+
+                            <div class="col-sm-6">
+
+                                <div class="clearfix">&nbsp;</div>
+                                <div class="col-sm-12">
+                                    <input type="button" style="width: 100px;" class="btn btn-primary" ng-show="Challan.Items.length  >0 && AccessData.Add ? true : false " value="Save" ng-click="Save();" />
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-6" ng-show="WorkOrder.SiteInfo.SiteId==0">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 vcenter">W. Doc</label>
+                                    <div class="col-sm-5 input-group">
+
+                                        <span class="input-group-btn">
+                                            <input type="text" class="form-control" value="{{SitePic}}" disabled />
+                                            <label class="btn btn-primary" type="button">
+                                                <i class="fa fa-folder-open" aria-hidden="true"></i>Select File
+                                                    <input type="file" id="fileSitePic" file style="display: none;" ng-model="SitePic" />
+                                            </label>
+                                        </span>
+
+                                    </div>
+
+
+
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 vcenter">Doc-1</label>
+                                    <div class="col-sm-5 input-group">
+
+                                        <span class="input-group-btn">
+                                            <input type="text" class="form-control" value="{{Doc1}}" disabled />
+                                            <label class="btn btn-primary" type="button">
+                                                <i class="fa fa-folder-open" aria-hidden="true"></i>Select File
+                                                    <input type="file" id="Doc1" file style="display: none;" ng-model="Doc1" />
+                                            </label>
+                                        </span>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 vcenter">Doc-2</label>
+                                    <div class="col-sm-5 input-group">
+
+                                        <span class="input-group-btn">
+                                            <input type="text" class="form-control" value="{{Doc2}}" disabled />
+                                            <label class="btn btn-primary" type="button">
+                                                <i class="fa fa-folder-open" aria-hidden="true"></i>Select File
+                                <input type="file" id="Doc2" file style="display: none;" ng-model="Doc2" />
+                                            </label>
+                                        </span>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 vcenter">Doc-3</label>
+                                    <div class="col-sm-5 input-group">
+
+                                        <span class="input-group-btn">
+                                            <input type="text" class="form-control" value="{{Doc3}}" disabled />
+                                            <label class="btn btn-primary" type="button">
+                                                <i class="fa fa-folder-open" aria-hidden="true"></i>Select File
+                                <input type="file" id="Doc3" file style="display: none;" ng-model="Doc3" />
+                                            </label>
+                                        </span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <table class="table  table-responsive text-bold">
+                                <!-- <tr>
+                                    <td class="text-right">SubTotal</td>
+                                    <td class="text-right" width="80px">{{ Challan.SubTotal= (Challan.Items | sum: 'Amount') |number:2}}</td>
+                                </tr>-->
+                                <tr>
+
+                                    <td class="text-right vcenter">Freight</td>
+                                    <td class="text-right" width="150px">
+                                        <input type="number" class="form-control maskednumber text-right" ng-model="Challan.Freight" />
+                                    </td>
+                                </tr>
+                                <!--  <tr ng-repeat="tax in WorkOrder.Taxes">
+
+                                    <td class="text-right">
+                                        <input type="checkbox" ng-model="tax.Applicable" />
+                                        {{tax.Name}}({{tax.Rate  |number:2 }}%)</td>
+                                    <td class="text-right" width="100px">{{tax.Applicable && (WorkOrder.SubTotal1  * tax.Rate/100.00) || 0 |number:2}}</td>
+                                </tr>-->
+                                <tr>
+
+                                    <td class="text-right">Approx. Value</td>
+                                    <td class="text-right" width="150px">
+                                        <input type="number" ng-model="Challan.SubTotal" class="form-control" />
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+
+                                    <td class="text-right">Total</td>
+                                    <td class="text-right" width="150px">{{  (Challan.SubTotal + Challan.Freight)|number:2}}</td>
+                                </tr>-->
+                            </table>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+
+
+
+
+    </div>
+    <script lang="ja">
+        $('.tabContainer a').click(function (e) {
+            e.preventDefault();
+        });
+
+    </script>
+</div>

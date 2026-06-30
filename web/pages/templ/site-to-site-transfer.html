@@ -1,0 +1,261 @@
+﻿<!--<pageheader heading="Daily Transactions" />-->
+<link rel="stylesheet" href="../dist/css/timeline.css" />
+
+
+<!--<div class="row text-center justify-content-center mb-5 ">
+    <div class="col-xl-6 col-lg-8 text-left">
+        <h2 class="font-weight-bold">Material Transfer</h2>
+        <p class="text-muted">Transfer Material from one site to other site of the same client or diffirent.</p>
+    </div>
+</div>-->
+<div class="clearfix">&nbsp;</div>
+<div class="container-fluid">
+    <div class="row text-center justify-content-center mt-3">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-lg-6 timelineborder ">
+                    <span class="dot text-center justify-content-center"></span>
+                    <div class="row">
+                        <div class="col-sm-12" style="margin-bottom:20px;">
+                            <span><b>Party Balance</b></span>
+                        </div>
+                        <div class="col-sm-5 text-left">
+                            <label>Party</label>
+                            <!--<searchabletext ng-id="client_value" local-data="Accounts" title-field="Name" name="Name" search-fields="Name,Code"
+                        selected-object="selectedParty" data-entry="1" tab-index="8" initial-value="initialValue"> </searchabletext>-->
+                            <searchableselect name="client_value" tabindex="2" data-field="Accounts"
+                                              data-primarytext="TradeName"
+                                              ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+
+                        </div>
+                        <div class="col-sm-4 text-left">
+                            <label>From Site</label>
+                            <searchableselect name="val_site" tabindex="2" data-field="LedgerSites" ng-model="Filter.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+
+                        </div>
+                        <div class="col-sm-3 text-left">
+                            <div class="form-group">
+                                <label >Date</label>
+                                
+                                    <datepicker date-format="dd/MM/yyyy" date-max-limit="{{Today}}">
+                                        <input ng-model="Transfer.ReceivingDate" id="val_receivingDate" name="val_receivingDate" type="text" tabindex="2"
+                                               maxDate="{{Today}}" class="form-control" />
+                                    </datepicker>
+                              
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-left" style="max-height:450px;overflow-y:scroll;">
+
+                            <table class="table table-condensed table-responsive">
+
+                                <tr class="headerRow">
+                                    <th style="width: 20px;">Sr.No</th>
+                                    <th style="width: 137px;">Item</th>
+                                    <th style="width: 50px;">Bal. Qty</th>
+                                    <th style="width: 50px;">Transfer</th>
+                                </tr>
+                                <tr ng-repeat="item in Balance">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{item.Product}}</td>
+                                    <td>
+                                        {{item.ClosingBalance}}
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control" ng-model="item.Quantity" />
+                                    </td>
+
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-4 text-center timelineborder hide">
+                    <span class="dot text-center justify-content-center"></span>
+                    <div class="row" style="border-left:dotted 1px #039be5; height:calc(100vh - 329px);">
+                        <div class="col-sm-12" style="margin-bottom:20px;">
+                            <span><b>Select Items</b> </span>
+                        </div>
+                        <div class="col-sm-12 text-left">
+                            <table class="table table-condensed table-responsive tableInput">
+
+                                <tr class="headerRow">
+                                    <th style="width: 137px;">Item</th>
+                                    <th style="width: 50px;">Qty</th>
+                                    <th style="width: 50px;"></th>
+
+                                </tr>
+                                <tr class="headerRow">
+                                    <th style="width: 137px;">
+                                        <searchableselect ng-id="product" name="val_product[]" tabindex="7" data-field="Balance" on-itemselected="itemSelected(itemId)" description-field="Code" ng-model="IssueItem.ProductId" ng-ret_type="index" data-val="ProductId" data-text="Item"></searchableselect>
+                                    </th>
+                                    <th style="width: 50px;">
+                                        <input type="number" class="form-control" ng-model="IssueItem.Quantity" />
+                                    </th>
+                                    <th style="width: 50px;">
+                                        <button class="btn btn-primary" ng-click="addToList();">Add</button>
+                                    </th>
+
+                                </tr>
+                                <tr ng-repeat="item in TransferList">
+                                    <td style="width: 137px;">{{item.Item}}</td>
+                                    <td style="width: 50px;">
+                                        <input type="text" ng-model="item.Quantity" class="form-control" />
+                                    </td>
+                                    <td style="width: 50px;">
+                                        <a href="#" stop="true" ng-click="remove($index);"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <span class="dot text-center justify-content-center"></span>
+                    <div class="row text-left justify-content-left" style="border-left: dotted 1px #039be5; height: calc(100vh - 329px);">
+                        <form id="form-matTransfer" method="post" class="form-horizontal">
+                            <div class="col-sm-12 text-center" style="margin-bottom:20px;">
+                                <span><b>Party To Transfer</b></span>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="row">
+
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Party</label>
+                                            <div class="col-sm-9">
+                                                <searchableselect ng-id="val_party" ng-name="val_party" data-primarytext="TradeName" tabindex="2" data-field="Accounts" ng-model="Transfer.DestLedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Site</label>
+                                            <div class="col-sm-9">
+                                                <searchableselect ng-id="val_site" ng-name="val_site" tabindex="2" data-field="DestLedgerSites" ng-model="Transfer.DestLedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress"></searchableselect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Ch #</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" validateprefix maxlength="20"
+                                                    ng-model="Transfer.ChallanNumber"   ng-if="Config.allowEditChallanNumber" />
+                                                <label ng-if="!Config.allowEditChallanNumber">{{Transfer.ChallanNumber}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Driver</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" maxlength="50" ng-model="Transfer.Driver" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3">Vehicle</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" maxlength="50" ng-model="Transfer.Vehicle" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="margin-top:10px;">
+                                <ul class="qutoationSettingsTab nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#tabCharges" stop="true" aria-controls="tabCharges" role="tab" data-toggle="tab">Charges</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#delOtherInfo" stop="true" aria-controls="delOtherInfo" role="tab"
+                                           data-toggle="tab">Other Info</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" style="border: solid 1px #c0c0c0;padding:8px; ">
+                                    <div role="tabpanel" class="tab-pane active" id="tabCharges" style="min-height:240px;">
+
+
+                                        <div class="col-sm-6">
+                                            <div class="table-responsive">
+                                                <table class="table table-condenced">
+                                                    <tr class="headerRow">
+                                                        <th style="width: 30px" class="text-center">#</th>
+                                                        <th style="width: 150px">Charge</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                    <tr ng-repeat="ch in Transfer.OtherCharges">
+                                                        <td class="text-center">{{$index+1}}</td>
+                                                        <td ng-bind="ch.Name" style="width:70%"></td>
+                                                        <td style="padding: 2px !important;">
+
+                                                            <input type="text" class="form-control maskednumber"
+                                                                   style="border: solid 1px #00bcd4;padding-right:3px;"
+                                                                   ng-model="ch.Amount" maxlength="8" />
+
+                                                        </td>
+
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="table-responsive">
+                                                <table class="table table-condenced no-border">
+                                                    <tr>
+                                                        <td style="width: 50%; vertical-align: middle; border-bottom: dashed 1px #808080 !important;">Freight</td>
+                                                        <td style="border-bottom: dashed 1px #808080 !important; ">
+                                                            <input class="form-control maskednumber" maxlength="12" type="text" ng-model="Transfer.Freight" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane" id="delOtherInfo" style="min-height:100px;">
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                <label class="col-sm-4">Remarks</label>
+                                                <div class="col-sm-8">
+                                                    <textarea class="form-control" rows="2" maxlength="500" ng-model="Transfer.Remarks"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4">Weight (KG)</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control maskednumber" maxlength="6" ng-model="Transfer.Weight" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 text-right" style="margin-top: 20px; background: #ebebeb; padding: 10px;">
+            <input type="button" class="btn btn-primary" value="{{editMode ? 'Save changes' : 'Transfer Now'}}" ng-click="TransferMaterial();" />
+        </div>
+    </div>
+</div>

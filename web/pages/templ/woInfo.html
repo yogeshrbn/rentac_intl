@@ -1,0 +1,307 @@
+﻿<div class="col-sm-12">
+
+
+    <div class="col-sm-12 tableInfo">
+
+        <!-- <span class="col-sm-2 labelHeading">W#</span>
+        <span class="col-sm-2">{{WorkOrder.Number}}</span>-->
+        <span class="col-sm-2 labelHeading">Site</span>
+        <span class="col-sm-10">{{SiteInfo.SiteAddress}}</span>
+        <!--<span class="col-sm-2 labelHeading">Order Date</span>
+        <span class="col-sm-2">{{WorkOrder.WorkOrderDate | formatDate}}</span>-->
+    </div>
+    <div class="col-sm-12 tableInfo hide">
+
+        <span class="col-sm-2 labelHeading">Total Amount</span>
+        <span class="col-sm-2">{{WorkOrder.Total}}</span>
+        <span class="col-sm-2 labelHeading">Company</span>
+        <span class="col-sm-2">{{WorkOrder.Company}}</span>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="col-sm-12">
+            <div class="col-sm-10">&nbsp;</div>
+            <div class="col-sm-2">
+                  <input type="button" value="Add Job" class="btn btn-primary" ng-click="NewSiteJob();"/>
+            </div>
+
+        </div>
+        <div class="col-sm-12">&nbsp;</div>
+
+        <div ng-repeat="site in Jobs" class="col-sm-12">
+
+            <div class="panel panel-primary">
+
+                <div class="panel-heading" style="height: auto;" data-toggle="collapse" data-target="#{{site.SiteId}}" ng-click="LoadItems($index,$event);">
+                    Job Number: {{site.JobNumber}} | Shaft Size: {{site.ShaftSize}} | Shaft Height: {{site.ShaftHeight}}
+                    <span class="pull-right" style="width: 100px;">
+                        <a href="#manbill?type=3&wId={{site.WorkOrderId}}">
+                            <i class="fa fa-money text-white" title="Create Bill"></i>
+                        </a>&nbsp;
+                         <a href="#addSiteBill?wId={{site.WorkOrderId}}">
+                             <i class="fa fa-database text-white" title="Add Estimate"></i>
+                         </a>&nbsp;
+                        <a class="pul-right" href="#woSettings?sId={{site.SiteId}}"><span class="fa fa-cog text-white" title="Settings"></span></a>
+                        &nbsp;
+                             <a href="#" preventdefault ng-click="EditJob(site,$event); $event.stopPropagation();">
+                                 <span class="fa fa-edit text-white" title="Edit Job"></span>
+                             </a>
+                    </span>
+
+                </div>
+                <div class="panel-body collapse" id="{{site.SiteId}}">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#siteInfo{{site.SiteId}}" showtab="" aria-controls="itemInfo" role="tab" data-toggle="tab">Info</a></li>
+                        <li role="presentation"><a href="#payments{{site.SiteId}}" showtab="" aria-controls="ratesandTaxes" role="tab" data-toggle="tab">Ledger</a></li>
+                        <li role="presentation"><a href="#siteReturn{{site.SiteId}}" showtab="" aria-controls="ratesandTaxes" role="tab" data-toggle="tab">Inventory</a></li>
+                    </ul>
+                    <div class="tab-content">
+
+                        <div role="tabpanel" class="tab-pane active" id="siteInfo{{site.SiteId}}">
+
+
+                            <div class="col-sm-12 tableInfo hide">
+
+                                <span class="col-sm-2 labelHeading">Job#</span>
+                                <span class="col-sm-2">{{site.JobNumber}}</span>
+
+                                <span class="col-sm-2 labelHeading">Date</span>
+                                <span class="col-sm-2">{{site.StartDate | formatDate}}</span>
+                            </div>
+                            <div class="col-sm-12 tableInfo hide">
+
+                                <span class="col-sm-2 labelHeading">Site</span>
+                                <span class="col-sm-2">{{site.Site}}</span>
+                                <span class="col-sm-2 labelHeading">Site Eng</span>
+                                <span class="col-sm-2">{{site.SiteEng}}</span>
+                                <span class="col-sm-4">
+                                    <a ng-show='{{site.Doc1!=null}}' href="{{SERVER_URL }}/{{site.Doc1}}" target="_blank">Doc1 |</a>
+                                    <a ng-show='{{site.Doc2!=null}}' href="{{SERVER_URL }}/{{site.Doc2}}" target="_blank">Doc2 |</a>
+                                    <a ng-show='{{site.Doc3!=null}}' href="{{SERVER_URL }}/{{site.Doc3}}" target="_blank">Doc3</a>
+                                </span>
+                            </div>
+
+
+                            <div class="col-sm-12">
+
+                                <table class="table table-condensed table-responsive">
+
+                                    <tr class="headerRow hide">
+                                        <th style="width: 15px;">#</th>
+
+                                        <th>Item</th>
+                                        <!--     <th>Size</th>-->
+                                        <th>Qty</th>
+                                        <th>Rate</th>
+
+                                        <th width="150px">Amount</th>
+                                    </tr>
+                                    <tr ng-repeat="(key,value) in site.Items | groupBy: 'SiteId'">
+
+                                        <td colspan="5" style="padding: 0px !important; border: 0px !important;">
+                                            <div class="col-sm-12 site-group-header">
+                                                Date: {{value[0].StartDate | formatDate}} | Job#: {{ (Sites|filter:{SiteId:key})[0].JobNumber}} 
+                                              | Eng: {{ (Sites|filter:{SiteId:key})[0].SiteEng}} || Shaft Size: {{ (Sites|filter:{SiteId:key})[0].ShaftSize}} | Shaft Height:{{ (Sites|filter:{SiteId:key})[0].ShaftHeight}}
+                                                {{loadTaxes(value[0])}}
+                                            </div>
+                                            <div class="col-sm-12" style="padding: 0px;">
+                                                <table class="table table-condensed table-responsive tableInput" style="border: 0px !important;">
+                                                    <tr class="headerRow">
+                                                        <th style="width: 15px;">#</th>
+
+                                                        <th>Item</th>
+                                                        <!--     <th>Size</th>-->
+                                                        <th>Qty</th>
+                                                        <th>Rate</th>
+
+                                                        <th width="150px">Amount</th>
+                                                    </tr>
+                                                    <tr ng-repeat="item in value">
+
+
+                                                        <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">{{$index+1}}
+                                                        </td>
+
+                                                        <td>{{item.Name}}
+                                                        </td>
+
+                                                        <td>{{item.PurchaseQty}}</td>
+                                                        <td class="text-right" width="150px">{{item.Rate |number:2  }}
+                         
+                                                        </td>
+                                                        <td class="text-right">{{item.PurchaseQty * item.Rate |number:2  }}
+                                            
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr class="totalRow">
+                                                        <td colspan="4">Sub Total</td>
+                                                        <td>{{value[0].SubTotal  | number:2}} </td>
+                                                    </tr>
+                                                    <tr class="totalRow">
+                                                        <td colspan="4">Cartage</td>
+                                                        <td>{{value[0].Freight  | number:2}} </td>
+                                                    </tr>
+                                                    <tr class="totalRow">
+                                                        <td colspan="4">Cartage Tax</td>
+                                                        <td>{{value[0].FreightTax  | number:2}} </td>
+                                                    </tr>
+                                                    <!-- <tr class="totalRow" ng-repeat="tax in (Sites|filter:{SiteId:key})[0].Taxes">-->
+                                                    <tr class="totalRow" ng-repeat="tax in value[0].Taxes">
+                                                        <td colspan="4"><b>{{tax.Name}}({{tax.Rate  |number:2 }}%)</b></td>
+                                                        <td>{{ tax.Amount |number:2}}</td>
+                                                    </tr>
+                                                    <tr class="totalRow">
+                                                        <td colspan="4">Total</td>
+                                                        <td>{{(((Sites|filter:{SiteId:key})[0].Taxes|sum: 'Amount') + value[0].SubTotal + value[0].Freight+value[0].FreightTax) | number:2 }}</td>
+                                                    </tr>
+                                                </table>
+
+                                            </div>
+                                            <div class="col-sm-9"></div>
+                                            <div class="col-sm-3" style="padding: 0px;">
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+
+                                </table>
+
+
+                            </div>
+
+                            <div class="clearfix">&nbsp;</div>
+                            <div class="col-sm-12">
+                                <h4>Challans</h4>
+
+                                <div ng-repeat="(key,value) in site.Challans | groupBy: 'Number'">
+                                    <div class="site-group-header">
+                                        <span>Challan No: {{key}}</span>
+                                        | <span>Date: {{value[0].WorkOrderDate | formatDate}}</span>
+                                        | <span>Vehicle: {{value[0].Vehicle}}</span>
+                                        | <span>Driver: {{value[0].Driver}}</span>
+                                        <span class="pull-right">
+                                            <a href="#" ng-click="PrintReceipt(value[0],$event);">
+                                                <i class="fa fa-print text-white" title="Print challan"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+
+                                    <table class="table table-bordered table-responsive">
+                                        <tr class="headerRow">
+                                            <th style="width: 30px;">#</th>
+                                            <th>Item</th>
+                                            <th style="width: 100px;" class="text-right">Quantity</th>
+                                        </tr>
+                                        <tr ng-repeat="i in value">
+                                            <td>{{$index+1}}</td>
+                                            <td>{{i.Name}}</td>
+                                            <td class="text-right">{{i.PurchaseQty|number:2}}</td>
+                                        </tr>
+                                        <tr class="totalRow">
+                                            <td colspan="2">Cartage:</td>
+                                            <td>{{value[0].Freight|number:2}}</td>
+                                            </t>
+                                        <tr class="totalRow">
+                                            <td colspan="2" class="text-left">Approx. Value:</td>
+                                            <td>{{value[0].SubTotal|number:2}}</td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="col-sm-3">
+                                    <input type="button" class="btn btn-primary" value="Send More Items" ng-click="AddSiteItems(site.WorkOrderId)" />
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="payments{{site.SiteId}}">
+                            <table class="table table-condensed table-responsive" med-key>
+
+                                <tr class="headerRow">
+
+
+                                    <th style="width: 100px;">Date</th>
+                                    <th style="width: 50px;">Type</th>
+                                    <th style="width: 150px;">Name</th>
+                                    <th style="width: 50px;" class="number_td">Debit</th>
+                                    <th style="width: 50px;" class="number_td">Credit</th>
+                                    <th style="width: 50px;" class="number_td">Balance</th>
+                                </tr>
+                                <tr ng-repeat="item in site.TransList">
+
+                                    <td>{{item.TransactionDate | formatDate}}</td>
+                                    <td>{{item.EntryTypeName}}
+                                    </td>
+                                    <td>{{item.Description }}-{{item.TranRefNumber }}</td>
+                                    <td class="number_td">{{ item.TransactionType == 1 ? item.TransactionAmount : ''  | number:2 }}</td>
+                                    <td class="number_td">{{ item.TransactionType == 2 ? item.TransactionAmount : '' | number:2}}</td>
+                                    <td class="number_td">{{item.Balance |number:2 }} {{item.TransactionTypeName}}</td>
+
+                                </tr>
+                                <tr class="totalRow">
+
+                                    <td colspan="4"></td>
+                                    <td>Total</td>
+
+                                    <td>{{site.LastRow.Balance |number:2 }} {{site.LastRow.TransactionTypeName}}</td>
+
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="siteReturn{{site.SiteId}}">
+                            <!-- <div class="col-sm-12">
+                                <span class="col-sm-2">
+
+                                    <label>Sent By</label>
+                                    :  {{site.GRNItems[0].Sender}}
+                                </span>
+                                <span class="col-sm-2">
+
+                                    <label>Received By</label>
+                                    :  {{site.GRNItems[0].Receiver}}
+                                </span>
+
+                            </div>-->
+
+                            <table class="table table-condensed table-responsive">
+                                <tr class="headerRow">
+                                    <th>Item</th>
+                                    <th>Sent Qty</th>
+                                    <th>Rec Qty</th>
+                                    <th>Balance</th>
+                                </tr>
+                                <tr ng-repeat="item in site.GRNItems">
+                                    <td>{{item.Product}}</td>
+                                    <td>{{item.SentQty}} </td>
+                                    <td>{{item.RecQty}} </td>
+                                    <td>{{item.SentQty - item.RecQty}} </td>
+                                </tr>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix">&nbsp;</div>
+        </div>
+
+    </div>
+</div>
+
+<script lang="ja">
+
+    $('.panel-heading a').click(function (e) {
+        alert('hi');
+        e.preventDefault();
+
+    });
+
+</script>
+

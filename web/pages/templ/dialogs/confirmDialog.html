@@ -1,0 +1,33 @@
+﻿<md-dialog style="width:400px;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Confirmation?</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="closeDialog()">
+
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout="row" layout-wrap layout-margin layout-align="left">
+        <div class="row">
+            <div class="col-sm-12">
+                <p>  {{Message}} ?</p>
+            </div>
+            <div class="col-sm-12" ng-if="ShowRemarks">
+                <div class="form-group">
+                    <label class="col-sm-12">Remarks</label>
+                    <div class="col-sm-12">                    
+                        <textarea ng-model="dlg.Remarks" class="form-control" style="height:70px;width:250px;" maxlength="200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="pull-right">
+            <md-button ng-click="OkButtonClick()" class="btn btn-primary" value="Print">Yes <i class="fa fa-spinner fa-spin hide" style="color:#fff;"></i></md-button>
+            <span flex></span>
+            <md-button ng-click="closeDialog()" class="btn btn-danger" value="Close">No</md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

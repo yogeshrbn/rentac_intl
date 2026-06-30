@@ -1,0 +1,543 @@
+<style>
+    .tile-container {
+        /* margin-bottom: 30px;*/
+    }
+
+    .tile {
+        border-radius: 6px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        background: white;
+        border: 1px solid #e1e5eb;
+    }
+
+        .tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .delayed {
+        color: #e17400 !important;
+        text-transform: uppercase;
+    }
+
+
+
+    .due {
+        text-transform: uppercase;
+        color: #000 !important;
+    }
+    .completed {
+        text-transform: uppercase;
+        color: green !important;
+    }
+    .delay {
+        text-transform: uppercase;
+        color: red !important;
+    }
+    .tile-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #e1e5eb;
+        font-weight: 600;
+        color: #2c3e50;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tile-body {
+        padding: 20px;
+    }
+
+    .tile-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #e1e5eb;
+        background-color: #f8f9fa;
+    }
+
+    .order-id {
+        font-weight: 600;
+        color: #3498db;
+    }
+
+    .customer-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .order-date {
+        color: #7f8c8d;
+        font-size: 0.9em;
+    }
+
+    .order-amount {
+        font-size: 1.4em;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .order-status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-processing {
+        background-color: #cce7ff;
+        color: #004085;
+    }
+
+    .status-shipped {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-delivered {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .order-items {
+        margin-top: 15px;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px dashed #e1e5eb;
+    }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+    .item-name {
+        flex-grow: 1;
+    }
+
+    .item-qty {
+        color: #7f8c8d;
+        margin: 0 5px;
+    }
+
+    .item-price {
+        font-weight: 600;
+    }
+
+    .order-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .btn-order {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+
+    .metrics-tile {
+        text-align: center;
+        padding: 15px 0px
+    }
+
+    .metric-value {
+        font-size: 2.2em;
+        color: #000;
+        font-weight: 300;
+        margin: 0px 0;
+    }
+
+    .metric-label {
+        font-size: 0.95em;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .metric-change {
+        font-size: 0.85em;
+        margin-top: 5px;
+    }
+
+    .change-positive {
+        color: #27ae60;
+    }
+
+    .change-negative {
+        color: #e74c3c;
+    }
+
+    .priority-high {
+        border-left: 4px solid #e74c3c;
+    }
+
+    .priority-medium {
+        border-left: 4px solid #f39c12;
+    }
+
+    .priority-low {
+        border-left: 4px solid #3498db;
+    }
+
+    .order-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.7em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .order-tile {
+        position: relative;
+    }
+
+    .customer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+    }
+
+        .customer-avatar img {
+            width: 100%;
+            height: auto;
+        }
+
+    .customer-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .filter-controls {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .progress {
+        height: 8px;
+        margin-bottom: 10px;
+    }
+
+    .employeesMultiSelect div {
+        height: 100px;
+    }
+
+    .rentac-multiselect {
+        border: solid 1px #cdcdcd;
+        position: relative;
+        width: auto;
+        zoom: 1;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .rentac-multiselect li {
+            padding: 2px;
+        }
+
+
+    .todo-header {
+        background-color: #e74c3c;
+    }
+
+    .inprogress-header {
+        background-color: #f39c12;
+    }
+
+    .review-header {
+        background-color: #3498db;
+    }
+
+    .done-header {
+        background-color: #2ecc71;
+    }
+</style>
+<div class="col-md-12">
+    <!-- Filter Controls -->
+    <div class="row" style="margin-bottom:10px;">
+        <div class="col-sm-12">
+            <div class="flex-container" style="justify-content: space-between;">
+                <div>
+                    <label>Choose Party</label>
+
+                    <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                                      ng-id="client_value" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                </div>
+                <!--<div style="width:200px;">
+                    <label>Site</label>
+                    <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                      data-text="SiteAddress"></searchableselect>
+                </div>-->
+                <div>
+                    <label>From</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+                    </datepicker>
+                </div>
+                <div>
+                    <label>To</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+                    </datepicker>
+                </div>
+                <div>
+                    <label>Contract Status</label>
+                    <select class="form-control" ng-model="Filter.ActivityType">
+                        <option ng-value="0"> All</option>
+                        <!--<option ng-value="1"> Draft</option>-->
+                        <!--<option ng-value="2"> Active</option>-->
+                        <!--<option ng-value="3"> Deleted</option>-->
+                        <option ng-value="1"> Installation</option>
+                        <option ng-value="2"> Dismantale</option>
+                        <option ng-value="3"> Pick-Up</option>
+
+                    </select>
+                </div>
+                <div>
+                    <label>Activity Status</label>
+                    <select class="form-control" ng-model="Filter.ActivityStatusId">
+                        <option ng-value="0"> All</option>
+                        <option ng-value="1">Not Completed</option>
+                        <option ng-value="2">Completed</option>
+                        <option ng-value="3">Delayed</option>
+                        <option ng-value="4">In-Progress</option>
+                    </select>
+                </div>
+                <div>
+                    <label>&nbsp;</label>
+                    <div style=" display: flex; flex-direction: row; align-content: space-around; justify-content: space-between; align-items: center;">
+
+                        <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="filter();" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Metrics -->
+    <div class="row tile-container">
+        <div class="col-md-3 col-sm-6">
+            <div class="tile metrics-tile selected-tile" ng-click="applyByStatus('');">
+                <div class="metric-value">{{Contracts.length}}</div>
+                <div class="metric-label">Total</div>
+                <!--<div class="metric-change change-positive">
+                    <i class="fa fa-arrow-up"></i> 12.5% from last month
+                </div>-->
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="tile metrics-tile"  ng-click="applyByStatus('install');">
+                <div class="metric-value">{{Installations}}</div>
+                <div class="metric-label">Installations</div>
+                <!--<div class="metric-change change-positive">
+                    <i class="fa fa-arrow-up"></i> 8.3% from last month
+                </div>-->
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="tile metrics-tile"  ng-click="applyByStatus('dismantle');">
+                <div class="metric-value">{{Dismantle}}</div>
+                <div class="metric-label">Dismantal</div>
+                <!--<div class="metric-change change-negative">
+                    <i class="fa fa-arrow-down"></i> 3.2% from last week
+                </div>-->
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="tile metrics-tile"  ng-click="applyByStatus('other');">
+                <div class="metric-value">{{Others}}</div>
+                <div class="metric-label">Others</div>
+                <!--<div class="metric-change change-positive">
+                    <i class="fa fa-arrow-up"></i> 0.2 from last month
+                </div>-->
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Grid -->
+    <div class="row">
+        <div class="col-sm-12">
+        <!-- Order 1 -->
+        <table class="table table-condensed">
+            <thead>
+                <tr class="headerRow">
+                    <th style="width: 300px;">Party</th>
+                    <th class="text-center" style="width: 150px;">Installation</th>
+                    <th class="text-center" style="width: 150px;">Dismantle</th>
+                    <th class="text-center" style="width: 150px;">Pickup</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Group by Client using angular-filter -->
+                <tr ng-repeat-start="(key,clientGroup) in FilteredContracts | groupBy: 'LedgerId'">
+                    <!-- Client Header -->
+                    <td colspan="4" style="background-color: #f8f9fa; font-weight: bold; padding: 8px;">
+                        {{clientGroup[0].Client}}
+                        <span ng-if="clientGroup[0].ProjectOwnerName" style="color:blue">
+                            ({{clientGroup[0].ProjectOwnerName}})
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Individual bills for this client -->
+                <tr ng-repeat-end ng-repeat="item in clientGroup  track by $index">
+                    <td style="padding-left: 20px;">
+                        <label>{{item.SiteAddress}}</label>
+                       {{item.Title + ' ' + item.SizeDescription == null ? '': item.SizeDescription}}
+                        <label>Area: {{item.Area}}</label>
+                        <label style="font-weight:normal;width:100%;">{{item.EffectiveFrom | formatDate}} <strong>To</strong> {{item.ValidTill | formatDate}}</label>
+                    </td>
+                    <td class="text-center" style="width: 150px;">
+                        <div style="display: flex; flex-direction: column;">
+                            <strong ng-class="getClassName(item.InstallStatus)">{{item.InstallStatus}}</strong>
+                            <strong>Due On: {{item.InstallDueDate | formatDate}}</strong>
+                            <strong>Completed On: {{item.InstalledDate | formatDate}}</strong>
+                        </div>
+                        
+
+                    </td>
+                    <td class="text-center" style="width: 150px;">
+                        <div style="display: flex; flex-direction: column;">
+                            <strong ng-class="getClassName(item.DismantleStatus)">{{item.DismantleStatus}}</strong>
+                            <strong>Due On: {{item.DismantleDueDate | formatDate}}</strong>
+                            <strong>Completed On: {{item.DismantledDate | formatDate}}</strong>
+                        </div>
+                    </td>
+                    <td class="text-center" style="width: 150px;">
+                        <div style="display: flex; flex-direction: column;">
+                            <strong ng-class="getClassName(item.PickupStatus)">{{item.PickupStatus}}</strong>
+                            <strong>Due On: {{item.PickupDueDate | formatDate}}</strong>
+                            <strong>Completed On: {{item.PickupDate | formatDate}}</strong>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="changeStatusDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Change Status</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form name="frmExtendConract" id="frmExtendConract">
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Status</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" ng-model="JobCard.StatusId">
+                                        <option ng-value="1">Not Completed</option>
+                                        <option ng-value="4">In-Progress</option>
+                                        <option ng-value="2">Completed</option>
+                                        <option ng-value="3">Delayed</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3">
+                                    Employee(s)
+
+                                </label>
+                                <div class="col-sm-8">
+
+                                    <multiselectcheckbox data="Employees" text="Name" text2="Name" key="EmployeeId"
+                                                         selecteddata="selectedEmployees"></multiselectcheckbox>
+                                    <span>Select your employee for this job</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12  mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Area Covered</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="30" name="clientContactName" class="form-control maskednumber" ng-model="JobCard.AreaCovered" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3">Completion Date</label>
+                                <div class="col-sm-8">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="JobCard.CompletionDate" type="text" tabindex="3" class="form-control" />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" style="height:100px;width:100%" ng-model="JobCard.Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1" ng-if="JobCard.Activity === 'INSTALL'">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Install photo</label>
+                                <div class="col-sm-8">
+                                    <input type="file" accept="image/*" style="display:none" id="installActivityImageFile" />
+                                    <button type="button" class="btn btn-default btn-sm" ng-click="browseInstallActivityImage()">Choose image</button>
+                                    <button type="button" class="btn btn-link btn-sm" ng-if="installActivityImageDataUrl" ng-click="clearInstallActivityImage()">Remove</button>
+                                    <div ng-if="installActivityImagePreview" style="margin-top:8px;">
+                                        <img ng-src="{{installActivityImagePreview}}" style="max-width:100%;max-height:180px;border:1px solid #ccc;" alt="Preview" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary btn-sm" ng-click="updateStatus();">Change Status</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<ng-include src="'templ/contract/contract.activity.html'"></ng-include>

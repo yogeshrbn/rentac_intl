@@ -1,0 +1,250 @@
+<div class="">
+
+  
+    <div class="col-sm-12">
+
+        <div id="workOrderInfo">
+            <form id="frmPurchase" name="frmPurchase" method="post" class="">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Vendor</label>
+                        <div class="col-sm-7">
+
+                            <!--<searchabletext ng-id="client" search-fields="Name" local-data="SundryDebtors" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+                            <searchableselect ng-name="val_party" ng-id="val_party" tabindex="2" data-field="SundryDebtors" data-primarytext="TradeName"
+                                              ng-model="Trans.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Warehouse</label>
+                        <div class="col-sm-7">
+                            <searchableselect style="max-width: 220px; display: block;" ng-name="purchaseWarehouse" ng-id="purchaseWarehouse" data-field="warehouses"
+                                              ng-model="Trans.WarehouseId" data-val="WarehouseId" data-text="Name"></searchableselect>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Bill Date</label>
+                        <div class="col-sm-7">
+
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Trans.PurchaseDate" tabindex="2" type="text" class="form-control" name="val_partyBillDate" />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Vendory Bill#</label>
+                        <div class="col-sm-6">
+
+                            <input type="text" ng-model="Trans.BillNumber" tabindex="3" class="form-control" name="val_workOrderNumber" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Vendor Credit Note #</label>
+                        <div class="col-sm-7">
+
+                            <input type="text" ng-model="Trans.VendorCreditNoteNumber" tabindex="3" class="form-control" name="val_workOrderNumber" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Vendor Credit Date</label>
+                        <div class="col-sm-7">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Trans.VendorCreditNoteDate" tabindex="2" type="text" class="form-control" name="val_partyBillDate" />
+                            </datepicker>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <!--<div class="col-sm-7">-->
+                    <!--<div class="col-sm-3 ">
+                <label class="vcenter">Purchase A/C</label>
+            </div>
+
+            <div class="col-sm-5">
+                <searchableselect name="val_bank" on-loaded="bankLoaded();" tabindex="2" data-field="Banks" ng-model="Trans.PurchaseAccountId" data-val="LedgerId" data-text="Name"></searchableselect>
+            </div>
+        </div>-->
+                    <!--<div class="col-sm-5">
+            <span class="col-sm-4 ">
+                <label class="vcenter">Vch/Challan #</label>
+            </span>
+            <div class="col-sm-4">
+                <input type="text" ng-model="Trans.VoucherNumber" readonly tabindex="3" class="form-control" name="val_workOrderNumber" required />
+            </div>
+        </div>-->
+                </div>
+                <div class="col-sm-12">
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="row addWithTable" style="height: 290px; overflow-y: auto;border: solid 1px #a5b0b5 ">
+
+                        <div class="col-sm-12 addItemBox">
+                            <div class="col-sm-3">
+                                <label>
+                                    Product
+                                </label>
+                                <searchabletext ng-id="itemSelect" local-data="AllSizes" title-field="Name" name="Name" search-fields="Name,Code"
+                                                selected-object="selectedProduct" data-entry="1"> </searchabletext>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>
+                                    Quantity
+                                </label>
+                                <input type="number" class="form-control" tabindex="6" ng-model="TransItem.Quantity"
+                                       max="999999999" />
+                            </div>
+                            <div class="col-sm-3">
+                                <label>
+                                    P.Rate
+                                </label>
+                                <input type="number" class="form-control" tabindex="7" ng-model="TransItem.Rate" max="999999999" />
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="col-sm-12">&nbsp; </label>
+                                <!--<input type="button" class="btn btn-primary" tabindex="8" value="Add" ng-click="addItem();" ng-show="AccessData.Add" />-->
+                                <button class="btn btn-primary" value="Add" ng-keydown="addItem($event);" stopfocus="true" ng-click="addItem();" ng-show="AccessData.Add">Add</button>
+
+                            </div>
+                        </div>
+                        <table class="table table-condensed table-responsive tableInput" med-key ng-delete="DeleteItem(index)">
+
+                            <tr class="headerRow">
+                                <th style="width: 15px;">#</th>
+                                <th>Item</th>
+
+                                <!--     <th>Size</th>-->
+                                <th>Qty</th>
+                                <th>Rate</th>
+                                <th>Tax</th>
+                                <!--<th>Total</th>-->
+                                <th width="150px"></th>
+                            </tr>
+                            <tr ng-repeat="item in Trans.Items" ng-delete="DeleteItem(index);">
+                                <td style="width: 30px; vertical-align: middle; text-align: center; background: #e4e4e4; font-weight: bold;">
+                                    {{$index+1}}
+                                </td>
+                                <td>
+                                    {{item.Item}}
+                                </td>
+
+                                <td>
+                                    {{item.Quantity}}
+
+                                </td>
+                                <td>
+                                    {{item.Rate}}
+                                </td>
+                                <td> {{item.TaxName}}</td>
+                                <td class="text-right">
+                                    {{item.SubTotal |number:2  }}
+
+                                </td>
+                            </tr>
+                            <tr ng-if="Trans.Items.length==0">
+                                <td colspan="6" class="text-center text-info"><h5>No Items added.</h5></td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-7 siteBox">
+                            <div class="col-sm-offset-5 form-group">
+                                <!--<label for="inputEmail3" class="col-sm-4 control-label">Tax Apply</label>
+                    <div class="col-sm-8">
+                        <input type="radio" class="radio-inline" name="taxApply" /> Exclusive
+                        <input type="radio" class="radio-inline" name="taxApply" /> Inclusive
+
+                    </div>-->
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+                            <div class="col-sm-12">
+                                <input type="button" style="width: 100px;" class="btn btn-default" ui-sref="purchaseReg" value="Cancel" />
+
+                                <input type="button" style="width: 100px;" class="btn btn-primary ml-1" ng-show="AccessData.Add ? true : false " value="Save" ng-click="Save();" />
+
+                            </div>
+                        </div>
+                        <div class="col-sm-5 nopadding">
+                            <table class="table  table-responsive text-bold">
+                                <tr>
+                                    <td class="text-right">SubTotal</td>
+                                    <td class="text-right" width="80px">
+                                        {{ SubTotal(0) |number:2}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-horizontal">
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label for="inputEmail3" class="col-sm-4 control-label">
+                                                    Discount
+                                                </label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control maskednumber" max="100" ng-model="Trans.DiscountValue" placeholder="">
+                                                        <div class="input-group-btn">
+                                                            <button class="btn btn-default" type="button">%</button>
+                                                            <!--<button class="btn btn-default" type="button">Fixed</button>-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--<div class="col-sm-10 pull-right">
+                                        <span class="label label-default">New</span>
+                                    </div>-->
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        {{Trans.DiscountAmount | number:2}}
+
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        CGST
+                                    </td>
+                                    <td class="text-right">{{Trans.Items|sum:'CGST' |number:2}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        SGST
+                                    </td>
+                                    <td class="text-right">{{Trans.Items|sum:'SGST' |number:2}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-bold">
+                                        <label class="control-label">
+                                            Total
+                                        </label>
+                                    </td>
+                                    <td class="text-right" width="150px">
+                                        {{Trans.Total |number:2}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <script lang="ja">
+        $('.tabContainer a').click(function (e) {
+            e.preventDefault();
+        });
+
+    </script>
+</div>

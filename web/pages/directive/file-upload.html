@@ -1,0 +1,187 @@
+﻿<style>
+    .upload-container {
+        max-width: 600px;
+        /*   margin: 50px auto;*/
+        padding: 3px;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .upload-area {
+        /*  padding: 40px;*/
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .upload-area:hover {
+            background-color: #f9f9f9;
+        }
+
+        .upload-area.dragover {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+    .file-input {
+        display: none;
+    }
+
+    .upload-btn {
+        background-color: #2196f3;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+        .upload-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    .file-info {
+      /*  margin-top: 20px;*/
+        padding: 5px;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        background-color: #4caf50;
+        transition: width 0.3s ease;
+    }
+
+    .error-message {
+        color: #f44336;
+        margin-top: 10px;
+    }
+
+    .success-message {
+        color: #4caf50;
+        margin-top: 10px;
+    }
+
+    .file-list {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .file-item {
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .file-actions button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .preview-btn {
+        background-color: #ff9800;
+        color: white;
+    }
+
+    .delete-btn {
+        background-color: #f44336;
+        color: white;
+    }
+</style>
+<div class="upload-container" ng-controller="FileUploadController as vm">
+    <!--<h2>PDF Upload</h2>-->
+    <!-- Upload Area -->
+    <div class="upload-area"
+         ng-class="{'dragover': vm.isDragging}"
+         ng-drop="true"
+         ng-drop-success="vm.onDrop($file, $event)">
+        <!--<i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #ccc;"></i>-->
+        <label>Drag & Drop PDF Files Here</label>
+        <p>or click to browse</p>
+        <input type="file"
+               class="file-input"
+               id="fileInputCtl"
+               
+               style="display:none;"
+               multiple
+               ng-model="vm.selectedFiles"
+               onchange="angular.element(this).scope().onFileSelect(event)"
+               ng-change="onFileSelect()">
+        <input type="button" class="btn btn-sm btn-primary"
+               ng-click="vm.triggerFileInput()" value="Browse">
+
+
+    </div>
+
+    <!-- Selected Files Info -->
+    <div class="file-info" ng-if="selectedFiles.length > 0">
+        <!--<h4>Selected Files:</h4>-->
+        <div ng-repeat="file in selectedFiles">
+            <div ng-if="file.name">
+                <label>{{ file.name }}</label> - {{ (file.size / 1024 / 1024).toFixed(2) }} MB
+                <a href="javascript:void()" ng-click="vm.deleteSelectedFile(file)"><i class="fa fa-trash"></i></a>
+            </div>
+            <div ng-if="!file.name && file">
+                <label>{{ file  }}</label>
+                <a href="javascript:void()" ng-click="vm.deleteSelectedFile(file)"><i class="fa fa-trash"></i></a>
+            </div>
+        </div>
+        <!--<button class="btn btn-sm btn-primary"
+                ng-click="vm.uploadFiles()"
+                ng-disabled="vm.uploading">
+            {{ vm.uploading ? 'Uploading...' : 'Upload PDFs' }}
+        </button>-->
+        <!-- Progress Bar -->
+        <div class="progress-bar" ng-if="vm.uploading">
+            <div class="progress" ng-style="{'width': vm.uploadProgress + '%'}"></div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="error-message" ng-if="vm.errorMessage">
+        {{ vm.errorMessage }}
+    </div>
+
+    <div class="success-message" ng-if="vm.successMessage">
+        {{ vm.successMessage }}
+    </div>
+
+    <!-- Uploaded Files List -->
+    <div class="file-list" ng-if="vm.uploadedFiles.length > 0">
+        <h4>Uploaded Files:</h4>
+        <div class="file-item" ng-repeat="file in vm.uploadedFiles">
+            <div class="file-info">
+                <strong>{{ file.name }}</strong><br>
+                <small>Uploaded: {{ file.uploadDate | date:'medium' }}</small><br>
+                <small>Size: {{ (file.size / 1024 / 1024).toFixed(2) }} MB</small>
+            </div>
+            <div class="file-actions">
+                <button class="preview-btn" ng-click="vm.previewFile(file)">
+                    Preview
+                </button>
+                <button class="delete-btn" ng-click="vm.deleteFile(file)">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

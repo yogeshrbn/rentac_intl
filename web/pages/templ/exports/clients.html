@@ -1,0 +1,56 @@
+﻿
+<div style="margin:15px" class="tblPrint">
+    <style>
+        .tblPrint {
+            th {
+                   font-size:10px;
+            padding: 2px;
+            background-color: gainsboro;
+            border-top: solid 1px black;
+            border-bottom: solid 1px;
+            border-right: solid 1px;
+        }
+
+        th:first-of-type {
+            border-left: solid 1px black;
+        }
+
+        td {
+            font-size: 10px;
+            padding: 2px;
+            border-right: solid 1px black;
+            border-bottom: solid 1px black;
+        }
+
+            td:first-of-type {
+                border-left: solid 1px black;
+            }
+        }
+    </style>
+    <table style="width: 100%; border-collapse:collapse;" role="rowgroup" cellspacing="0">
+        <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Address1</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Balance</th>
+        </tr>
+        <tr ng-repeat="item in data">
+            <td>
+                {{item.Code}}
+            </td>
+            <td>
+                {{
+item.Name
+                }}
+            </td>
+            <td>
+                {{item.Address1}},{{item.Address2}}
+            </td>
+            <td>{{item.Phone1}}</td>
+            <td>{{item.Email}}</td>
+            <td>{{item.Balance |  number:2}}</td>
+        </tr>
+    </table>
+</div>

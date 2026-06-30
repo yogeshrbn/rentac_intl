@@ -1,0 +1,797 @@
+<form id="form-bill" name="form-bill">
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Party</label>
+                                <div class="col-sm-9">
+                                    <searchableselect id="party" ng-name="party" tabindex="2" data-field="Accounts" ng-model="Billing.LedgerId"
+                                                       data-primarytext="TradeName" data-val="LedgerId" data-text="Name" required description-field="Code"></searchableselect>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Site</label>
+                                <div class="col-sm-9">
+                                    <searchableselect id="site" ng-name="site" ng-model="Billing.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                                     data-text="SiteAddress" required></searchableselect>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="col-sm-12 mt-2">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">From</label>
+                                <div class="col-sm-9">
+
+                                    <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="Billing.From" tabindex="3" type="text" class="form-control" id="txtFrom" required />
+                                    </datepicker>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">To</label>
+                                <div class="col-sm-9">
+
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="Billing.To" tabindex="4" type="text" class="form-control" id="txtTo" required />
+                                    </datepicker>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-sm-12 mt-2">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Type</label>
+                                <div class="col-sm-9">
+
+                                    <input type="radio" name="rdoInvoiceType" class="radio-inline" ng-model="Billing.InvoiceType" ng-value="1" style="margin-right:3px;" /> Rent
+                                    <input type="radio" name="rdoInvoiceType" class="radio-inline" ng-model="Billing.InvoiceType" ng-value="8" style="margin-right:3px;" /> Hire
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3"></label>
+                                <div class="col-sm-9">
+                                    <input type="checkbox" class="checkbox-inline" ng-model="Billing.ChargeReturnDay" ng-true-value="1" ng-false-value="0" style="margin-right:3px;" />
+                                    <label>Charge Return Day</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 mt-1">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+
+                                <div class="col-sm-offset-3 col-lg-offset-3 col-sm-9">
+                                    <input type="checkbox" name="rdoRateType" class="radio-inline"
+                                           ng-model="Billing.IncludeLostItems" ng-value="1" style="margin-right:3px;" /> Bill Lost Items
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+
+                                <div class="col-sm-offset-3 col-lg-offset-3 col-sm-9">
+                                    <input type="checkbox" name="rdoRateType" class="radio-inline"
+                                           ng-model="Billing.IncludeBreakageItems" ng-value="1" style="margin-right:3px;" /> Bill Breakage
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-12 mt-1">
+
+
+                </div>
+                <div class="col-sm-12 mt-1">
+                    <div class="row">
+
+                        <div class="col-sm-10">
+                            <div class="col-sm-offset-2 col-sm-9">
+
+                                <button class="btn btn-default" tabindex="5" value="Cancel" ng-click="cancel()">Cancel</button>
+
+                                <button type="button" class="btn btn-primary" ng-click="openBillTaxSettings()">Settings</button>
+
+                                <button class="btn btn-primary" tabindex="5" value="Generate Bill"
+                                        ng-click="GenBill();">
+                                    Generate Bill
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-3 vcenter">Bill#</label>
+                        <div class="col-sm-5">
+                            <label ng-if="Config.allowEditBillNo == false">{{Billing.InvoiceNumber}}</label>
+                            <div ng-if="Config.allowEditBillNo == true">
+                                <!--<span class="input-group-addon" id="basic-addon1" ng-if="Billing.InvoiceId == 0"> {{Config.billPrefix}}</span>-->
+                                <input type="text" class="form-control" no-space validateprefix ng-if="Config.allowEditBillNo == true" tabindex="6" ng-model="Billing.InvoiceNumber" maxlength="20" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-3 vcenter">Inv. Date</label>
+                        <div class="col-sm-5">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Billing.InvoiceDate" tabindex="3" type="text" class="form-control" id="txtFrom" required />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+
+                        <label class="col-sm-3 vcenter">PO#</label>
+
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" no-space ng-model="Billing.PONumber" maxlength="30" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+
+
+                        <label class="col-sm-3 vcenter">PO Date</label>
+
+                        <div class="col-sm-5">
+                            <datepicker date-format="dd/MM/yyyy">
+                                <input ng-model="Billing.PODate" tabindex="2" type="text" class="form-control" name="val_endsOnDate" />
+                            </datepicker>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-4 vcenter">Apply Rate As</label>
+                        <div class="col-sm-7 vcenter">
+                            <input type="radio" name="rdoRateType" class="radio-inline" ng-model="Billing.RateCalcType" ng-value="1" style="margin-right:3px;" /> Daily
+                            <input type="radio" name="rdoRateType" class="radio-inline" ng-model="Billing.RateCalcType" ng-value="2" style="margin-right:3px;" /> Monthly
+                            <input type="radio" name="rdoRateType" class="radio-inline" ng-model="Billing.RateCalcType" ng-value="3" style="margin-right:3px;" /> Fixed Monthly
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="col-sm-12" style="overflow-y: auto;">
+            <!--<input type="checkbox" />Charge returned-->
+            <table class="table table-condensed table-responsive tableInput" style="margin-top: 10px;">
+                <tr class="headerRow">
+                    <th style="width: 15px;" class="text-center">#</th>
+                    <th style="width: 350px;">Item</th>
+                    <th class="text-center" style="width: 50px;">From</th>
+                    <th class="text-center" style="width: 50px;">To</th>
+                    <th class="text-center" style="width: 20px;">Days</th>
+                    <th class="text-center" style="width: 20px;">OP</th>
+                    <th class="text-center" style="width: 50px;">Issue/Rec</th>
+                    <th class="text-center" style="width: 30px;">CB</th>
+                    <th class="text-center" style="width: 30px;">Rate</th>
+                    <th style="width: 69px" class="text-right">Amount</th>
+                </tr>
+                <tr ng-repeat="item in BillData" style="font-size:11px;">
+                    <td style="width: 25px;" class="text-center">
+                        {{$index + 1}}
+
+                    </td>
+                    <td style="width: 100px;">
+                        <div class="col-sm-12 nopadding">
+                            <!--<input type="checkbox" class="col-sm-1" ng-model="item.ChargeReturnedDate" ng-click="ApplyExtraDays(item);" />-->
+                            <span class="col-sm-10 nopadding" style="padding-left: 5px !important;">{{item.Item}}</span>
+                        </div>
+                    </td>
+
+                    <td class="text-center" style="width: 70px;">{{item.From | formatDate}}</td>
+                    <td class="text-center" style="width: 70px;">{{item.To | formatDate}}</td>
+                    <td class="text-center" style="width: 20px;">{{item.Days}}</td>
+                    <td class="text-center" style="width: 20px;">{{item.OPB}}</td>
+                    <td class="text-center" style="width: 50px;">
+                        <span class="badge label-success" ng-show="item.Quantity > 0">{{item.Quantity}}</span>
+                        <span class="badge label-warning" ng-show="item.Quantity <= 0">{{item.Quantity}}</span>
+                    </td>
+                    <td class="text-center" style="width: 50px;">{{item.ClosingBalance}}</td>
+                    <td class="text-center" style="width: 50px;">
+                        <input type="text" ng-model="item.Rate" ng-if="Config.allowRateEdits == true" class="form-control maskednumber" ng-blur="ApplyRate(item);" />
+                        <!---->
+                        <span ng-if="Config.allowRateEdits == false">{{item.Rate}}</span>
+                    </td>
+                    <!--<td width="50px" class="text-right">{{ item.ItemCategory == 1013 ? item.Amount : (item.ClosingBalance * (item.ChargeReturnedDate? (item.Days + 1) : item.Days) * item.Rate) | number :2}}</td>-->
+                    <td class="text-right">{{ item.Amount | number :2}}</td>
+                </tr>
+                <tr class="tblFooter">
+                    <td colspan="8"></td>
+                    <td><b>SubTotal</b></td>
+                    <td class="text-right"><b>{{ Billing.SubTotal  | number :2}}</b></td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+
+                        <div class="col-sm-12">
+
+
+
+                            <div class="col-sm-10 labelHeading">
+                                <span>Last Bill#: {{LastBill.InvoiceNumber}} | Bill Amount: {{LastBill.Total}} | Dated:  {{LastBill.InvoiceDate | formatDate}}</span>
+                            </div>
+                            <div class="clearfix">&nbsp;</div>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" ng-show="showBreakageBalanceTab()" ng-class="{active: showBreakageBalanceTab()}"><a href="#breakage" aria-controls="breakage" role="tab" data-toggle="tab">Breakage | Balance</a></li>
+                                <li role="presentation" ng-class="{active: !showBreakageBalanceTab()}"><a href="#matLoss" aria-controls="matLoss" role="tab" data-toggle="tab">Lost Entry</a></li>
+                                <li role="presentation"><a href="#otherCharges" aria-controls="otherCharges" role="tab" data-toggle="tab">Other Charges</a></li>
+                                <li role="presentation"><a href="#tnc" aria-controls="tnc" role="tab" data-toggle="tab">Terms and Conditions</a></li>
+                                <li role="presentation"><a href="#advanceVouchers" aria-controls="advanceVouchers" role="tab" data-toggle="tab">Advance Vouchers</a></li>
+
+                            </ul>
+
+                            <div class="tab-content">
+
+                                <div role="tabpanel" class="tab-pane" id="breakage" ng-show="showBreakageBalanceTab()" ng-class="{active: showBreakageBalanceTab()}">
+
+
+                                    <table class="table  table-responsive text-bold" style="margin-bottom: 5px;">
+
+                                        <tr class="headerRow">
+                                            <th style="width: 220px;">Item</th>
+                                            <th class="text-center" style="width:50px">B.Qty</th>
+                                            <!--<th class="text-right" style="width:50px">Rate</th>
+                                            <th class="text-right" style="width:100px">Amount</th>-->
+                                        </tr>
+                                        <tr ng-repeat="b in (Billing.Breakage || [])">
+                                            <td>{{b.Item}}</td>
+                                            <td class="text-center">{{b.Quantity}}</td>
+                                            <!--<td class="text-center">
+                                                <input type="text" ng-model="b.Rate" class="form-control maskednumber" />
+                                            </td>-->
+                                            <!--<td class="text-right">{{b.Quantity * b.Rate |number:2}}</td>-->
+                                        </tr>
+                                        <!--<tr>
+                                            <td colspan="3" class="text-right"><strong>Sub-Total</strong></td>
+                                            <td class="text-right">
+                                                {{totalBreakageAmount() |number:2}}
+                                            </td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">IGST</td>
+                                            <td class="text-right">
+                                                {{(Billing.Breakage || []) | sum : 'IGST'}}
+                                            </td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">CGST</td>
+                                            <td class="text-right">
+                                                {{(Billing.Breakage || []) | sum : 'CGST'}}
+                                            </td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">SGST</td>
+                                            <td class="text-right">
+                                                {{(Billing.Breakage || []) | sum : 'SGST'}}
+                                            </td>
+                                        </tr>-->
+                                        <!--<tr class="tblFooter">
+                                            <td colspan="3" class="text-right">Discount %</td>
+                                            <td class="text-right">
+                                                <input type="text" class="form-control maskednumber" ng-model="Billing.BreakageDiscountPercent" ng-change="onBreakageDiscountPercentChange()" />
+                                            </td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">Discount Amount</td>
+                                            <td class="text-right">
+                                                <input type="text" class="form-control maskednumber" nodecimal ng-model="Billing.BreakageDiscount" ng-change="onBreakageDiscountChange()" />
+                                            </td>
+                                        </tr>-->
+                                        <tr class="tblFooter">
+                                            <td class="text-right">Total</td>
+                                            <td class="text-center">
+                                                <strong>{{ (Billing.Breakage || []) | sum:'Quantity' | number:2 }}</strong>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div ng-if="Billing.BreakageDamageDetails && Billing.BreakageDamageDetails.length" style="margin-top:12px;">
+                                        <label class="text-muted" style="font-size:12px;">GRN damage components (from receipts in bill period)</label>
+                                        <table class="table table-condensed table-bordered" style="margin-bottom:0;">
+                                            <tr class="headerRow">
+                                                <th>Item</th>
+                                                <th>Challan</th>
+                                                <th>Component</th>
+                                                <th class="text-right">Qty</th>
+                                                <th class="text-right">Rate</th>
+                                                <th class="text-right">Cost</th>
+
+                                            </tr>
+                                            <tr ng-repeat="dd in Billing.BreakageDamageDetails">
+                                                <td>{{dd.Item}}</td>
+                                                <td>{{dd.GRN}}</td>
+                                                <td>{{dd.ComponentName}}</td>
+                                                <td class="text-right">{{dd.Quantity | number:2}}</td>
+                                                <td class="text-right">{{dd.Rate | number:2}}</td>
+                                                <td class="text-right">{{dd.Cost | number:2}}</td>
+
+                                            </tr>
+                                            <tr class="tblFooter">
+                                                <td colspan="5" class="text-right"><strong>Total</strong></td>
+                                                <td class="text-right"><strong>{{ (Billing.BreakageDamageDetails | sum:'Cost') | number:2 }}</strong></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="matLoss" ng-class="{active: !showBreakageBalanceTab()}">
+                                    <table class="table  table-responsive text-bold" style="margin-bottom: 5px; width: 100%;">
+                                        <tr class="headerRow">
+                                            <!--<th class="text-center" style="width: 130px;">Ref</th>-->
+                                            <th style="width: 260px;">Item</th>
+                                            <th class="text-center" style="width: 50px;">Qty</th>
+                                            <th class="text-right" style="width: 50px;">Rate</th>
+                                            <th class="text-right" style="width: 100px;">Amount</th>
+                                            <th class="text-center" style="width: 40px;">Delete</th>
+                                        </tr>
+
+
+                                        <tr ng-repeat="b in LossCharges">
+                                            <!--<td>{{b.GRN}}</td>-->
+                                            <td>{{b.Item}}</td>
+                                            <td class="text-center">
+                                                <input type="text" ng-model="b.Quantity" class="form-control maskednumber" />
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="text" ng-model="b.Rate" class="form-control maskednumber" />
+                                            </td>
+                                            <td class="text-right">{{b.Amount |number:2}}</td>
+                                            <td class="text-center">
+                                                <span style="cursor: pointer;" ng-click="DeleteLossItem($index);"><i class="fa fa-trash"></i></span>
+                                            </td>
+                                        </tr>
+                                        <!--<tr>
+
+                                            <td class="text-right" colspan="3"><strong>Sub-Total</strong></td>
+                                            <td class="text-right"><strong>{{LossCharges | sum:'Amount'}}</strong></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">IGST</td>
+                                            <td class="text-right">
+                                                {{LossCharges | sum : 'IGST'}}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">CGST</td>
+                                            <td class="text-right">
+                                                {{LossCharges | sum : 'CGST'}}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">SGST</td>
+                                            <td class="text-right">
+                                                {{LossCharges | sum : 'SGST'}}
+                                            </td>
+                                            <td></td>
+                                        </tr>-->
+                                        <!--<tr class="tblFooter">
+                                            <td colspan="3" class="text-right">Discount %</td>
+                                            <td class="text-right">
+                                                <input type="text" class="form-control maskednumber" ng-model="Billing.LossDiscountPercent" ng-change="onLossDiscountPercentChange()" />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">Discount Amount</td>
+                                            <td class="text-right">
+                                                <input type="text" class="form-control maskednumber" nodecimal ng-model="Billing.LossDiscount" ng-change="onLossDiscountChange()" />
+                                            </td>
+                                            <td></td>
+                                        </tr>-->
+                                        <tr class="tblFooter">
+                                            <td colspan="3" class="text-right">Total</td>
+                                            <td class="text-right">
+                                                {{Billing.TotalLossAmount}}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="otherCharges">
+                                    <table class="table table-responsive tableInput">
+                                        <tr class="headerRow">
+                                            <th style="width: 30px" class="text-center">#</th>
+                                            <th style="width: 150px">Charge</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                        <tr ng-repeat="ch in Billing.OtherCharges">
+                                            <td class="text-center">
+                                                {{$index+1}}
+                                            </td>
+                                            <td ng-bind="ch.Name"></td>
+                                            <td style="padding: 2px !important;">
+                                                <input type="number" class="form-control" style="border: solid 1px #00bcd4; width: 30%;" ng-model="ch.Amount" />
+                                            </td>
+
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="tnc">
+                                    <textarea ckeditor="editorOptions" ng-model="Billing.Tnc" data-ck-editor style="height:100px;"></textarea>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="advanceVouchers">
+                                    <table class="table  table-responsive text-bold" mekKey style="margin-bottom: 5px;width:100%">
+
+                                        <tr class="headerRow">
+                                            <th class="text-center" style="width: 50px;">Select</th>
+                                            <th class="text-center" style="width:150px">Vch.Number</th>
+                                            <th class="text-center" style="width:150px">Date</th>
+                                            <th class="text-right" style="width:150px">Amount</th>
+
+                                            <th class="text-right" style="width:100px">Balance</th>
+                                            <th class="text-right">Adjust</th>
+
+                                        </tr>
+
+                                        <tr ng-repeat="ad in Payments">
+                                            <td class="text-center">
+                                                <input type="checkbox" />
+                                            </td>
+                                            <td class="text-center">{{ad.ReceiptNumber}}</td>
+                                            <td class="text-center">{{ad.TransactionDate | date}}</td>
+                                            <td class="text-right"> {{ad.TransactionAmount}}</td>
+
+                                            <td class="text-right">{{ad.Balance}}</td>
+                                            <td class="text-right">
+                                                <input type="text" class="form-control maskednumber text-right" ng-model="ad.PaidAmount" maxlength="10" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label>Party Balance:| </label>
+                                    <span class="badge label-warning">
+                                        {{
+                                        ((TransList| filter: {TransactionType:1} |sum:'TransactionAmount') -   (TransList| filter: {TransactionType:2} |sum:'TransactionAmount'))|number:2
+                                        }}
+                                    </span>
+                                </div>
+                                <div class="col-sm-6 col-xs-12" ng-class="{'col-sm-12': !Config.showChallans}">
+                                    <div class="table-responsive" style="max-height:200px;overflow:auto">
+                                        <label>Stock Balance</label>
+                                        <table class="table table-condensed">
+                                            <tr class="headerRow">
+                                                <td class="headerRow text-center" style="width:50px;">Sr.No</td>
+                                                <td class="headerRow">Item</td>
+                                                <td class="headerRow">Balance</td>
+                                            </tr>
+                                            <tr ng-repeat="c in ClosingBalance">
+                                                <td class="text-center">{{$index+1}}</td>
+                                                <td>{{c.Item}}</td>
+                                                <td>{{c.ClosingBalance}}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="table-responsive" style="max-height:200px;overflow:auto">
+                                        <label>Challans</label>
+                                        <table class="table table-condensed">
+                                            <tr>
+                                                <td class="headerRow text-center" style="width:50px;">Sr.No</td>
+                                                <td class="headerRow">Challan Number</td>
+                                                <td class="headerRow">Mode</td>
+                                            </tr>
+                                            <tr ng-repeat="c in Billing.Challans">
+                                                <td class="text-center">{{$index+1}}</td>
+                                                <td>{{c.ChallanNumber}}</td>
+                                                <td>{{c.Type == 1 ?'Delivery': 'Return'}}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="table-responsive" style="max-height:200px;overflow:auto">
+                                        <label>PO</label>
+                                        <span ng-repeat="b in (Billing.PO || [])">
+                                            {{b.PONumber}}
+                                            <i class="fa fa-times text-danger" style="cursor:pointer;margin:0 4px 0 2px;" title="Remove"
+                                               ng-click="removeGenBillPo($index); $event.preventDefault()"></i>
+                                            <span ng-if="!$last">| </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div class="col-sm-10">
+                                <label>Party Stock Balance:| </label>
+                                <span ng-repeat="bal in ClosingBalance">
+                                    <b>{{bal.Item}} </b>
+                                    <span class="badge label-success">
+                                        {{bal.ClosingBalance}}
+                                    </span>
+                                </span>
+                            </div>-->
+
+                        </div>
+                    </td>
+                    <td colspan="4">
+
+                        <table class="table  table-responsive text-bold">
+                            <tr>
+
+
+
+                                <td class="text-right">Freight</td>
+                                <td class="text-right" width="150px" style="padding-right:0px;">
+                                    <input type="text" class="form-control maskednumber text-right" ng-model="Billing.Freight" maxlength="10" style="padding-right:0px;" />
+
+                                </td>
+                            </tr>
+                            <!--<tr>
+
+                                <td class="text-right">Breakage Charges</td>
+                                <td class="text-right">{{ Billing.BreakageAmount |number:2}}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-right">Loss Charges</td>
+                                <td class="text-right">{{   Billing.TotalLossAmount | number:2}}</td>
+                            </tr>-->
+                            <tr>
+                                <td class="text-right">Other Charges</td>
+                                <td class="text-right">{{ TotalOtherCharges |number:2}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Taxable value</td>
+                                <td class="text-right">{{ Billing.Taxable | number:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">
+                                    IGST
+                                </td>
+                                <td class="text-right">{{ Billing.IGST |number:2}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">
+                                    CGST
+                                </td>
+                                <td class="text-right">{{ Billing.CGST |number:2}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">
+                                    SGST
+                                </td>
+                                <td class="text-right">{{ Billing.SGST |number:2}}</td>
+                            </tr>
+                            <!--<tr>
+
+                                <td class="text-right">SubTotal</td>
+                                <td class="text-right">{{Billing.Total1 |number:2}}</td>
+                            </tr>-->
+
+
+
+                            <tr ng-repeat="tax in Billing.Taxes">
+
+
+
+                                <td class="text-right">
+                                    <div class="col-sm-12 nopadding text-right">
+                                        <!-- <input type="checkbox" class="col-sm-1"   ng-model="tax.Applicable" ng-change="ApplyTax(this)" />-->
+
+                                        <span class="col-sm-12 nopadding" ng-click="showTaxItems()" style="padding-left: 5px !important;">{{tax.Name}}({{tax.Rate  |number:2 }}%)</span>
+                                    </div>
+
+                                </td>
+
+                                <!--<td class="text-right" width="100px">{{tax.Applicable && (Billing.Total1  * tax.Rate/100.00) || 0 |number:2}}</td>-->
+                                <td class="text-right">
+
+                                    {{ tax.TaxAmount|| 0 |number:2}}
+                                </td>
+                            </tr>
+
+                            <!--<tr>
+                                <td class="text-right">Freight & B. Tax ( {{Config.FreightTax}}%)</td>
+                                <td class="text-right">{{Billing.FreightTax  |number:2}}</td>
+                            </tr>-->
+
+
+                            <tr>
+                                <td class="text-right">Freight  ({{Config.FreightTax}}%)</td>
+                                <td class="text-right">{{Billing.FreightTax  |number:2}}</td>
+                            </tr>
+                            <!--<tr>
+
+                                <td class="text-right">Breakage Tax  </td>
+                                <td class="text-right">{{Billing.BreakageTax  |number:2}}</td>
+                            </tr>-->
+                            <tr>
+                                <td class="text-right">Other Charges Tax  ({{Config.FreightTax}}%)</td>
+                                <td class="text-right">{{Billing.ChargesTax  |number:2}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">
+                                    Last Balance
+                                </td>
+                                <!--<td class="text-right">{{(Billing.OutStandingType) + ' ' + Billing.OutStanding |number:2}}</td>-->
+                                <td class="text-right">{{  Billing.AccountLedger.Balance |number:2}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Less Receipts</td>
+                                <td class="text-right">{{Billing.PaidAmount | number:2}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Discount %</td>
+                                <td class="text-right">
+                                    <input type="text" ng-model="Billing.DiscountPercent" style="padding-right:0px;" class="form-control maskednumber text-right " maxlength="15" ng-blur="onDiscountPercentChange()" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Discount</td>
+                                <td class="text-right">
+                                    <input type="text" ng-model="Billing.Discount" style="padding-right:0px;" class="form-control maskednumber text-right " maxlength="15" ng-blur="onDiscountChange()" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">
+                                    Round Off
+                                    <span ng-if="Config.roundOffTotalMethod && Config.roundOffTotalMethod !== 'none'" class="text-muted" style="font-size:11px;display:block;">(billing setting applies)</span>
+                                </td>
+                                <td class="text-right">
+                                    <div class="col-sm-3">
+                                        <input type="checkbox" ng-model="Billing.RoundOff" ng-disabled="Config.roundOffTotalMethod && Config.roundOffTotalMethod !== 'none'" />
+
+
+                                    </div>
+                                    <div class="col-sm-9 col-sm-9 nopadding text-right">
+                                        <label>{{CalSubTotal()| number:2}}</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td class="text-right">Gross Total</td>
+
+                                <td class="text-right">
+
+                                    <!--{{(Billing.Total +   (Billing.OutStandingType =='Dr' ? - Billing.OutStanding : - Billing.OutStanding)) - Billing.Discount |number:2}}-->
+                                    {{Billing.Total |number:2}}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">&nbsp;</div>
+        <div class="col-sm-10">
+        </div>
+
+        <div class="col-sm-2 text-right">
+            <input type="button" id="btnSave" class="btn btn-primary" value="Save Bill" ng-click="SaveBill();" />
+        </div>
+    </div>
+    <div class="modal fade" id="billChangesDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:36%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">
+                        Bill Changes
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-sm-12 pl-0 pr-0">
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <tr class="headerRow">
+                                    <th colspan="2">Old Bill</th>
+                                    <th>New Bill</th>
+                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td style="width:80px;">
+                                            <label>Date</label>
+                                        </td>
+                                        <td style="width:180px;">
+                                            {{ExistingBill.From}} -  {{ExistingBill.To}}
+                                        </td>
+                                        <td style="width:50%">
+                                            {{Billing.From}} - {{Billing.To}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>   <label>Client</label></td>
+                                        <td> {{Billing.LedgerName}} </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>   <label>Site</label></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-12 p-0">
+                            <div class="alert alert-warning">Click on Save to proceed or cancel to cancel the edits.</div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm">Save </button>
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script lang="ja">
+
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+        $('.panel-group a').click(function (e) {
+            e.preventDefault();
+        });
+
+    </script>
+</form>

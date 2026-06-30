@@ -1,0 +1,70 @@
+﻿
+
+
+<div class="col-sm-12 mt-3">
+    <div class="row">
+        <div class="col-sm-6">
+            <label for="exampleInputName2">Is your business registered for GST?</label>
+        </div>
+        <div class="col-sm-4"  ng-if="Comp.gstUpdated==0 || Comp.GSTStatus !='Active'">
+            <div class="radio-inline">
+                <label for="exampleInputName2">
+                    <input type="radio" name="paymentMode" ng-value="1" ng-model="Comp.hasGST" />
+                    Yes
+                </label>
+            </div>
+            <div class="radio-inline">
+                <label for="exampleInputName2">
+                    <input type="radio" name="paymentMode" ng-value="0" ng-model="Comp.hasGST" />
+                    No
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12" style="margin-top:50px;" ng-show="Comp.hasGST == 1">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-5 control-label">GSTIN</label>
+            <div class="col-sm-6">
+                <div style="display:flex;justify-content:space-between;">
+                    <input type="text" style="width:63%;" class="form-control" id="inputEmail3" placeholder="GST No" ng-model="GSTNo">
+
+                    <button type="submit" class="btn btn-primary" ng-if="Comp.gstUpdated==0  || Comp.GSTStatus !='Active'" ng-click="GetTaxPayerDetails();">Get Details</button>
+
+                </div>
+
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-5 control-label">Business Legal Name</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="inputPassword3" ng-model="Comp.LegalName" disabled>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-5 control-label">Business Trade Name</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="inputPassword3" ng-model="Comp.TradeName" disabled>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-5 control-label">GST Registeration Date</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="inputPassword3" ng-model="Comp.GSTRegistrationDate" disabled>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-5 control-label">GST Status</label>
+            <div class="col-sm-6">
+                {{Comp.GSTStatus}}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-5 col-sm-6">
+                <button type="submit" class="btn btn-primary" ng-if="Comp.GSTRegistrationDate != null && Comp.gstUpdated == 0" ng-click="UpdateGSTDetails()">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

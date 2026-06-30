@@ -1,0 +1,6 @@
+@RBN.CRM.API_HostAddress = http://localhost:5153
+
+GET {{RBN.CRM.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

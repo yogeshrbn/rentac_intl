@@ -1,0 +1,22 @@
+﻿<!--<pageheader heading="Settings"></pageheader>-->
+<div class="col-sm-12 settingsDiv">
+    <div class="row">
+        <div ui-view="control-navigation">
+            <ul class="nav nav-pills nav-stacked" role="tablist">
+                <li role="presentation" class="active"><a href="#itemInfo"><i class="fa fa-angle-right" aria-hidden="true"></i>  Default Company</a></li>
+                <li role="presentation"><a href="#billing"><i class="fa fa-angle-right" aria-hidden="true"></i> Billing</a></li>
+                <li role="presentation"><a href="#taxInfo"><i class="fa fa-angle-right" aria-hidden="true"></i>  Profile</a></li>
+                <!--<li role="presentation"><a href="#Div2" role="tab" data-toggle="tab">Messages</a></li>-->
+            </ul>
+
+        </div>
+        <div ui-view="content"></div>
+    </div>
+</div>
+
+<script lang="ja">
+
+    $('.nav a').click(function (e) {
+        e.preventDefault();
+    });
+</script>

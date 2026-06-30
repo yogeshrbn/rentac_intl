@@ -1,0 +1,175 @@
+<div class="clearfix">&nbsp;</div>
+<form id="form-receipt" method="post" class="form-horizontal">
+
+    <!-- <pageheader heading=" {{TranType == 1 ? 'Cash Receipt': 'Cash Payment' }}" />-->
+    <div class="col-sm-4">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Party<i class="required">*</i>
+                </label>
+                <div class="col-sm-9">
+                    <searchableselect ng-name="Ledger" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Trans.LedgerId" data-val="LedgerId" data-text="Name" ng-disabled="lockPartySite"></searchableselect>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Site
+                </label>
+                <div class="col-sm-9">
+                    <searchableselect ng-name="site" tabindex="2" data-field="LedgerSites" ng-model="Trans.LedgerSiteId" data-val="LedgerSiteId" data-text="SiteAddress" ng-disabled="lockSiteSelect"></searchableselect>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Advance
+                </label>
+                <div class="col-sm-9 vcenter">
+                    <input type="checkbox" ng-model="Trans.Advance" ng-true-value="1" ng-false-value="0"  ng-change="onAdvanceChange()" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Date<i class="required">*</i>
+                </label>
+                <div class="col-sm-9">
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Trans.TransactionDate" type="text" tabindex="1" class="form-control" field-required="true" name="TransactionDate" />
+                    </datepicker>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Amount<i class="required">*</i>
+                </label>
+                <div class="col-sm-9">
+                    <input ng-model="Trans.TransactionAmount" ng-change="onPaidAmountChange()" type="text" tabindex="3" class="form-control maskednumber text-right" name="Amount" field-required="true" />
+                </div>
+            </div>
+            <div class="form-group" ng-show="Bills.length">
+                <label class="col-sm-3 control-label">
+                    Total bill TDS
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static text-right">{{ totalBillTds() | number:2 }}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Mode<i class="required">*</i>
+                </label>
+                <div class="col-sm-9">
+                    <searchableselect ng-name="txn_mode" tabindex="2" data-field="PaymentModes"
+                                      ng-model="Trans.TransactionMode" data-val="Id" data-text="Name"></searchableselect>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Deposit To A/C<i class="required">*</i>
+                </label>
+                <div class="col-sm-9">
+                    <searchableselect ng-name="val_refedger" tabindex="2" data-field="RefAccounts" ng-model="Trans.RefLedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Ref/Bill#
+                </label>
+                <div class="col-sm-9">
+                    <input ng-model="Trans.TranRefNumber" type="text" tabindex="4" class="form-control" name="refBill" field-required="true" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Remarks
+                </label>
+                <div class="col-sm-9">
+                    <input ng-model="Trans.Narration" type="text" tabindex="5" class="form-control" name="Remarks" field-required="true" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    Receipt image
+                </label>
+                <div class="col-sm-9">
+                    <input type="file" id="quickReceiptImageInput" accept="image/*" class="form-control" style="padding:4px;height:auto;" onchange="angular.element(this).scope().onQuickReceiptFileChange(this);angular.element(this).scope().$apply();" />
+                    <!--<p class="help-block small">Optional. Image is stored in temp until you save the voucher.</p>-->
+                    <div style="margin-top:8px;">
+                        <img ng-if="receiptImagePreview" ng-src="{{receiptImagePreview}}" alt="Preview" style="max-height:120px;max-width:100%;border:1px solid #ddd;padding:2px;" />
+                        <img ng-if="!receiptImagePreview && receiptSavedImageUrl()" ng-src="{{receiptSavedImageUrl()}}" alt="Saved receipt" style="max-height:120px;max-width:100%;border:1px solid #ddd;padding:2px;" />
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm" ng-click="clearQuickReceiptImage()" ng-show="receiptImagePreview || Trans.ReceiptStagingPath">Remove staged image</button>
+                    <button type="button" class="btn btn-link btn-sm" ng-click="removeSavedReceiptImage()" ng-show="Trans.ReceiptDocumentPath && Trans.LedgerTransactionId > 0">Remove saved receipt</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="col-sm-9 col-sm-offset-3">
+                    <input type="button" class="btn btn-default" tabindex="6" value="Cancel" ng-click="Cancel();" />
+                    <input type="button" class="btn btn-primary" tabindex="6" value="Save Entry" ng-click="CreateTransaction();" ng-show="AccessData.Add" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-8">
+        <div class="table-responsive">
+            <div class="callout-heading">
+                <h4>Due Bills</h4>
+                <p>Enter the amount in the payment box against each bill. This will adjust the bill payment automatically.</p>
+            </div>
+            <table class="table table-condensed">
+                <tr class="headerRow">
+                    <th class="text-center">S.No</th>
+                    <th>Bill #</th>
+
+                    <th>Date</th>
+                    <th class="text-right">Bill Amount</th>
+                    <th class="text-right">Amount Due</th>
+                    <th class="text-center" style="width:100px;">Payment</th>
+                    <th class="text-center" style="width:90px;">TDS</th>
+                </tr>
+                <tr ng-repeat="item in Bills" class="{{item.Selected == 1 ? 'text-success': ''}}">
+                    <td class="text-center">{{$index+1}}</td>
+                    <td>{{item.InvoiceNumber}}</td>
+
+                    <td>{{item.InvoiceDate | formatDate}}</td>
+                    <td class="text-right">{{item.Total |number: 2}}</td>
+                    <td class="text-right">{{item.Balance |number: 2}}</td>
+                    <td class="text-center">
+                        <input type="text" class="form-control maskednumber" ng-model="item.AppliedAmount" ng-change="onAmountChange(item)" />
+                        <!--<button type="button" class="btn btn-sm btn-primary" ng-class="item.Selected == 1 ? 'btn-success': ''" ng-click="SelectBillForPayment(item)">
+                            {{item.Selected == 1 ? 'Selected': 'Select'}}
+                        </button>-->
+                    </td>
+                    <td class="text-center">
+                        <input type="text" class="form-control maskednumber" ng-model="item.TdsAmount" ng-change="onTdsChange(item)" />
+                    </td>
+
+                </tr>
+
+                <tr class="headerRow">
+                    <th colspan="4" class="text-right">
+                        Total
+                    </th>
+                    <th class="text-right">
+                        {{Bills  | sum:'Balance'| number:2}}
+                    </th>
+                    <th class="text-right">{{BillBalance | number:2}}</th>
+                    <th class="text-right">{{ totalBillTds() | number:2 }}</th>
+                </tr>
+
+
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+</form>

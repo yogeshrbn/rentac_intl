@@ -1,0 +1,105 @@
+﻿<style>
+    .widget-simple {
+        padding: 0px;
+    }
+
+    .widget {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    #page-content {
+        padding: 0px;
+    }
+
+    .content-header {
+        display: none;
+    }
+
+    footer {
+        display: none;
+    }
+</style>
+
+<div class="wrapper col-lg-5 col-md-5 col-sm-6 col-xs-12 login-left hidden-xs">
+    <div class="login-brand">
+        <a href="http://rentac.ind.in">  <img src="../img/brand-logo.png" style="width: 170px;"></a>
+    </div>
+
+
+    <div class="center-col">
+        <div class="login-form">
+            <h2>
+
+                Complete renting Solution
+            </h2>
+
+        </div>
+    </div>
+</div>
+<div class="wrapper col-lg-7 col-md-7 col-sm-6 col-xs-12 login-right">
+    <div class="center-col">
+        <div id="" class="login-form box-shadow">
+            <h2 style="width:40%">Sign Up</h2>
+
+            <div class="form-container" style="padding: 30px;">
+                <form id="form-signup">
+                    <div class="form-group">
+
+                        <label><b>Your Name</b></label>
+
+                        <input type="text" name="val_name" class="form-control" autofocus tabindex="1" placeholder="Full Name" data-ng-model="signUpData.name" required autofocus>
+                    </div>
+                    <div class="form-group">
+
+                        <label><b>Email</b></label>
+
+                        <input type="text" name="val_email" class="form-control" autofocus tabindex="1" placeholder="Email" data-ng-model="signUpData.email" required autofocus>
+                   <i class="text-danger">( Note: This will be your corresponding email address )</i>
+                    </div>
+                    <div class="form-group">
+
+                        <label><b>Mobile</b></label>
+
+                        <input type="text" name="val_mobile" class="form-control" autofocus tabindex="1" placeholder="Mobile number" maxlength="10"
+                               data-ng-model="signUpData.mobile" required autofocus>
+                        <i class="text-danger">( Note: This will be your corresponding mobile number )</i>
+                    </div>
+                    <div class="form-group">
+
+                        <label><b>Company Name</b></label>
+
+                        <input type="text" name="val_company" class="form-control" autofocus tabindex="1" placeholder="Company Name" data-ng-model="signUpData.company" required autofocus>
+                    </div>
+                    <!--<div class="form-group">
+                        <label><b>Password</b></label>
+                        <a href="forgot.html" class="pull-right hide">Forgot Password?</a>
+                        <input type="password" name="password" class="form-control" tabindex="2" placeholder="Password" data-ng-model="loginData.password" required>
+                    </div>-->
+                    <!--<div class="form-group">
+                        <label><b>Fin Year</b></label>
+                        <searchableselect id="finYear" name="finYear" tabindex="3" ng-model="loginData.finYear" data-field="FinYearList" data-val="FinYearId" data-text="FinYear" required></searchableselect>
+
+                    </div>-->
+                    <div data-ng-hide="message == ''" class="text-warning">
+                        {{message}}
+                    </div>
+
+                </form>
+                <div class="form-group text-right">
+                    <button class="btn btn-primary btn-md" type="submit" tabindex="4" data-ng-click="register()" value="SignUp">Sign Up</button>
+                </div>
+                <hr />
+                <div class="form-group text-center">
+
+                    <label>Already have account? <a href="#login">Login here</a> </label>
+
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,320 @@
+<!--  <pageheader heading="Bill register" />-->
+<div class="clearfix">&nbsp;</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="col-sm-3">Party</label>
+            <div class="col-sm-9">
+                <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts"
+                                  ng-id="client_value" ng-model="Billing.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="col-sm-3">Site</label>
+            <div class="col-sm-9">
+                <searchableselect id="Searchableselect1" ng-model="Billing.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                                  data-text="SiteAddress"></searchableselect>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="col-sm-3">Inv. Type</label>
+            <div class="col-sm-9">
+                <select class="form-control" ng-model="Billing.InvoiceType">
+                    <option value="0" ng-selected="true">ALL</option>
+                    <option value="1">Rent</option>
+                    <option value="2">Breakage</option>
+                    <option value="4">Sale</option>
+                    <option value="5">Contract</option>
+                    <option value="6">Loss</option>
+                    <option value="8">Hire</option>
+                    <option value="9">Measurement</option>
+
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="col-sm-3">Status</label>
+            <div class="col-sm-9">
+                <select class="form-control" ng-model="Billing.StatusId">
+                    <option value="0" ng-selected="true">ALL</option>
+                    <option value="3">Draft</option>
+                    <option value="4">Sent For Approval</option>
+                    <option value="1">Approved</option>
+                    <option value="2">Deleted</option>
+
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="col-sm-3">From</label>
+            <div class="col-sm-9">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input ng-model="Billing.From" type="text" tabindex="2" class="form-control" />
+                </datepicker>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="col-sm-3">To</label>
+            <div class="col-sm-9">
+                <datepicker date-format="dd/MM/yyyy">
+                    <input ng-model="Billing.To" type="text" tabindex="3" class="form-control" />
+                </datepicker>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <div class="d-flex col-xs-12" style="align-items:center;justify-content:space-between;">
+                <div class="d-flex" style="align-items:center;justify-content:space-between;">
+                    <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search Bills" ng-click="GetBills();" />
+                    <input type="button" ui-sref="recurrinvoice" class="btn btn-primary" value="New Bill" ng-show="AccessData.Add" />
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="col-lg-12 mt-2">
+    <div class="table-responsive">
+        <table class="table table-condensed ">
+
+            <tr class="headerRow">
+                <th style="width:50px;" class="text-center">S.No</th>
+                <th style="width: 80px;"  sort-header="Bills" sort-field="InvoiceNumber">Bill#</th>
+
+                <th style="width: 150px;"  sort-header="Bills" sort-field="Client">Client</th>
+                <th style="width: 70px;" sort-header="Bills" sort-field="InvoiceDate">B. Date</th>
+                <th class="text-center" style="width: 150px;"  sort-header="Bills" sort-field="From">Period</th>
+                <!--<th style="text-align: right; width: 50px;">Amt</th>-->
+                <!--<th style="text-align: right; width: 70px;">Freight</th>
+                <th style="text-align: right; width: 50px;">Br. Amt</th>-->
+                <!--<th style="text-align: right; width: 70px;">Loss Amt</th>-->
+                <!--<th style="text-align: right; width: 50px;">Tax</th>-->
+                <!--<th style="text-align: right; width: 80px;">Prev Bal</th>-->
+                <th style="text-align: right; width: 80px;" sort-header="Bills" sort-field="InvoiceType">Inv Type</th>
+                <th style="text-align: center; width: 50px;"  >Status</th>
+                <th style="text-align: right; width: 70px;" sort-header="Bills" sort-field="Total">Amount</th>
+                <th style="text-align: right; width: 80px;" sort-header="Bills" sort-field="Balance">Balance Due</th>
+                <th style="text-align: center; width: 50px;">Actions</th>
+
+            </tr>
+            <tr id="tr{{item.InvoiceId}}" ng-repeat="item in Bills" class="{{ getClassName(item) }}">
+                <td class="text-center">{{$index+1}}</td>
+                <td>
+                    <span ng-class="item.IrnDetails ? 'label label-success': ''" ng-click="ShowBillingItems(item);">{{item.InvoiceNumber}}</span>
+
+                </td>
+                <td>
+                    {{item.Client}}
+                </td>
+                <td>{{item.InvoiceDate | date: 'dd-MM-yyyy'}}</td>
+                <td class="text-center">{{item.From |formatDate}} To {{item.To |formatDate}}</td>
+                <!--<td style="text-align: right;">{{item.SubTotal |number:2 }}</td>-->
+                <!--<td style="text-align: right;">{{item.Freight |number:2 }}</td>
+                <td style="text-align: right;">{{item.BreakageAmount |number:2 }}</td>-->
+                <!--<td style="text-align: right;">{{item.LossCharges |number:2 }}</td>-->
+                <!--<td style="text-align: right;"><span class="text-primary" ng-click="BillingItemsTax(item);">{{item.TaxAmount |number:2 }}</span> </td>-->
+                <!--<td style="text-align: right;">
+                    <span ng-if="item.OutStandingType == 1"> Dr {{item.OutStanding |number:2 }}</span>
+                    <span ng-if="item.OutStandingType == 2"> Cr {{item.OutStanding |number:2 }}</span>
+                </td>-->
+
+                <td style="text-align: right;">
+                    <span ng-if="item.InvoiceType == 1">
+                        Rent Invoice
+                    </span>
+
+                    <span ng-if="item.InvoiceType == 2">
+
+                        Breakage
+
+
+                    </span>
+
+                    <span ng-if="item.InvoiceType == 4"> Sale Bill</span>
+                    <span ng-if="item.InvoiceType == 5"> Contract Bill</span>
+                    <span ng-if="item.InvoiceType == 6"> Loss Bill</span>
+                    <span ng-if="item.InvoiceType == 7"> Sale Return</span>
+                    <span ng-if="item.InvoiceType == 8">Hire Bill</span>
+                    <span ng-if="item.InvoiceType == 9">Measurement Bill</span>
+
+                </td>
+                <td style="text-align: center;">
+
+                    <span class="badge badge-success" ng-if="item.Balance == 0">Paid</span>
+                    <span class="badge badge-warning" ng-if="item.Balance > 0">Due</span>
+                </td>
+                <td style="text-align: right;">
+
+                    {{item.Total  |number:2 }}
+
+                </td>
+                <td style="text-align: right;">
+                    {{item.Balance | number:2}}
+                </td>
+                <td style="text-align: center;">
+
+                    <!--  <span ng-show="item.StatusId != 2" class="fa fa-times text-danger" title="Cancel bill" ng-click="CancellBill(item);"></span>-->
+                    <!--   <div class="btn-group">
+                        <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">
+                                <span class="fa fa-print text-primary" title="Print bill" ng-click="PrintBill($index);"></span>
+                            </a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+
+                        </div>
+                    </div>-->
+                    <div class="btn-group">
+                        <!-- <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Action
+                         <span class="caret"></span>
+                        </button>-->
+                        <a href="javascript:void()" ng-click="showOptions(item)"> <i class="fa fa-cogs fa-2x " aria-haspopup="true" aria-expanded="false"></i></a>
+                        <!--<a href="javascript:void()" class="ml-1" ng-click="showOptions(item)"> <i class="fa fa-whatsapp fa-2x text-success " aria-haspopup="true" aria-expanded="false"></i></a>-->
+                        <a href="javascript:void()" ng-click="showEmailDialog(item)"><i class="fa fa-share-alt fa-2x"></i> </a>
+                        <!--<i class="fa fa-chevron-down" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="#" ng-click="editBill(item);" stop="true"><i class="fa fa-edit text-primary fa-2x"></i>Edit</a></li>
+                            <li><a href="#" ng-click="PrintBill(item.InvoiceId,item.InvoiceType);" stop="true"><i class="fa fa-print text-primary fa-2x"></i>Print</a></li>
+                            <li><a href="#" ng-click="SendReminder(item,EMAIL_REMINDER);" stop="true"><i class="fa fa-envelope-o text-success fa-2x"></i>Send Email</a></li>
+                            <li><a href="#" ng-click="SendReminder(item,SMS_REMINDER);" stop="true"><i class="fa fa-comment text-success fa-2x"></i>Send SMS</a></li>
+                            <li ng-show="item.StatusId == 1"><a href="#" ng-click="CancellBill(item);" stop="true"><i class="fa fa-trash fa-2x"></i>Cancel Bill </a></li>
+
+                            <li ng-show="item.StatusId == 1"><a href="#" ng-click="CancellBill(item);" stop="true"><i class="fa fa-trash fa-2x"></i>Send For Approval </a></li>
+
+                            <li role="separator" class="divider"></li>
+                            <li ng-show="item.StatusId == 1 && comp.EInvoiceEnabled ==true && !item.IrnDetails"><a href="#" ng-click="pushToIRP(item);" stop="true"><i class="fa fa-paper-plane fa-2x"></i>Push To IRP</a></li>
+                            <li ng-show="item.StatusId == 1  && comp.EwayBillEnabled ==true"><a href="#" ng-click="createEwayBill(item);"><i class="fa fa-paper-plane fa-2x"></i>Create E-way Bill</a></li>-->
+                        <!--<li><a href="#" ng-show="item.StatusId == 1" ng-click="MarkSettle(item);" stop="true><i class="fa fa-check fa-2x"></i>Mark as Settled</a></li>-->
+                        <!--</ul>-->
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <div class="modal right fade" id="billOptionsModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:46%;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Bill Options</h4>
+                </div>
+                <div class="modal-body" style="overflow-y:auto;height:85%">
+
+                    <div class="col-sm-6 mt-3">
+                        <div class="bs-callout bs-callout-danger" id="callout-navbar-fixed-top-padding">
+                            <h4>Edit Bill</h4>
+                            <p>
+                                Bills in draft and send for approval state can be edited.
+                            </p>
+                            <button class="btn btn-primary" ng-click="editBill();"><i class="fa fa-edit"></i> Edit Bill</button>
+                        </div>
+                        <div class="bs-callout bs-callout-danger" id="callout-navbar-fixed-top-padding"
+                             ng-if="SelectedBill.StatusId == 3">
+                            <h4>Send For Approval</h4>
+                            <p>
+                                Only Draft Bills Can be Sent For Approval
+                            </p>
+                            <button class="btn btn-primary" ng-click="sendForApproval();"><i class="fa fa-legal"></i> Send For Approval</button>
+                        </div>
+                        <div class="bs-callout bs-callout-danger" id="callout-navbar-fixed-top-padding"
+                             ng-if="SelectedBill.StatusId == 4 && Token.RoleId == 1">
+                            <h4>Approve Bill</h4>
+                            <p>
+
+                            </p>
+                            <button class="btn btn-primary" ng-click="approveBill();"><i class="fa fa-legal"></i>Approve Bill</button>
+                        </div>
+                        <div class="bs-callout bs-callout-danger" id="callout-navbar-fixed-top-padding">
+                            <h4>Cancel Bill</h4>
+                            <p>
+                                Bills in draft and send for approval state can be cancelled.
+                            </p>
+                            <button class="btn btn-danger" ng-click="CancellBill()"><i class="fa fa-trash"></i> Cancel Bill</button>
+                        </div>
+                        <div class="bs-callout bs-callout-danger" id="callout-navbar-fixed-top-padding"
+                             ng-if="SelectedBill.Balance > 0 &&  SelectedBill.StatusId == 1">
+                            <h4>Settle Bill</h4>
+                            <p>
+                                Settle bill if client alread paid in advance and payment not received from receipt voucher.
+                            </p>
+                            <button class="btn btn-success" ng-show="AccessData.Add" ng-click="SettleBill()"><i class="fa fa-check"></i> Settle Bill</button>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6 mt-3">
+                        <div class="bs-callout bs-callout-danger" id="callout-navbar-fixed-top-padding">
+                            <h4>Print Bill</h4>
+
+                            <button class="btn btn-primary" ng-click="PrintBill()"><i class="fa fa-print"></i> Print Bill</button>
+                        </div>
+                        <div class="bs-callout bs-callout-danger" ng-if="SelectedBill.StatusId == 1" id="callout-navbar-fixed-top-padding">
+                            <h4>Push To IRP</h4>
+                            <p>
+                                Please make sure IRP is enabled in settings
+                            </p>
+                            <button class="btn btn-primary" ng-click="pushToIRP()"><i class="fa fa-paper-plane"></i> Push To IRP</button>
+                        </div>
+                        <div class="bs-callout bs-callout-danger" ng-if="SelectedBill.StatusId == 1 && SelectedBill.InvoiceType == 4" id="callout-navbar-fixed-top-padding">
+
+                            <h4>Create E-Way Bill</h4>
+                            <p>
+                                Please make sure E-way bill is enabled in settings
+                            </p>
+                            <button class="btn btn-primary" ng-click="createEwayBill()"><i class="fa fa-paper-plane"></i> Create E-Way Bill</button>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCancelProfileDialog" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script lang="ja">
+    $('table a').click(function (e) {
+        alert(e);
+        e.preventDefault();
+
+    });
+</script>
+
+
+

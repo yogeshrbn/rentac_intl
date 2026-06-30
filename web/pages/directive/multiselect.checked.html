@@ -1,0 +1,10 @@
+﻿<div>
+    <input type="text" class="form-control" placeholder="Find by name" ng-model="search[text]" />
+    <ul class="rentac-multiselect" style="list-style:none;height:100px;overflow-y:scroll;">
+
+        <li ng-repeat="item in data |filter: search:strict" ng-class="item.Selected ? 'text-success': ''">
+            <input type="checkbox" ng-model="item.Selected" ng-checked="item.Selected" ng-change="updateSelection()">
+            {{item[text] + ' - ' }} {{item[text2]}}
+        </li>
+    </ul>
+</div>

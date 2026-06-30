@@ -1,0 +1,1185 @@
+@using ReportViewer.Helpers
+@using System.Data
+
+@functions
+{
+    private static bool ShowContractType16(DataRow header)
+    {
+        if (header == null || header.Table == null) return false;
+        if (header.Table.Columns.Contains("QuotationType") && header["QuotationType"] != DBNull.Value)
+            return Convert.ToInt16(header["QuotationType"]) == 16;
+        if (header.Table.Columns.Contains("InvoiceType") && header["InvoiceType"] != DBNull.Value)
+            return Convert.ToInt32(header["InvoiceType"]) == 5;
+        return false;
+    }
+
+    private static decimal? GetLineArea(DataRow row)
+    {
+        if (row == null || row.Table == null) return null;
+        if (row.Table.Columns.Contains("Area") && row["Area"] != DBNull.Value)
+        {
+            try { return Convert.ToDecimal(row["Area"]); } catch { return null; }
+        }
+        if (row.Table.Columns.Contains("Height") && row.Table.Columns.Contains("Width"))
+        {
+            try
+            {
+                var h = row["Height"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Height"]);
+                var w = row["Width"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Width"]);
+                var p = h * w;
+                return p > 0 ? (decimal?)p : null;
+            }
+            catch { return null; }
+        }
+        return null;
+    }
+
+    private static decimal GetHeaderArea(DataRow header)
+    {
+        if (header == null || header.Table == null) return 0m;
+        if (header.Table.Columns.Contains("ContractArea") && header["ContractArea"] != DBNull.Value)
+        { try { return Convert.ToDecimal(header["ContractArea"]); } catch { } }
+        if (header.Table.Columns.Contains("BillArea") && header["BillArea"] != DBNull.Value)
+        { try { return Convert.ToDecimal(header["BillArea"]); } catch { } }
+        if (header.Table.Columns.Contains("Area") && header["Area"] != DBNull.Value)
+        { try { return Convert.ToDecimal(header["Area"]); } catch { } }
+        return 0m;
+    }
+
+    private static string FormatTotalArea(DataRow row, DataRow header)
+    {
+        if (row == null) return "";
+        decimal qty = 0m;
+        try { qty = row["Quantity"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Quantity"]); } catch { }
+        var lineA = GetLineArea(row);
+        if (lineA.HasValue && lineA.Value > 0m)
+            return (qty * lineA.Value).ToString("N0");
+        var headA = GetHeaderArea(header);
+        if (headA > 0m)
+            return (qty * headA).ToString("N0");
+        return "";
+    }
+
+    private static string FormatLineAreaDisplay(DataRow row)
+    {
+        var a = GetLineArea(row);
+        return a.HasValue && a.Value != 0m ? a.Value.ToString("N0") : "";
+    }
+}
+
+@{
+    Layout = null;
+    var data = ViewBag.BillData;
+
+    var imagepath = data.Tables[0].Rows[0]["CompanyLogo"];
+    var signature = data.Tables[0].Rows[0]["Signature"];
+    var firstRow = data.Tables[0].Rows[0];
+    var taxes = data.Tables[1];
+    //var charges = data.Tables[4];
+    var IGST = data.Tables[0].Compute("Sum(IGST)", "");
+    var CGST = data.Tables[0].Compute("Sum(CGST)", "");
+    var SGST = data.Tables[0].Compute("Sum(SGST)", "");
+
+
+    var subTotal = data.Tables[0].Compute("Sum(SubTotal)", "");
+    var rowsToSpanAtBottom = 2;
+
+    //if (data.Tables[1] != null)
+    //{
+    //    taxAmount = Convert.ToDecimal(data.Tables[1].Compute("Sum(TaxAmount)", ""));
+    //}
+    var total = subTotal + +IGST + CGST + SGST;
+
+    var billingConfig = BillingConfigViewHelper.AsEnumerable(ViewBag.ConfigData);
+    var invoiceTitle = "TAX INVOICE";// BillingConfigViewHelper.GetValue(billingConfig, "invoiceTitle", "TAX Invoice");
+    var billPeriodText = BillingConfigViewHelper.GetValue(billingConfig, "billPeriodText", "Bill Period");
+    var showCompanyPhoneMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyPhone");
+    var showCompanyEmailMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyEmail");
+    var showCompanyWebsiteMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showCompanyWebsite");
+    var showMSMENumberMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showMSMENumber");
+    var showClientMobileMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientMobile");
+    var showClientEmailMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientEmail");
+    var showClientPinMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showClientPin");
+    var showPONumberMode = BillingConfigViewHelper.GetContactShowMode(billingConfig, "showPONumber");
+    var hideZeroAmountItem = BillingConfigViewHelper.GetBool(billingConfig, "hideZeroAmountItem", false);
+
+    var showContractType16 = ShowContractType16(firstRow);
+    var totalCols = 8;//
+    var spanWords = totalCols - 3;
+    var spanSingleLabel = totalCols - 1;
+
+    var codeColHeader = Convert.ToString(ViewBag.contractbillcodetype) == "SACCode" ? "SAC" : "HSN";
+
+    total += firstRow["Freight"] + firstRow["FreightTax"];
+    if (firstRow["Freight"] > 0)
+    {
+        rowsToSpanAtBottom += 1;
+    }
+    if (firstRow["FreightTax"] > 0)
+    {
+        if (IGST == 0)
+        {
+            SGST += firstRow["FreightTax"] / 2;
+            CGST += firstRow["FreightTax"] / 2;
+        }
+        else
+        {
+            IGST += firstRow["FreightTax"];
+        }
+    }
+    if (firstRow["ChargesTax"] > 0)
+    {
+        if (IGST == 0)
+        {
+            SGST += firstRow["ChargesTax"] / 2;
+            CGST += firstRow["ChargesTax"] / 2;
+
+        }
+        else
+        {
+            IGST += firstRow["ChargesTax"];
+        }
+    }
+
+    //if (firstRow["ChargesTax"] > 0)
+    //{
+    //    if (IGST == 0)
+    //    {
+    //        SGST += firstRow["ChargesTax"] / 2;
+    //        CGST += firstRow["ChargesTax"] / 2;
+
+    //    }
+    //    else
+    //    {
+    //        IGST += firstRow["ChargesTax"];
+    //    }
+    //}
+    //if (charges != null && charges.Rows.Count > 0)
+    //{
+    //    total += charges.Compute("Sum(Amount)", "");
+    //}
+    //total -= firstRow["discount"];
+    total = Math.Round(total, MidpointRounding.AwayFromZero);
+
+    if (IGST > 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+    if (CGST > 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+    if (SGST > 0)
+    {
+        rowsToSpanAtBottom++;
+    }
+    if (firstRow["otherChargeAmount"] > 0)
+    {
+        rowsToSpanAtBottom += 1;
+    }
+    total = firstRow["Taxable"] + SGST + IGST + CGST;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Contract bill</title>
+    @*<link rel="stylesheet" href="~/Content/print.css" />*@
+    <style>
+     /*   body {
+            font-family: arial;
+            font-size: 13pt !important;
+            color: #111;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+
+        }*/
+        .page {
+
+           height: 235mm;  /* A4 (297mm) - top/bottom margins (20mm each) */
+            box-sizing: border-box;
+          /*  page-break-after: always;*/
+            padding: 0;
+        }
+
+            .page:last-of-type {
+                page-break-after: auto;
+            }
+
+        header {
+            text-align: center;
+            font-size: 13pt;
+            font-weight: bold;
+            padding-top: 10mm;
+        }
+
+        .content {
+            flex: 1;
+            height: 95%;
+            padding-top: 0px;
+            padding-left: 0;
+            padding-right: 0;
+            padding-bottom: 0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12pt;
+            padding: 5mm 0 0;
+            margin-top: 5mm;
+        }
+        /* Hide footer on all pages except the last */
+        /*  .page:not(:last-of-type) .footer {
+       display: none;
+   }
+*/
+        .text-right {
+            text-align: right;
+        }
+        /*
+
+   */
+        .table-container {
+            height: 100%;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            font-size: 12pt !important;
+            font-family: arial !important;
+        }
+
+        .table-header {
+            display: table-header-group;
+        }
+
+        .repeat-header {
+            display: table-header-group;
+        }
+
+        .address-row {
+            display: table-row-group;
+        }
+
+        .table-body {
+            display: table-row-group;
+            height: 100%;
+        }
+
+        .table-row {
+            display: table-row;
+        }
+
+        td {
+            font-size: 12pt !important;
+        }
+
+        .table-cell {
+            display: table-cell;
+            padding: 5px;
+            border: 1px solid #000;
+            font-size: 12pt !important;
+            vertical-align: top;
+        }
+        /* Spacer between line items and totals — height grown by script (short pages / PDF) */
+        .spacer-row {
+            height: 100%;
+            min-height:10px;
+        }
+
+            .spacer-row .table-cell {
+                border: 1px solid #000;
+            }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .firstRow {
+            border-top: solid 1px;
+        }
+
+        .border {
+            border: solid 1px #000;
+        }
+
+        .headertable, .address-table {
+            font-size: 12pt !important;
+        }
+
+        .addresstd {
+            font-size: 12pt !important;
+            font-weight: normal;
+            text-align: left;
+        }
+
+        .breakage {
+        }
+        .totals-wrapper-row > .totals-right-cell {
+            border-left: none !important;
+        }
+        .totals-inner {
+            width: 100%;
+            border-collapse: collapse;
+        }
+            .totals-inner td {
+                font-size: 12pt !important;
+            }
+        .bold {
+            font-weight: bold;
+        }
+        /* Shown in print when #parentheadertable does not intersect the page where #rent-bill-totals-wrap starts (see updateTotalsRepeatHeader) */
+        #rent-bill-totals-table .totals-repeat-thead {
+            display: none;
+        }
+        @@media print {
+            body.print-totals-new-page #rent-bill-totals-table .totals-repeat-thead {
+                display: table-header-group !important;
+            }
+            body {
+                font-family: arial;
+                font-size: 10pt !important;
+                color: #111;
+                margin: 0;
+                padding: 0;
+                height: 98vh;
+
+            }
+
+            .page {
+                /*display: flex;
+                flex-direction: column;
+                justify-content: space-between;*/
+                height: 297mm; /* A4 (297mm) - top/bottom margins (20mm each) */
+                 box-sizing: border-box;
+                page-break-after: always;
+                padding: 0;
+            }
+
+                .page:last-of-type {
+                    page-break-after: auto;
+                }
+
+            header {
+                text-align: center;
+                font-size: 13pt;
+                font-weight: bold;
+                padding-top: 10mm;
+            }
+
+            .content {
+                flex: 1;
+                height: 95%;
+                padding-top: 0px;
+                padding-left: 0;
+                padding-right: 0;
+                padding-bottom: 0;
+            }
+
+            .footer {
+                text-align: center;
+                font-size: 12pt;
+                padding: 5mm 0 0;
+                margin-top: 5mm;
+            }
+            /* Hide footer on all pages except the last */
+            /*  .page:not(:last-of-type) .footer {
+               display: none;
+           }
+        */
+            .text-right {
+                text-align: right;
+            }
+            /*
+
+           */
+            /* height:100% on table/body breaks thead repetition across pages in WebKit / wkhtmltopdf */
+            #rent-bill-line-items-table.table-container {
+                height: auto !important;
+                min-height: 0 !important;
+            }
+
+            #rent-bill-line-items-table thead {
+                display: table-header-group !important;
+            }
+
+            .table-container {
+                height: 100%;
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+                border-collapse: collapse;
+                font-size: 12pt !important;
+                font-family: Arial !important;
+                page-break-inside: auto;
+            }
+
+            .table-header {
+                display: table-header-group;
+            }
+
+            .repeat-header {
+                display: table-header-group;
+            }
+
+            .address-row {
+                display: table-row-group;
+            }
+
+            #rent-bill-line-items-table .table-body {
+                height: auto !important;
+            }
+
+            .table-body {
+                display: table-row-group;
+                height: 100%;
+            }
+
+            .table-row {
+                display: table-row;
+            }
+
+            td {
+                font-size: 12pt !important;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
+            }
+
+            th {
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
+            }
+
+            .table-cell {
+                display: table-cell;
+                padding: 5px;
+                border: 1px solid #000;
+                font-size: 12pt !important;
+                vertical-align: top;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
+            }
+            .spacer-row {
+                min-height: 10px;
+            }
+
+                .spacer-row .table-cell {
+                    border: 1px solid #000;
+                }
+
+            .invoice-line-row {
+                break-inside: avoid-page;
+                page-break-inside: avoid;
+            }
+
+            .text-center {
+                text-align: center;
+            }
+
+            .firstRow {
+                border-top: solid 1px;
+            }
+
+            .border {
+                border: solid 1px #000;
+            }
+
+            .headertable, .address-table {
+                font-size: 12pt !important;
+            }
+            .addresstd {
+                font-size: 12pt !important;
+                font-weight: normal;
+                text-align: left;
+            }
+            .breakage {
+            }
+
+            .totalrow{
+                page-break-inside:avoid;
+            }
+            /* Nested totals (no rowspan) — better page breaks in wkhtmltopdf / NReco */
+            .compAddr {
+                font-size: 12pt;
+            }
+            .bold {font-weight:bold;}
+            .header-repeat {
+                position: fixed; /* Fixes position on every physical page */
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 80px; /* Set specific height */
+                background: #f1f1f1;
+                text-align: center;
+                border-bottom: 2px solid #333;
+                z-index: 1000;
+            }
+
+            /* Ensures the footer repeats */
+        }
+            @Html.Raw(ViewBag.Style)
+
+        @@media print {
+
+
+            .repeat-company-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #fff;
+                z-index: 1000;
+            }
+        }
+
+
+        @@media print {
+            .repeat-table-header {
+                display: table-header-group !important;
+            }
+        }
+    </style>
+</head>
+<table id="rent-bill-line-items-table" class="table-container">
+    <colgroup>
+        <col style="width: 301px;">
+        <col style="width: 50px;">
+        <col style="width: 70px;">
+
+        <col style="width: 80px;">
+        <col style="width: 80px;">
+        <col style="width: 80px;">
+        <col style="width: 120px;">
+    </colgroup>
+    <thead id="parentheadertable">
+        <tr>
+
+            <td colspan="7" style="text-align: center; font-size: 24px !important;"> @invoiceTitle </td>
+
+        </tr>
+        <tr>
+            <td colspan="7" style="border-bottom:none;">
+                <table style="width:100%;margin:0px;" class="headertable" cellpadding="0" cellspacing="0">
+
+                    <tr>
+                        <td style="width:70%;border:0px;">
+                            <img src="@imagepath" style="max-width:100px" />
+                        </td>
+                        <td>
+                            <table style="width:100%;">
+                                <tr>
+                                    <td><span class="page"></span></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right; font-size: 12pt !important; "><strong>PAN: </strong>@firstRow["CompanyPAN"]</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right; font-size: 12pt !important;"><strong>GSTIN: </strong>@firstRow["CompanyGST"]  </td>
+                                </tr>
+                                @if (BillingConfigViewHelper.ShouldShowContactField(showMSMENumberMode, firstRow["MSMENumber"]))
+                                {
+                                    <tr>
+                                        <td style="text-align: right; font-size: 12pt !important;"><strong>MSME Number: </strong>@firstRow["MSMENumber"]  </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table style="width: 100%; border: none;">
+                                <tr>
+                                    <td style="width:80%;border:none;">
+                                        <ul style="list-style:none;padding-left:0px;font-size:12pt !important;">
+                                            <li><strong style="font-size:18pt;"> @firstRow["Company"]</strong></li>
+                                            <li class="compAddr">@firstRow["CompanyAddress1"] @firstRow["CompanyAddress2"]</li>
+                                            <li class="compAddr">@firstRow["CompanyCity"] (@firstRow["CompanyStateName"]) Pin:- @firstRow["CompanyZipCode"]</li>
+
+                                            @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyPhoneMode, firstRow["CompanyPhone"])
+                                                || BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]))
+                                            {
+                                                <li class="compAddr">
+                                                    @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyPhoneMode, firstRow["CompanyPhone"]))
+                                                    {
+                                                        <span> Mobile: @firstRow["CompanyPhone"]@(BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]) ? "," : "")</span>
+                                                    }
+                                                    @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]))
+                                                    {
+                                                        <span> Email: @firstRow["CompanyEmail"]</span>
+                                                    }
+                                                </li>
+                                            }
+                                            @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyWebsiteMode, firstRow["CompanyWebsite"]))
+                                            {
+                                                <li class="compAddr">Web: @firstRow["CompanyWebsite"]</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td style="text-align: right; font-size: 20px !important; font-weight: 600">  </td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table style="width:100%">
+                                <tr>
+                                    <td class="compAddr" style="font-size: 12pt !important; font-weight: bold; vertical-align: bottom;">
+                                    </td>
+                                    <td class="compAddr" style="font-size:12pt !important;font-weight:bold;text-align:right;">
+                                        Bill No:  @firstRow["InvoiceNumber"]
+                                        |
+                                        <span>Date:    @firstRow["InvoiceDate"]</span>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                        </td>
+
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <th colspan="3" class="table-cell">
+
+                <table width="100%" style="border-collapse: collapse; margin: 0px;border:none;">
+                    <tr>
+                        <td style="vertical-align: top; text-align: left;  padding: 3px;
+                                            font-weight: normal; width: 495px;
+                                            border-bottom: none;border-top:none;">
+                            <label style="font-weight: bold; font-size: 12pt;">Bill To</label>
+                            <div>
+                                <ul style="padding-left:0px;padding-top:0px;margin-left:0px;margin-top:0px;list-style:none;">
+                                    <li>@firstRow["ClientBillToName"]</li>
+                                    <li>@firstRow["ClientAddress1"] @firstRow["ClientAddress2"]</li>
+                                    <li>
+                                        @firstRow["ClientCity"] @firstRow["ClientStateName"]
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["ClientZipCode"]))
+                                        {<text> Pin:- @firstRow["ClientZipCode"]</text>
+                                    }
+                                    </li>
+                                    @if (!String.IsNullOrEmpty(Convert.ToString(@firstRow["ClientGST"])))
+                                    {
+                                        <li> GSTIN: @firstRow["ClientGST"]</li>
+                                    }
+                                    <li>
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                                        {<text> Mobile: @firstRow["ClientPhone"]</text>}@if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                        {<text> Email: @firstRow["ClientEmail"]</text>}
+                                    </li>
+                                    @if (firstRow.Table.Columns.Contains("billPONumber") && firstRow.Table.Columns.Contains("billPODate")
+                                        && BillingConfigViewHelper.ShouldShowStringField(showPONumberMode, Convert.ToString(firstRow["billPONumber"])))
+                                    {
+                                        <li style="margin-top:8px;"><strong>Customer PO Number:</strong> @firstRow["billPONumber"] <strong>| PO Date:</strong> @BAL.Objects.Utils.CheckDateAndReturnDefault(Convert.ToString(firstRow["billPODate"]), "")</li>
+                                    }
+                                </ul>
+
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                </table>
+            </th>
+            <th colspan="4" class="table-cell" style="text-align:left;">
+                <label style="font-weight: bold; font-size: 12pt; ">Ship To</label>
+
+                <ul style="padding-left:0px;padding-top:0px;margin-left:0px;margin-top:0px;list-style:none;font-weight:normal;">
+                    <li>@firstRow["ClientBillToName"]</li>
+                    <li>@firstRow["SiteAddress"]</li>
+                    <li>
+                        GSTIN: @firstRow["SiteGST"]@if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                        {<text>, Mobile: @firstRow["ClientPhone"]</text>}@if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                        {<text>, Email: @firstRow["ClientEmail"]</text>}
+                    </li>
+                </ul>
+
+
+
+
+            </th>
+        </tr>
+        <tr>
+            <th class="table-cell" style="width:70mm;border-right:none;">Description</th>
+            <th class="table-cell" style="width:30px;text-align:center;">Qty</th>
+            <th class="table-cell text-center" style="width: 0.5in !important; border-left: none;">Area</th>
+            <th class="table-cell" style="width:80px;">Total Area</th>
+            <th class="table-cell" style="width:70px;">SAC Code</th>
+            <th class="table-cell" style="width: 60px; text-align: right;">Rate</th>
+            <th class="table-cell" style="width:80px;text-align:right;">Amount</th>
+        </tr>
+    </thead>
+    <tbody class="table-body">
+
+        @{
+            foreach (var row in data.Tables[0].Rows)
+            {
+                if (hideZeroAmountItem && Convert.ToDecimal(row["SubTotal"]) == 0m)
+                {
+                    continue;
+                }
+                <tr class="table-row invoice-line-row">
+                            <td class="noborder_b" style="padding: 7px 3px; border-left: solid 1px; vertical-align: middle">
+                                @row["Item"]
+                                <br />
+                                <span style="font-size:10pt;font-style:italic">@firstRow["LineItem"]</span>
+                            </td>
+
+                    <td class="table-cell text-center" style="vertical-align: middle">
+                        @row["Quantity"]
+
+                    </td>
+                    <td class=" table-cell text-center;" style="border-left: solid 1px; text-align: center; vertical-align: middle">
+                        @FormatLineAreaDisplay(row)
+                    </td>
+                    <td class="border table-cell table-cell text-center" style="vertical-align:middle">
+                        @FormatTotalArea(row, firstRow)
+                    </td>
+                    <td class="border table-cell text-center" style="vertical-align:middle">
+                        @row[Convert.ToString(ViewBag.contractbillcodetype)]
+                    </td>
+                    <td class="table-cell text-right" style="vertical-align:middle">
+                        @row["Rate"]
+                    </td>
+                    <td class="table-cell text-right" style="vertical-align:middle">
+                        @row["SubTotal"].ToString("N", System.Globalization.CultureInfo.InvariantCulture)
+                    </td>
+                </tr>
+            }
+        }
+        <tr class="table-row spacer-row">
+            <td class="table-cell" style="border-right:0px;" colspan="2">&nbsp;</td>
+            <td class=" ">&nbsp;</td>
+            <td class=" ">&nbsp;</td>
+            <td class=" ">&nbsp;</td>
+            <td class=" ">&nbsp;</td>
+            <td class="table-cell" style="border-left:none;">&nbsp;</td>
+        </tr>
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7" style="border-top:solid 1px;"></td>
+        </tr>
+    </tfoot>
+</table>
+<div id="rent-bill-totals-wrap" style="width:100%;page-break-inside:avoid;page-break-before:avoid;margin-top:-3px;padding-left:0px;">
+    <table id="rent-bill-totals-table" style="width: 100%; padding-left: 0px;padding:0px; table-layout: fixed; border-collapse: collapse;" cellspacing="0">
+        <colgroup>
+            <col style="width: 301px;">
+            <col style="width: 80px;">
+            <col style="width: 70px;">
+            <col style="width: 40px;">
+            <col style="width: 50px;">
+            <col style="width: 60px;">
+            <col style="width: 80px;">
+        </colgroup>
+        <thead class="totals-repeat-thead" id="totals-repeat-thead">
+            <tr>
+
+                <td colspan="7" style="text-align: center; font-size: 24px !important;"> @invoiceTitle </td>
+
+            </tr>
+            <tr>
+                <td colspan="7" style="border-bottom:none;">
+                    <table style="width:100%;margin:0px;" class="headertable" cellpadding="0" cellspacing="0">
+
+                        <tr>
+                            <td style="width:70%;border:0px;">
+                                <img src="@imagepath" style="max-width:100px" />
+                            </td>
+                            <td>
+                                <table style="width:100%;">
+                                    <tr>
+                                        <td><span class="page"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right; font-size: 12pt !important; "><strong>PAN: </strong>@firstRow["CompanyPAN"]</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: right; font-size: 12pt !important;"><strong>GSTIN: </strong>@firstRow["CompanyGST"]  </td>
+                                    </tr>
+                                    @if (BillingConfigViewHelper.ShouldShowContactField(showMSMENumberMode, firstRow["MSMENumber"]))
+                                    {
+                                        <tr>
+                                            <td style="text-align: right; font-size: 12pt !important;"><strong>MSME Number: </strong>@firstRow["MSMENumber"]  </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table style="width: 100%; border: none;">
+                                    <tr>
+                                        <td style="width:80%;border:none;">
+                                            <ul style="list-style:none;padding-left:0px;font-size:12pt !important;">
+                                                <li><strong style="font-size:18pt;"> @firstRow["Company"]</strong></li>
+                                                <li class="compAddr">@firstRow["CompanyAddress1"] @firstRow["CompanyAddress2"]</li>
+                                                <li class="compAddr">@firstRow["CompanyCity"] (@firstRow["CompanyStateName"]) Pin:- @firstRow["CompanyZipCode"]</li>
+
+                                                @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyPhoneMode, firstRow["CompanyPhone"])
+                                                    || BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]))
+                                                {
+                                                    <li class="compAddr">
+                                                        @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyPhoneMode, firstRow["CompanyPhone"]))
+                                                        {
+                                                            <span> Mobile: @firstRow["CompanyPhone"]@(BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]) ? "," : "")</span>
+                                                        }
+                                                        @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyEmailMode, firstRow["CompanyEmail"]))
+                                                        {
+                                                            <span> Email: @firstRow["CompanyEmail"]</span>
+                                                        }
+                                                    </li>
+                                                }
+                                                @if (BillingConfigViewHelper.ShouldShowContactField(showCompanyWebsiteMode, firstRow["CompanyWebsite"]))
+                                                {
+                                                    <li class="compAddr">Web: @firstRow["CompanyWebsite"]</li>
+                                                }
+                                            </ul>
+                                        </td>
+                                        <td style="text-align: right; font-size: 20px !important; font-weight: 600">  </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td class="compAddr" style="font-size: 12pt !important; font-weight: bold; vertical-align: bottom;">
+                                        </td>
+                                        <td class="compAddr" style="font-size:12pt !important;font-weight:bold;text-align:right;">
+                                            Bill No:  @firstRow["InvoiceNumber"]
+                                            |
+                                            <span>Date:   @BAL.Objects.Utils.FormatDate(@firstRow["InvoiceDate"])</span>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                            </td>
+
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2" class="table-cell">
+
+                    <table width="100%" style="border-collapse: collapse; margin: 0px;border:none;">
+                        <tr>
+                            <td style="vertical-align: top; text-align: left;  padding: 3px;
+                                   font-weight: normal; width: 495px;
+                                   border-bottom: none;border-top:none;">
+                                <label style="font-weight: bold; font-size: 12pt;">Bill To</label>
+                                <div>
+
+
+                                    <table style="width:100%;" class="address-table">
+                                        <tr><td class="addresstd bold" style="font-size: 14pt !important ">@firstRow["ClientBillToName"]</td></tr>
+                                        <tr><td class="addresstd">@firstRow["ClientAddress1"] @firstRow["ClientAddress2"]</td></tr>
+                                        <tr>
+                                            <td class="addresstd">
+                                                @firstRow["ClientCity"] (@firstRow["ClientStateName"])@if (BillingConfigViewHelper.ShouldShowContactField(showClientPinMode, firstRow["ClientZipCode"]))
+                                                {<text> Pin:- @firstRow["ClientZipCode"] </text>}
+                                            </td>
+                                        </tr>
+                                        <tr><td class="addresstd" style=""> GSTIN: @firstRow["ClientGST"]</td></tr>
+                                        @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]) || BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                        {
+                                            <tr>
+                                                <td class="addresstd">
+                                                    @if (BillingConfigViewHelper.ShouldShowContactField(showClientMobileMode, firstRow["ClientPhone"]))
+                                                    {
+                                                        <span> Mobile: @firstRow["ClientPhone"];</span>
+                                                    }
+                                                    @if (BillingConfigViewHelper.ShouldShowContactField(showClientEmailMode, firstRow["ClientEmail"]))
+                                                    {
+                                                        <span> Email: @firstRow["ClientEmail"];</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    </table>
+                </th>
+                <th colspan="5" class="table-cell" style="text-align:left;">
+                    <label style="font-weight: bold; font-size: 12pt; ">Ship To</label>
+                    <table style="width:100%" class="address-table">
+                        <tr><td class="addresstd bold" style="font-size: 14pt !important ">@firstRow["ClientBillToName"]</td></tr>
+
+
+                    </table>
+                </th>
+            </tr>
+
+        </thead>
+
+        <tr class="table-row border totals-wrapper-row totalrow">
+            <td colspan="3" class="border totals-left-cell"
+                style="text-align:left; vertical-align:top;padding-top:20px;padding-left:8px;">
+                <span style="width:500px;display:block">In Words: @BAL.Objects.Utils.AmountToWords(Convert.ToDecimal(total))</span>
+
+                @if (ViewBag.LastBill != null && Convert.ToInt16(firstRow["printLastBillDetails"]) == 1)
+                {
+                    <div>
+                        <ul style="list-style:none;">
+                            <li>  <u>Last Bill Details:</u></li>
+                            <li style="padding-top:12pt;">Invoice#: @ViewBag.LastBill.InvoiceNumber | Date: @BAL.Objects.Utils.FormatDate(ViewBag.LastBill.InvoiceDate) | Amount: @Math.Round(ViewBag.LastBill.Total, MidpointRounding.AwayFromZero)   </li>
+                        </ul>
+                    </div>
+
+                }
+
+                @{
+                    <div style="width:100%;">
+                        <div style="width:60%;">
+                            @if (ViewBag.PrintBankDetails)
+                            {
+                                <ul style="list-style:none;">
+                                    <li><b>Bank Details</b></li>
+                                    <li>Bank ACC. No: @ViewBag.CompanyInfo.BankAccNumber</li>
+                                    <li>Bank: @ViewBag.CompanyInfo.BankName</li>
+                                    <li>Branch: @ViewBag.CompanyInfo.BankBranch</li>
+                                    <li>IFSC COde: @ViewBag.CompanyInfo.IFSCCode</li>
+                                </ul>
+                            }
+                        </div>
+
+
+
+                    </div>
+                }
+            </td>
+            <td colspan="4" class="table-cell totals-right-cell" style="padding:0;vertical-align:top;border-left:none;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;">
+                <table class="totals-inner" style="width:100%;border-collapse:collapse;font-size:12pt;font-family:Arial;">
+                    <tr class="table-row">
+                        <td class="table-cell text-right border bold" style="width:150px; vertical-align: top; border-left: none; border-top: none;border-right:none; font-weight: bold;">SubTotal</td>
+                        <td class="table-cell border noborder_bl text-right" style="vertical-align:top;border-top:none;border-left:none;">@subTotal.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                    </tr>
+                    @if (firstRow["Freight"] > 0)
+                    {
+                        <tr class="table-row">
+                            <td class="table-cell  text-right border bold" style="border-left: none; border-right: none;">Freight</td>
+                            <td class="table-cell border noborder_bl text-right" style="" border-left: none;">@firstRow["Freight"].ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                        </tr>
+                    }
+
+                    @if (firstRow["otherChargeAmount"] > 0)
+                    {
+                        <tr class="table-row">
+                            <td colspan="2" class="table-cell border noborder_bl">Other Charges </td>
+                            <td class="table-cell border noborder_bl text-right">@firstRow["otherChargeAmount"]</td>
+                        </tr>
+
+                    }
+
+
+                    @if (IGST > 0)
+                    {
+                        <tr class="table-row">
+                            <td class="table-cell border  text-right bold" style="border-left: none;border-right:none;">IGST (@firstRow["IGSTRate"]%)</td>
+                            <td class="table-cell border noborder_bl text-right" style="border-left:none;">@IGST.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                        </tr>
+                    }
+                    @if (CGST > 0)
+                    {
+                        <tr class="table-row">
+                            <td class="table-cell border  text-right bold" style="border-left: none; border-right: none;">CGST (@firstRow["CGSTRate"]%)</td>
+                            <td class="table-cell border noborder_bl text-right" style="border-left:none;">@CGST.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                        </tr>
+                    }
+                    @if (SGST > 0)
+                    {
+                        <tr class="table-row">
+                            <td class="table-cell border  text-right  bold" style="border-left: none; border-right: none;">SGST (@firstRow["SGSTRate"]%)</td>
+                            <td class="table-cell border noborder_bl text-right" style="border-left:none;">@SGST.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                        </tr>
+                    }
+                    @if (firstRow["discount"] > 0)
+                    {
+                        <tr class="table-row">
+                            <td class="table-cell border  text-right  bold" style="border-left: none; border-right: none;">Discount</td>
+                            <td class="table-cell border noborder_bl text-right">@firstRow["discount"].ToString("N", System.Globalization.CultureInfo.InvariantCulture) </td>
+                        </tr>
+                    }
+
+
+                    <tr class="table-row">
+                        <td class="table-cell  text-right bold" style="border-bottom: solid 1px; border-left: none; border-right: none;">Total</td>
+                        <td class="table-cell text-right" style="border-bottom: solid 1px; border-left: none;">@total.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        @{
+
+
+
+        }
+
+        <tr>
+            <td colspan="7" class="tncRow" style="page-break-inside:avoid; border-left: solid 1px; border-right: solid 1px; border-bottom: solid 1px;">
+                <div style="width: 100%; page-break-inside: avoid !important; break-inside: avoid !important; ">
+                    <table style="width:100%;border-top:none;">
+                        <tr>
+
+                            <td class="text-right" colspan="2">
+                                <span style="font-size: 14pt; font-weight: bold;"> For:- @firstRow["Company"]</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3" style="vertical-align: top;">
+                                @Html.Raw(firstRow["Tnc"])
+
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td style="text-align:right;">
+                                <img src="@signature" style="max-width:100px;max-height:50px;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-top:25px;" class="text-right">
+                                <span style="font-size:14pt;font-weight:bold;">Authorized Signatory</span>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+<script>
+    (function () {
+        function a4HeightPx() {
+            return Math.round(297 * 96 / 25.4);
+        }
+        /** Use A4 printable height — window.innerHeight does not match printed page slices (causes missed totals thead). */
+        function printablePageHeightPx() {
+            var marginMm = 24;
+            var marginPx = Math.round(marginMm * 96 / 25.4 * 2);
+            return Math.max(400, a4HeightPx() - marginPx);
+        }
+        function docTop(el) {
+            var r = el.getBoundingClientRect();
+            return r.top + (window.pageYOffset || document.documentElement.scrollTop || 0);
+        }
+        /** True if parent thead intersects the same print-page band as the top of the totals wrap. */
+        function parentHeaderOnTotalsPage(parentEl, totalsWrap, pageH) {
+            if (!parentEl || !totalsWrap || pageH <= 0) return false;
+            var totalsY = docTop(totalsWrap);
+            var pageStart = Math.floor(totalsY / pageH) * pageH;
+            var pageEnd = pageStart + pageH;
+            var phTop = docTop(parentEl);
+            var phBottom = phTop + parentEl.offsetHeight;
+            return phBottom > pageStart && phTop < pageEnd;
+        }
+        /** Show #rent-bill-totals-table .totals-repeat-thead in print when #parentheadertable is not on that page. */
+        function updateTotalsRepeatHeader() {
+            var lineTable = document.getElementById('rent-bill-line-items-table');
+            var totalsWrap = document.getElementById('rent-bill-totals-wrap');
+            var totalsTable = document.getElementById('rent-bill-totals-table');
+            var parentheadertable = document.getElementById('parentheadertable');
+
+            if (!lineTable || !totalsWrap || !totalsTable) {
+                document.body.classList.remove('print-totals-new-page');
+                return;
+            }
+            var pageH = printablePageHeightPx();
+            if (pageH < 200) pageH = a4HeightPx();
+
+            var headerSharesPage = parentHeaderOnTotalsPage(parentheadertable, totalsWrap, pageH);
+            if (!headerSharesPage) {
+                document.body.classList.add('print-totals-new-page');
+            } else {
+                document.body.classList.remove('print-totals-new-page');
+            }
+        }
+        /** Grow tbody spacer row(s) by the slack height so blank space moves into the spacer (between lines and totals), shrinking empty area below content. Split evenly if multiple .spacer-row. */
+        function fillSpacerRows() {
+            var table = document.getElementById('rent-bill-line-items-table');
+            var spacers = table ? table.querySelectorAll('tbody tr.spacer-row') : [];
+            if (!spacers.length) return;
+            for (var s = 0; s < spacers.length; s++) {
+                var row = spacers[s];
+                row.style.height = '';
+                var cells = row.querySelectorAll('td');
+                for (var i = 0; i < cells.length; i++) {
+                    cells[i].style.height = '';
+                }
+            }
+            var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+            var target = vh > 400 ? vh : a4HeightPx();
+            var sh = document.body.scrollHeight || document.documentElement.scrollHeight || 0;
+            var extra = target - sh - 1;
+            if (extra <= 2) return;
+            var n = spacers.length;
+            var per = Math.floor(extra / n);
+            var rem = extra % n;
+            for (var k = 0; k < n; k++) {
+                var r = spacers[k];
+                var add = per + (k < rem ? 1 : 0);
+                var base = r.offsetHeight || 4;
+                var h = base + add;
+                r.style.height = h + 'px';
+                var cs = r.querySelectorAll('td');
+                for (var j = 0; j < cs.length; j++) {
+                    cs[j].style.height = h + 'px';
+                }
+            }
+        }
+        function schedule() {
+            fillSpacerRows();
+            updateTotalsRepeatHeader();
+            setTimeout(function () { fillSpacerRows(); updateTotalsRepeatHeader(); }, 120);
+            setTimeout(function () { fillSpacerRows(); updateTotalsRepeatHeader(); }, 450);
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', schedule);
+        } else {
+            schedule();
+        }
+        window.addEventListener('load', function () { fillSpacerRows(); updateTotalsRepeatHeader(); });
+        window.addEventListener('resize', function () { fillSpacerRows(); updateTotalsRepeatHeader(); });
+        window.addEventListener('beforeprint', function () {
+            fillSpacerRows();
+            requestAnimationFrame(function () {
+                requestAnimationFrame(updateTotalsRepeatHeader);
+            });
+        });
+        window.addEventListener('afterprint', function () {
+            document.body.classList.remove('print-totals-new-page');
+        });
+    })();
+</script>
+@* NReco/wkhtmltopdf: CustomWkHtmlArgs += " --javascript-delay 500" so fillSpacerRows runs after layout/images. *@
+</html>

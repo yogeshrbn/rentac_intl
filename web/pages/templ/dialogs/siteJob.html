@@ -1,0 +1,104 @@
+﻿<md-dialog style="height: 75% !important;">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add Edit Job</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+           
+        </md-button>
+      </div>
+    </md-toolbar>
+  <md-dialog-content  layout="row" layout-wrap layout-margin layout-align="center">
+
+    <!--<pageheader heading="Issue Items" />-->
+    <div class="alert alert-success hide" ng-show="Ledgers.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>
+    <div class="col-sm-12">
+
+         
+            <form id="form-workorder" method="post" class="">
+                  <div class="col-sm-12">
+                            
+                            <div class="col-sm-1 nopadding">
+                                <label class="vcenter">Date</label>
+                            </div>
+                            <div class="col-sm-3">
+                                <datepicker date-format="dd/MM/yyyy">
+                                  <input ng-model="WorkOrder.WorkOrderDate" tabindex="2" type="text" class="form-control"  name="val_workOrderDate"/>
+                                </datepicker>
+                                <!--<input type="date" name="val_workOrderDate" ng-model="WorkOrder.WorkOrderDate" class="form-control" required />-->
+                            </div>
+                      
+                        </div>
+                    <div class="col-sm-12 nopadding">
+                        <div class="col-sm-6" >
+                            <label class="vcenter">Choose Party</label>
+                            <!--<searchabletext ng-id="client" tab-index="1" data-item="Client" data-all="true" selected-object="ClientSelect" name="client_value" field-required="true"> </searchabletext>-->
+                            <searchableselect name="client" tabindex="2" data-field="Accounts" ng-model="WorkOrder.LedgerId" data-val="LedgerId" data-text="Name" description-field="Code"></searchableselect>
+                        </div>
+                        <div class="col-sm-4">
+                             <label class="vcenter">WorkOrder#</label>
+
+                            <input type="text" class="form-control" ng-model="WorkOrder.Number" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+ 
+                        <div class="col-sm-6">
+
+                            <label class="vcenter">JobNumber</label>
+
+                            <input type="text" ng-model="WorkOrder.SiteInfo.JobNumber" tabindex="3" class="form-control" name="val_workOrderNumber" required />
+
+                        </div>
+                             <div class="col-sm-4">
+                            <label class="vcenter">Shaft Size</label>
+                            <input type="text" ng-model="WorkOrder.SiteInfo.ShaftSize" class="form-control" name="shaft_size" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                   
+                        <div class="col-sm-6">
+                            <label class="vcenter">Shaft Height</label>
+                            <input type="text" ng-model="WorkOrder.SiteInfo.ShaftHeight" class="form-control" name="shaft_height" required />
+                        </div>
+                         <div class="col-sm-4">
+
+                            <label class="vcenter">Site Eng.</label>
+
+                            <input type="text" ng-model="WorkOrder.SiteInfo.SiteEng" class="form-control" name="shaft_size" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+
+                            <label class="vcenter">Approx Amount</label>
+
+                            <input type="text" ng-model="WorkOrder.SiteInfo.Total" class="form-control" name="shaft_size" required />
+                        </div>
+
+                        <div class="col-sm-4 ">
+                            <label class="vcenter">Duration(Days)</label>
+
+                            <input type="number" class="form-control" ng-model="WorkOrder.SiteInfo.Duration" />
+
+
+                        </div>
+                    </div>
+                    
+        </form>
+    </div>
+
+      </md-dialog-content>
+       <md-dialog-actions layout="row">
+            <div  class="pull-right"> 
+       <input type="button" style="width: 100px;" class="btn btn-primary" value="Save" ng-click="Save();" />
+                 <button ng-click="CloseDialog()" class="btn btn-danger" value="Close" >Close</button>
+         </div>
+         
+  </md-dialog-actions>
+     </md-dialog>
+
+

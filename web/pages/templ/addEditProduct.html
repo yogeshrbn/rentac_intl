@@ -1,0 +1,413 @@
+
+<div class="form-group">
+
+    <div class="col-lg-12">
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#productInfo" aria-controls="productInfo" role="tab" data-toggle="tab" ng-click="tab =1">General Info</a></li>
+            <li role="presentation"><a href="#taxInfo" aria-controls="accountInfo" role="tab" data-toggle="tab" ng-click="tab =2">Tax Classifcation</a></li>
+        </ul>
+        <form id="form-product" method="post" class="form-horizontal">
+            <div class="tab-content">
+
+                <div role="tabpanel" class="tab-pane active" id="productInfo">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-4 control-label">Item</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" id="val_productName" tabindex="1" name="val_productName" ng-model="Product.Name" class="form-control" maxlength="100" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="inputEmail3" class="col-sm-4 control-label">UOM</label>
+                                            <div class="col-sm-8">
+                                                <searchableselect id="ddlUOM" tab-index="2" ng-model="Product.UOM" data-field="UOM" data-val="UOMId" data-text="UOM"></searchableselect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Unit 2</label>
+                                            <div class="col-sm-8">
+                                                <searchableselect id="ddlUOM2" tab-index="2" ng-model="Product.UOM2" data-field="UOM" data-val="UOMId" data-text="UOM"></searchableselect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Apply Unit-2 Rate</label>
+                                            <div class="col-sm-8">
+                                                <input type="checkbox" class="checkbox" ng-model="Product.ApplyUnit2Rate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">HSN Code</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_hsnCode" tabindex="5" style="text-align:left;" maxlength="12" nodecimal ng-model="Product.HSNCode" class="form-control maskednumber text-left" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">SAC Code</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_SACCode" tabindex="5" style="text-align:left;" maxlength="12" nodecimal ng-model="Product.SACCode" class="form-control maskednumber text-left" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Product Type</label>
+                                            <div class="col-sm-8">
+                                                <div class="radio-inline">
+                                                    <label for="exampleInputName2">
+                                                        <input type="radio" name="paymentMode" ng-model="Product.ProductType" ng-value="1" />
+                                                        Goods
+                                                    </label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <label for="exampleInputName2">
+                                                        <input type="radio" name="paymentMode" ng-model="Product.ProductType" ng-value="2" />
+                                                        Service
+                                                    </label>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Size</label>
+                                            <div class="col-sm-8">
+
+                                                <input type="text" name="val_length" tabindex="5" style="text-align:left;" maxlength="6" ng-model="Product.Size" class="form-control text-left" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Item Code</label>
+                                            <div class="col-sm-8">
+
+                                                <input type="text" name="val_productCode" tabindex="3"
+                                                       ng-disabled="Config.productcodegenmode == 'auto' ? 'true': null"
+                                                       ng-model="Product.Code" class="form-control" maxlength="10" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Weight (kg)</label>
+                                            <div class="col-sm-8">
+
+                                                <input type="text" id="Text1" name="val_productSize" ng-model="Product.Weight" class="form-control maskednumber" maxlength="5" />
+                                                <!--<searchableselect id="ddlUOMSize" tab-index="4" ng-model="Product.Size" data-field="UOMSize" data-val="Size" data-text="Size"></searchableselect>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Description</label>
+                                            <div class="col-sm-8">
+                                                <textarea name="val_description" tabindex="5" style="height:80px;"
+                                                          ng-model="Product.Description" class="form-control" maxlength="500" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Category</label>
+                                            <div class="col-sm-8">
+                                                <searchableselect name="val_productCategory" tab-index="6" data-field="Categories" ng-model="Product.Category" data-val="CategoryId"
+                                                                  data-text="Name"></searchableselect>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Item Group</label>
+                                            <div class="col-sm-8">
+
+                                                <searchableselect name="val_pItemGroup" tab-index="6" data-field="GroupList" ng-model="Product.ItemGroupId" data-val="ItemGroupId"
+                                                                  data-text="GroupName"></searchableselect>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Sort Order</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_productPacking" tabindex="5" ng-model="Product.SortOrder" nodecimal class="form-control maskednumber text-left" maxlength="3" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Opening Stock</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_peningStock" tabindex="5" ng-model="Product.OpeningBalance" class="form-control maskednumber" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row">
+                                    <hr />
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Rent Rate</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_rentRate" tabindex="5" ng-model="Product.RentRate" class="form-control maskednumber" maxlength="10" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Lost Rate</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_lossRate" tabindex="5" ng-model="Product.LossRate" class="form-control maskednumber" maxlength="10" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Break Rate</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_brakRate" tabindex="5" ng-model="Product.BrekageRate" class="form-control maskednumber" maxlength="10" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Size Rate</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_length" tabindex="5" style="text-align:left;" maxlength="6" ng-model="Product.UnitSizeRate" class="form-control maskednumber text-left" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Weight Rate</label>
+                                            <div class="col-sm-8">
+
+                                                <input type="text" name="val_brakRate" tabindex="5" ng-model="Product.WeightRate" class="form-control maskednumber" maxlength="10" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Sale Information</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 control-label">Sale Price</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="val_productPacking" tabindex="5" ng-model="Product.SalePrice" class="form-control maskednumber" maxlength="7" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Purchase Information</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 control-label">Cost Price</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" name="val_productPacking" tabindex="5" ng-model="Product.CostPrice" class="form-control maskednumber" maxlength="7" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 control-label">Purchase Unit</label>
+                                                    <div class="col-sm-8">
+                                                        <searchableselect id="ddlPurchaseUnit" tab-index="2" ng-model="Product.PurchaseUnitId" data-field="UOM" data-val="UOMId" data-text="UOM"></searchableselect>
+                                                    </div>
+                                                </div>
+                                                <!--<div class="form-group">
+                                                    <label class="col-sm-4 control-label">Account</label>
+                                                    <div class="col-sm-8">
+                                                        <searchableselect id="ddlPurchaseAccount" tab-index="2" ng-model="Product.PurchaseAccount" data-field="SundryDebtors" data-val="LedgerId" data-text="Name"></searchableselect>
+
+                                                    </div>
+                                                </div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-sm-6 col-lg-6  col-md-6 ">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">M.R.P</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="val_productPacking" tabindex="5" ng-model="Product.MRP" class="form-control maskednumber" maxlength="7" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">Tax Category</label>
+                                            <div class="col-sm-8">
+                                                <searchableselect id="ddlTaxes" tab-index="2" ng-model="Product.TaxCategoryId" data-field="TAXES" data-val="TaxId" data-text="TaxName"></searchableselect>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--<div class="col-sm-12" style="margin-top:30px;">
+                                        <input type="button" class="btn btn-default" tabindex="10" value="Cancel" ui-sref="products" />
+                                        <input type="button" class="btn btn-primary" tabindex="8" value="Save" ng-click="Save();" ng-show="AccessData.Add" />
+
+                                    </div>-->
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <fileupload on-file-selected="onFileSelected(files)"
+                                            selected-files="selectedFiles"
+                                            on-file-delete="onFileDeleted(file)"
+                                            allowed-Types="'image/jpeg,image/png'"></fileupload>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="taxInfo" >
+                    <div class="table-responsive" ng-controller="ProductTaxClassificationController">
+                        <table class="table table-condensed">
+                            <tr class="headerRow">
+                                <th>Supply Type</th>
+                                <th>Nature</th>
+                                <th>HSN Code</th>
+                                <th>SAC Code</th>
+                                <th>Tax Category</th>
+                                <th class="text-center">Is Reverse Charge</th>
+                                <th class="text-center">Is Exempt</th>
+                                <th class="text-center">Is Nill Rated</th>
+                                <th class="text-center">Is Zero Rated</th>
+                            </tr>
+                            <tr ng-repeat="row in taxClassifications">
+
+                                <td>
+                                    {{row.transactionType}}
+                                </td>
+
+                                <td>
+                                    <select class="form-control"
+                                            ng-model="row.nature"
+                                            ng-options="n.value as n.text for n in taxNatures"
+                                            ng-change="onNatureChange(row)">
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="row.hsnCode"
+                                           ng-disabled="isHSNDisabled(row)"
+                                           placeholder="Enter HSN Code"
+                                           maxlength="10" />
+                                </td>
+
+                                <td>
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="row.sacCode"
+                                           ng-disabled="isSACDisabled(row)"
+                                           placeholder="Enter SAC Code"
+                                           maxlength="10" />
+                                </td>
+
+                                <td>
+                                    <select class="form-control"
+                                            ng-model="row.taxCategoryId"
+                                            ng-options="t.id as t.name for t in taxCategories">
+                                    </select>
+                                </td>
+
+                                <td class="text-center">
+                                    <input type="checkbox" ng-model="row.isReverseCharge" />
+                                </td>
+
+                                <td class="text-center">
+                                    <input type="checkbox" ng-model="row.isExempt" />
+                                </td>
+
+                                <td class="text-center">
+                                    <input type="checkbox" ng-model="row.isNilRated" />
+                                </td>
+
+                                <td class="text-center">
+                                    <input type="checkbox" ng-model="row.isZeroRated" />
+                                </td>
+
+                            </tr>
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 sticky-buttons" style="margin-top:30px;padding-left:12px">
+                <input type="button" class="btn btn-default" tabindex="10" value="Cancel" ui-sref="products" />
+                <input type="button" class="btn btn-primary" tabindex="8" value="Save" ng-click="Save();" ng-show="AccessData.Add" />
+            </div>
+            <!-- End -->
+        </form>
+        <script lang="ja">
+
+            $('.nav a').click(function (e) {
+                e.preventDefault();
+            });
+            $('.panel-group a').click(function (e) {
+                e.preventDefault();
+            });
+
+        </script>
+    </div>
+
+
+</div>

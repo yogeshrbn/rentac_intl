@@ -1,0 +1,583 @@
+
+<ul class="qutoationSettingsTab nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#billSettingsTab" aria-controls="billSettingsTab" role="tab" data-toggle="tab">Settings</a>
+    </li>
+    <li role="presentation">
+        <a href="#billPrintSettingsTab" aria-controls="billPrintSettingsTab" role="tab" data-toggle="tab">Print settings</a>
+    </li>
+    <li role="presentation">
+        <a href="#billOtherInfo" aria-controls="billOtherInfo" role="tab"
+           data-toggle="tab">Other Info</a>
+    </li>
+</ul>
+<div class="tab-content" style="border: solid 1px #c0c0c0;padding:8px; ">
+    <div role="tabpanel" class="tab-pane active" id="billSettingsTab">
+
+
+        <form class="form-horizontal" id="frmBillConfig">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Bill Prefix</label>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Keep same prefix for each type of bill?</label>
+                        <div class="col-sm-6">
+                            <div class="radio-inline">
+                                <input type="radio" name="samebillprefix" ng-value="true" ng-model="BillSettings.samebillprefix"> Yes
+
+                            </div>
+                            <div class="radio-inline">
+                                <input type="radio" name="samebillprefix" ng-value="false" ng-model="BillSettings.samebillprefix"> No
+                            </div>
+                        </div>
+                    </div>
+                    <table style="width:65%" class="table table-condensed" ng-if="BillSettings.samebillprefix == false ">
+                        <tr class="headerRow">
+                            <th>Bill Type</th>
+                            <th>Prefix</th>
+                            <th>Start</th>
+                        </tr>
+                        <tr>
+                            <td>Rent</td>
+                            <td>
+                                <input type="text" class="form-control" validateprefix maxlength="20" name="val_preFix" ng-model="BillSettings.PreFixRent" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="6" name="val_billNo" max="1000000" ng-model="BillSettings.BillNoStartRent" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sale</td>
+                            <td>
+                                <input type="text" class="form-control" validateprefix maxlength="20" name="val_preFix" ng-model="BillSettings.PreFixSale" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="6" name="val_billNo" max="1000000" ng-model="BillSettings.BillNoStartSale" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Measurement</td>
+                            <td>
+                                <input type="text" class="form-control" validateprefix maxlength="20" name="val_preFix" ng-model="BillSettings.PreFixMeasure" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="6" name="val_billNo" max="1000000" ng-model="BillSettings.BillNoStartMeasure" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Contract</td>
+                            <td>
+                                <input type="text" class="form-control" validateprefix maxlength="20" name="val_preFix" ng-model="BillSettings.PreFixContract" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="6" name="val_billNo" max="1000000" ng-model="BillSettings.BillNoStartContract" />
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="form-group" ng-if="BillSettings.samebillprefix == true">
+                        <label for="inputEmail3" class="col-sm-3 control-label">Prefix<i class="required">*</i></label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" validateprefix maxlength="20" name="val_preFix" ng-model="BillSettings.PreFix" />
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="BillSettings.samebillprefix == true">
+                        <label for="inputEmail3" class="col-sm-3 control-label">Start From<i class="required">*</i></label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control maskednumber" style="text-align:left;" nodecimal maxlength="6" name="val_billNo" max="1000000" ng-model="BillSettings.Start" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Allow Editing Bill No</label>
+                <div class="col-sm-5">
+
+                    <input type="checkbox" class="checkbox" ng-model="BillSettings.allowEditBillNo">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <input type="button" class="btn btn-primary" value="Save" ng-click="SaveBillingSetting();" />
+                </div>
+
+            </div>
+
+        </form>
+        <hr />
+        <div class="row">
+            <div class="col-sm-6">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">SAC Code For Rental</label>
+                        <div class="col-sm-6">
+
+                            <input type="text" class="form-control" maxlength="12" ng-model="rentalsaccode">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">SAC Code For Contract</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" maxlength="12" ng-model="contractsaccode">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Tax On Freight</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control maskednumber" maxlength="6" max="100" ng-model="FreightTax">
+                                <span class="input-group-addon">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Apply Tax</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="checkbox" ng-model="applyTax">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Apply Tax On</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" ng-model="applyTaxOn">
+                                <option value="itemlevel">Item Level</option>
+                                <option value="subtotal">Subtotal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="applyTaxOn === 'subtotal'">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Default Tax Rate</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control maskednumber" maxlength="6"
+                                       max="100" ng-model="Settings.defaultTaxRate">
+                                <span class="input-group-addon">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="applyTaxOn === 'subtotal'">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Auto Round Off Taxable Value</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" class="checkbox" ng-model="Settings.autoRoundOffTaxable">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Default Rate Type</label>
+                        <div class="col-sm-6">
+                            <div class="radio-inline">
+                                <input type="radio" name="defaultRateType" value="day" ng-model="defaultRateType"> Daily
+
+                            </div>
+                            <div class="radio-inline">
+                                <input type="radio" name="defaultRateType" value="month" ng-model="defaultRateType"> Monthly
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--<div class="form-group">
+                        <label for="inputEmail3" class="col-sm-3 control-label">Bill Sent Date</label>
+                        <div class="col-sm-2">
+                            <input type="checkbox" number class="checkbox" ng-model="billSentDate">
+                        </div>
+                    </div>-->
+
+
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Bill Receiving Date</label>
+                        <div class="col-sm-6">
+
+                            <input type="checkbox" class="checkbox" ng-model="billReceivedDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Generate Separate Bill For Breakage</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" class="checkbox" ng-model="billBreakage">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Bill Negative Quantity</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" class="checkbox" ng-model="billNegativeQty">
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                        <label for="inputEmail3" class="col-sm-6 control-label">Apply Unit-2 Rate</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" class="checkbox" ng-model="applyUnit2Rate">
+                        </div>
+                    </div>-->
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label">Round off total amount</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" ng-model="roundOffTotalMethod">
+                                <option value="none">None (use invoice Round off checkbox)</option>
+                                <option value="nearest">Nearest whole rupee</option>
+                                <option value="up">Round up to whole rupee</option>
+                                <option value="down">Round down to whole rupee</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label">Default round off on new invoice</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" class="checkbox" ng-model="defaultRoundOffTotal">
+                            <span class="help-block" style="font-size:11px;">When &quot;Round off total&quot; is None, new invoices start with this Round off checkbox state.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-6 col-sm-6">
+                            <input type="button" class="btn btn-primary" value="Save" ng-click="saveConfig ();" />
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-6">
+                <div class="row  mt-1">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-10 control-label">Adjust Advance Receipt In Bill</label>
+                        <div class="col-sm-2">
+                            <div class="input-group">
+                                <input type="checkbox" class="checkbox" ng-model="adjustAdvance">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="dashed-separator" />
+                <div class="row mt-1">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-10 control-label">Allow Rates Editing</label>
+                        <div class="col-sm-2">
+                            <div class="input-group">
+                                <input type="checkbox" class="checkbox" ng-model="allowrateEdits">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="dashed-separator" />
+                <div class="row mt-1">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-10 control-label">Re-check balance if no challans found for billing.</label>
+                        <div class="col-sm-2">
+                            <div class="input-group">
+                                <input type="checkbox" class="checkbox" ng-model="recheckbalance">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="dashed-separator" />
+                <div class="row mt-1">
+                    <div class="form-group">
+                        <label class="col-sm-10 control-label">Bill upto End Date</label>
+                        <div class="col-sm-2">
+                            <div class="input-group">
+                                <input type="checkbox" class="checkbox" ng-model="billUptoEndDate">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <p class="text-muted" style="font-size:12px;margin:0;">
+                                When enabled delivery end date will be up to [To] date and if receiving balance quantity will be up to receiving.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="dashed-separator" />
+                <div class="row mt-1">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-9 control-label">Apply Discount On</label>
+                        <div class="col-sm-3">
+
+                            <select class="form-control" ng-model="discount_type">
+                                <option value="itemlevel" ng-selected="discount_type == 'itemlevel'">Item Level (Before GST)</option>
+                                <option value="invoicelevel" ng-selected="discount_type == 'invoicelevel'">Invoice Level</option>
+                            </select>
+
+
+                        </div>
+                    </div>
+                </div>
+                <hr class="dashed-separator" />
+                <div class="row mt-1">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-9 control-label">Month Days Setup</label>
+                        <div class="col-sm-3">
+
+                            <select class="form-control" ng-model="dayscalctype">
+                                <option value="fixed" ng-selected="dayscalctype == 'fixed'">Fixed Days</option>
+                                <option value="actual" ng-selected="dayscalctype == 'actual'">Actual Month Days</option>
+                            </select>
+
+
+                        </div>
+                    </div>
+                </div>
+                <hr class="dashed-separator" />
+                <div class="row mt-1">
+                    <div class="form-group" style="padding-left:20px;" ng-if="dayscalctype == 'fixed'">
+                        <label for="inputEmail3" class="col-sm-9 control-label">Fixed Days in Month</label>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="number" ng-model="dayscalctype_days" class="form-control" max="31" min="30" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="billPrintSettingsTab" style="padding-bottom:30px;">
+        <p class="text-muted" style="margin-bottom:16px;">These options control what appears on printed and previewed bills.</p>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Invoice title</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" ng-model="invoiceTitle" maxlength="120" placeholder="TAX Invoice" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Bill Period text</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" ng-model="billPeriodText" maxlength="120" placeholder="Bill Period" />
+                </div>
+                <div class="col-sm-6">
+                    <p class="text-muted" style="margin:0;font-size:12px;">Label shown before the bill date range on printed rent bills (and the line-item column heading).</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show company phone</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-model="showCompanyPhone">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show company email</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-model="showCompanyEmail">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show company website</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-model="showCompanyWebsite">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show MSME number</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-model="showMSMENumber">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show client mobile</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" ng-model="showClientMobile">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show client email</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" ng-model="showClientEmail">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show client PIN</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" ng-model="showClientPin">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Show PO number</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" ng-model="showPONumber">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                                <option value="ifexists">Show If Exists</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Print Bank Details On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="printBankDetails">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Print Balance Material On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="printBalanceMaterial">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Hide Zero(0) amount items On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="hideZeroAmountItem">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Hide BOM Components On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="hideBOMComponents">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Group Items on Print</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="groupItemsOnPrint">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Show Excess Qty On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="showExcessQty">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Show Discription Column On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="showDiscriptionColumn">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Show Challans On Bill</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="showChallans">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Print Delivery Challan</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" ng-model="includechallansonbilltoprint">
+                                <option value="all">All</option>
+                                <option value="alldeliveryandcurrentreturns">All Delivery and Current Return</option>
+                                <option value="current">Current</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Print Damage Components Details</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="printDamageComponentsDetails">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Show Detailed Day Calculation</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="showDetailedDayCalculation">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Repeat Company Details On Each Page</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="repeatCompanyDetailsOnEachPage">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">Repeat Table Header</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="checkbox" ng-model="repeatTableHeader">
+                        </div>
+                    </div>
+                    <p class="col-sm-12 text-muted" style="font-size:12px;margin-top:-8px;">When off, printed rent bills hide the quantity breakdown line, the monthly rate note under the item, and show billing days only in the Days column.</p>
+                    <div class="form-group">
+                        <label class="col-sm-8 control-label">HSN/SAC For Contract Bill</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" ng-model="contractbillcodetype">
+                                <option value="hsn" ng-selected="contractbillcodetype == 'hsn'">HSN</option>
+                                <option value="sac" ng-selected="contractbillcodetype == 'sac'">SAC</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="button" class="btn btn-primary" value="Save" ng-click="saveConfig();" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="billOtherInfo" style="padding-bottom:30px;">
+        <form>
+            <div class="form-group">
+                <div>
+                    <h3>Additional Information</h3>
+                    <textarea ckeditor="editorOptions" ng-model="addInfo" data-ck-editor style="height:100px;"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <h3>Terms &amp; Conditions</h3>
+                    <textarea ckeditor="editorOptions" ng-model="tnc" data-ck-editor style="height:100px;"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <input type="button" class="btn btn-primary" value="Save" ng-click="saveOtherConfig ();" />
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<script lang="ja">
+    $('.qutoationSettingsTab a').click(function (e) {
+        e.preventDefault();
+    });
+    $('.otherInfoTab a').click(function (e) {
+        e.preventDefault();
+    });
+</script>

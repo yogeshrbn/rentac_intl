@@ -1,0 +1,134 @@
+﻿<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Status</label>
+
+                        <searchableselect ng-name="client_value1" ng-id="client_value1" data-field="TaskStatusList"
+                                          ng-model="Filter.StatusId" data-val="Id" data-text="Name"></searchableselect>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group" style="margin-top:22px;">
+                        <button type="button" class="btn btn-primary" ng-click="findTasks()">Find</button>
+                    </div>
+
+                </div>
+                <div class="col-sm-4 text-right">
+                    <div class="form-group" style="margin-top:22px;">
+                        <button class="btn btn-primary" ng-show="AccessData.Add" ng-click="newTask()">New Task</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-responsive" style="margin-top:5px;">
+        <table class="table table-condensed">
+            <tr class="headerRow">
+                <th class="text-center">Sr.No</th>
+                <th>Task</th>
+                <th>Owner</th>
+                <th>CreatedOn</th>
+
+                <th>DeadLine</th>
+                <th>Status</th>
+                <th class="text-center">Assignee</th>
+                <th class="text-center"></th>
+            </tr>
+            <tr ng-repeat="item in Tasks">
+                <td class="text-center">{{$index+1}}</td>
+                <td>{{item.Task}}</td>
+                <td>{{item.Owner}}</td>
+                <td> {{item.CreatedOn | date}}</td>
+                <td> {{item.DeliveryDate | date}}</td>
+                <td>
+                    <span ng-if="item.StatusId==1" class="label label-primary">{{item.StatusName}}</span>
+                    <span ng-if="item.StatusId==2" class="label label-primary">{{item.StatusName}}</span>
+                    <span ng-if="item.StatusId==3" class="label label-primary">{{item.StatusName}}</span>
+                    <span ng-if="item.StatusId==4" class="label label-danger">{{item.StatusName}}</span>
+                    <span ng-if="item.StatusId==5" class="label label-success">{{item.StatusName}}</span>
+                </td>
+                <td class="text-center">
+                    {{item.Assignee}}
+                </td>
+                <td class="text-center">
+                   
+                    <a href="javascript:void()" ng-click="edit(item)" ng-if="Token.UserId == item.AssignedTo || Token.UserId == item.CreatedBy ">
+                        <i class="fa fa-edit fa-2x"></i>
+                    </a>
+
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+
+    <div class="modal fade" id="modalNewTask" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Add/Edit Task</h4>
+                </div>
+                <div class="modal-body" style="overflow-y:auto;height:350px">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Task</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" ng-model="Task.Task" maxlength="100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Est.Due Date</label>
+                                <div class="col-sm-8">
+                                    <datepicker date-format="dd/MM/yyyy">
+                                        <input ng-model="Task.DeliveryDate" type="text" class="form-control"
+                                               id="val_workOrderDate" name="val_workOrderDate" />
+                                    </datepicker>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Assign To</label>
+                                <div class="col-sm-8">
+
+                                    <searchableselect ng-name="client_value1" ng-id="client_value1" data-field="Users"
+                                                      ng-model="Task.AssignedTo" data-val="UserId" data-text="FullName"></searchableselect>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-if="Task.TaskId == 0" ng-click="Save()">Save</button>
+                    <span ng-if="Task.TaskId > 0 && Task.StatusId !=4 && Task.StatusId != 5"
+                          class="ml-1" >
+                        <button type="button"  ng-if="Token.UserId == Task.CreatedBy" class="btn btn-primary" ng-click="Save()">Update</button>
+                        <button type="button" class="btn btn-success" ng-if="Token.UserId == Task.AssignedTo" ng-click="complete()">Complete</button>
+                        <button type="button"  ng-if="Token.UserId == Task.CreatedBy" class="btn btn-warning" ng-click="reAssign()">Re-Assign</button>
+                        <button type="button" ng-if="Token.UserId == Task.CreatedBy"  class="btn btn-danger" ng-click="delete()">Delete</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

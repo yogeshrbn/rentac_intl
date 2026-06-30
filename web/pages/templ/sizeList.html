@@ -1,0 +1,51 @@
+﻿<div class="form-group">
+     
+    <!--   <pageheader heading="Size List" />-->
+    <div class="col-lg-12">
+        <!--<h3>Size List</h3>-->
+         <a href="#addeditsize" class="btn btn-primary">New Size</a>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+  <!--  <div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>-->
+    <div class="col-lg-12">
+
+        <table class="table table-condensed table-responsive" med-key>
+            <tr class="filterRow hidden-xs">
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by code" ng-model="search.Name" />
+                </th>
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by name" ng-model="search.Address1" /></th>
+                <th>
+                    <input type="button" value="Find" class="btn btn-primary" ng-click="Find();" />
+                    <!--<input type="button" value="Advance Filter" class="btn btn-primary" />-->
+                </th>
+                
+            </tr>
+            <tr class="headerRow">
+                <th>Unit</th>
+                <th>Size</th>
+
+                <th>Actions</th>
+
+
+            </tr>
+            <tr dir-paginate="item in Sizes | itemsPerPage: PAGE_SIZE |filter: search:strict">
+
+                <td>{{item.UOM}}
+                </td>
+                <td>{{item.Size}}
+                </td>
+                <td>
+                   
+                   <a ng-show="{{item.Active}}==true" ng-click="Activate(0,item.UOMSizeId);"><span class="fa fa-trash text-danger"></span></a>
+                    <a ng-show="{{item.Active}}==false" ng-click="Activate(1,item.UOMSizeId);"><span class="fa fa-check text-primary"></span></a>
+                </td>
+            </tr>
+
+        </table>
+        <dir-pagination-controls></dir-pagination-controls>
+    </div>
+</div>

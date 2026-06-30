@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="../dist/js/vendor/jquery-1.12.0.min.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+</head>
+<body>
+    <script>
+        $(document).ready(function (e) {
+             
+            var doc = new jsPDF()
+
+            doc.text('Hello world!', 10, 10)
+            doc.save('a4.pdf')
+        });
+    </script>
+</body>
+</html>

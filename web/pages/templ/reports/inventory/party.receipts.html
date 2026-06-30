@@ -1,0 +1,60 @@
+﻿
+
+<div class="table-responsive mt-2" ng-repeat="item in ReportData">
+    <table class="table table-condensed">
+        <tr>
+            <th class="headerRow" style="width:100px;">Party:</th>
+            <th colspan="3">{{item.Client}}</th>
+        </tr>
+        <tr>
+            <th class="headerRow">Site:</th>
+            <th colspan="3">{{item.SiteName}}</th>
+        </tr>
+        <tr>
+            <th class="headerRow">Receipt Date:</th>
+            <th>{{item.ReceivingDate | date}}</th>
+            <th class="headerRow" style="width:100px;">Receipt No: </th>
+            <td>{{item.GRN}}</td>
+        </tr>
+        <tr>
+            <th class="headerRow">Charges Paid:</th>
+            <th></th>
+            <th class="headerRow">Additional Exp: </th>
+            <td></td>
+        </tr>
+        <tr>
+            <th class="headerRow">Vehicle No:</th>
+            <th>{{item.VehicleNo}}</th>
+            <th class="headerRow">Driver Name: </th>
+            <td>{{item.Driver}}</td>
+        </tr>
+
+    </table>
+    <table class="table table-condensed">
+
+        <tr class="headerRow">
+            <th style="width:50%">Product</th>
+            <th class="text-center">Qty</th>
+            <th class="text-center">Brekage</th>
+            <th class="text-center">ShortQty</th>
+            <th class="text-center">ScrapQty</th>
+
+            <th class="text-center">ExcessQty</th>
+            
+
+            <th style="width:200px;">Remraks</th>
+
+        </tr>
+        <tr ng-repeat="d in item.Items">
+            <td>{{d.Product}}</td>
+            <td class="text-center">{{d.Quantity}}</td>
+            <td class="text-center">{{d.Breakage}}</td>
+            <td class="text-center">{{d.ShortQty}}</td>
+            <td class="text-center">{{d.Scrap}}</td>
+            <td class="text-center">{{d.ExcessQty}}</td>
+            <td>{{d.Remarks}}</td>
+        </tr>
+    </table>
+    <hr />
+</div>
+

@@ -1,0 +1,144 @@
+<div class="content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding:10px 10px 10px;">
+                <!--<div class="block-title">
+                    <h2>CEO Dashboard</h2>
+                    <small class="text-muted">Static sample data (temporary)</small>
+                </div>-->
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-6">
+                        <div class="panel panel-default ">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Rental vs Contract Comparison Analytics</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-4" ng-repeat="metric in rentalVsContractAnalytics track by metric.title">
+                                        <div class="panel panel-default ceo-dashboard-widget" style="margin-bottom:10px;">
+                                            <div class="panel-body text-center">
+                                                <div style="font-size:13px; color:#666;">{{metric.title}}</div>
+                                                <div style="font-size:24px; font-weight:700; margin-top:6px;">{{metric.value}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="panel panel-default ">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Forecasting Analytics</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div style="height:250px;">
+                                    <canvas id="ceoForecastingBarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="panel panel-default ">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">KPI Overview</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div style="height:250px;">
+                                    <canvas id="ceoKpiHorizontalChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="panel panel-default ">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Early Warning Alerts</h3>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-condensed">
+                                    <tbody>
+                                        <tr ng-repeat="a in earlyWarningAlerts track by a.title">
+                                            <td style="width:72%;">
+                                                <span>{{a.title}}</span>
+                                            </td>
+                                            <td class="text-right">
+                                                <span class="label" ng-class="a.level == 'danger' ? 'label-danger' : 'label-warning'">{{a.value}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row" style="margin-top:10px;">
+
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-6 col-sm-12">
+                        <div class="panel panel-default ">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Top 5 Risk Projects</h3>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-condensed table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th class="text-right">Risk</th>
+                                            <th class="text-right">Next action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="p in topRiskProjects track by p.name">
+                                            <td>{{p.name}}</td>
+                                            <td class="text-right"><span class="label label-danger">{{p.risk}}</span></td>
+                                            <td class="text-right">{{p.action}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12">
+                        <div class="panel panel-default ">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Sales Pipeline Value</h3>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-condensed table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Stage</th>
+                                            <th class="text-right">Value</th>
+                                            <th class="text-right">Weighted</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="s in pipeline track by s.stage">
+                                            <td>{{s.stage}}</td>
+                                            <td class="text-right">{{s.value}}</td>
+                                            <td class="text-right">{{s.weighted}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="text-right" style="font-weight:700;">
+                                    Total: {{pipelineTotal}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

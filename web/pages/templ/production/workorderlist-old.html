@@ -1,0 +1,154 @@
+<div class="form-group" style="padding:0px 15px;">
+
+    <!--   <div class="clearfix">&nbsp;</div>-->
+    <!--    <div class="alert alert-success" ng-show="Salts.length==null">
+    </div>-->
+    <!--<div class="col-sm-2">
+        <a href="#/addSiteBill" class="btn btn-primary">New Site</a>
+    </div>-->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="row" style=" background: #e9e9e9; padding: 10px; border-bottom: solid 1px #bdb7b7;">
+                <div class="col-xs-12 col-sm-6">
+                    <label class="control-label">Client</label>
+
+                    <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts"
+                                      ng-id="client_value" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+
+
+                </div>
+
+                <div class="col-xs-12  col-sm-6">
+                    <label>Site</label>
+                    <input type="text" class="form-control" placeholder="Site" ng-model="Filter.Site" />
+                </div>
+                <!--<div class="col-xs-12  col-sm-6">
+            <label>Job #</label>
+            <input type="text" class="form-control" placeholder="Job#" ng-model="Filter.JobNumber" />
+        </div>-->
+
+                <div class="col-xs-12  col-sm-6">
+                    <label>From</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.WorkOrderDate" type="text" tabindex="2" class="form-control" />
+                    </datepicker>
+                </div>
+                <div class="col-xs-12  col-sm-6">
+                    <label>To</label>
+                    <datepicker date-format="dd/MM/yyyy">
+                        <input ng-model="Filter.EndDate" type="text" tabindex="3" class="form-control" />
+                    </datepicker>
+                </div>
+
+                <div class="col-xs-12 col-sm-offset-6 col-sm-6 text-right" style="padding-top:20px;">
+                    <input type="button" value="Find" class="btn btn-primary" ng-click="Find();" />
+                    <input type="button" value="Add" class="btn btn-primary" ui-sref="addworkorder" />
+                </div>
+
+            </div>
+
+            <div class="">
+                <div class="col-sm-12" style="padding:10px; margin:10px 0px;">
+                    <div class="" ng-repeat="site in WorkOrders" style="border-bottom: solid 1px #c7c5c5; padding-bottom: 5px;">
+                        <div style="display: flex; flex-direction: column;">
+                            <label class="control-label">{{$index+1}}.{{site.Client}}</label>
+                            <label> {{site.Site}}</label>
+
+                            <div class="row">
+                                <div class="col-sm-3">{{site.WorkOrderNumber}}</div>
+                                <div class="col-sm-2">Jobs:{{site.JobsCount}}</div>
+                                <div class="col-sm-7 text-right">
+                                    <button class="btn btn-primary">VIEW</button>
+                                    <button class="btn btn-primary">JOBS</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="WorkOrders.length == 0" class="text-center">
+                        <img src="../img/no-data.png"  style="width:110px;" />
+                        <p>No Records Found</p>
+                    </div>
+                </div>
+              
+            </div>
+            <table class="table table-condensed table-responsive hide">
+
+
+
+                <tr class="headerRow">
+                    <th style="width: 20px;">S.#</th>
+                    <th style="width: 200px;">Client</th>
+                    <th style="width: 200px;">Site</th>
+                    <th style="width: 50px;">Job#</th>
+                    <th style="width: 50px;">W.O#</th>
+                    <th style="width: 70px;">Eng.</th>
+
+
+                    <!-- <th class="number_td" style="width: 50px;">Sub Total</th>
+
+            <th class="number_td" style="width: 50px;">Tax</th>
+            <th class="number_td" style="width: 50px;">Freight</th>-->
+
+                    <th class="number_td" style="width: 50px;">Total</th>
+                    <th class="number_td" style="width: 50px;">Received</th>
+                    <th class="number_td" style="width: 50px;">Balance</th>
+                    <th width="30px"></th>
+                </tr>
+                <tr ng-repeat="site in WorkOrders">
+                    <td>{{$index+1}}</td>
+                    <td>{{site.Client}}</td>
+                    <td style="max-width: 200px; text-overflow: ellipsis; word-break: break-word;"
+                        class="overflow-td">
+                        {{site.Site}}
+                    </td>
+                    <td>{{site.Jobs}}</td>
+                    <td>{{site.WorkOrderNumber}}</td>
+                    <td>{{site.SiteEng }}</td>
+
+                    <!--  <td class="number_td">{{site.SubTotal|number:2}}</td>
+
+            <td class="number_td">{{(site.TaxAmount + site.FreightTax)|number:2}}</td>
+            <td class="number_td">{{site.Freight|number:2}}</td>-->
+                    <td class="number_td">{{site.Total|number:2}}</td>
+                    <td class="number_td">{{site.TotalReceived|number:2}}</td>
+                    <td class="number_td">{{site.BalanceAmount|number:2}}</td>
+                    <td>
+                        <button class="btn btn-primary">JOBS</button>
+                        <!--  <i class="fa fa-edit" ng-click="editSite($index,site.SiteId);"></i>
+                <i class="fa fa-print" ng-click="PrintReceipt(item);"></i>-->
+                        <div class="btn-group">
+                            <i class="fa fa-chevron-down" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+
+                            <!--<ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="#woInfo/{{site.LedgerSiteId}}">View Details</a></li>
+                    <li><a href="#" preventdefault ng-click="NewSiteJob(site,$event); $event.stopPropagation();">Add Job</a></li>-->
+                            <!--   <li><a href="#" preventdefault ng-click="editSite(site,$event); $event.stopPropagation();">Edit Site</a></li>-->
+                            <!--<li><a href="#" preventdefault ng-click="PrintReceipt(item,$event); $event.stopPropagation();">Print Challan</a></li>-->
+                            <!--<li><a href="#" preventdefault ng-click="CloseSite($index,site.SiteId,$event); $event.stopPropagation();">Close Site</a></li>-->
+                            <!--<li><a href="#" preventdefault ng-click="CloseSitePayment($index ,site.SiteId,$event);">Close Payment</a></li>-->
+                            <!--</ul>-->
+                        </div>
+                    </td>
+                </tr>
+                <tfoot ng-if="WorkOrders.length == 0">
+                    <tr>
+                        <td colspan="10" class="text-center">
+                          
+                        </td>
+                    </tr>
+                </tfoot>
+
+
+
+
+
+
+            </table>
+        </div>
+        <div class="col-lg-6" style="border-left:dashed 1px gray;min-height:87vh;">
+           Right Section Data 
+        </div>
+    </div>
+   
+
+</div>

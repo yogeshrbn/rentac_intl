@@ -1,0 +1,18 @@
+﻿[
+
+  {
+    "name": "login",
+    "templateUrl": "assets/templates/login.html",
+    
+    "title": "Order Detail",
+    "authorize": false,
+    "data": {
+      "authorizedRoles": [
+        "ADMIN",
+        "EMPLOYEE"
+      ],
+      "menuCluster": "order-detail"
+    }
+  }
+  
+]

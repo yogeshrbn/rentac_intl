@@ -1,0 +1,269 @@
+<!--  <pageheader heading="Bill register" />-->
+<script src="../../../dist/js/ag-grid/customHeaderComponent.js"></script>
+<div class="clearfix">&nbsp;</div>
+<div class="col-sm-12">
+    <div class="flex-container" style="justify-content: space-between;">
+        <div style="width:200px;">
+            <label>Choose Party</label>
+
+            <searchableselect ng-name="client_value" tabindex="2" data-field="Accounts" data-primarytext="TradeName"
+                              ng-id="client_value" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+        </div>
+        <div style="width:200px;">
+            <label>Site</label>
+            <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+        </div>
+        <div style="width: 100px;">
+            <label>From</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" tabindex="2" class="form-control" />
+            </datepicker>
+        </div>
+        <div style="width: 100px;">
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" tabindex="3" class="form-control" />
+            </datepicker>
+        </div>
+        <div style="width:100px;">
+            <label>Status</label>
+            <select class="form-control" ng-model="Filter.StatusId">
+
+                <option ng-value="2"> Installation</option>
+                <option ng-value="4"> Dismantale</option>
+                <option ng-value="5"> Completed</option>
+
+            </select>
+        </div>
+        <div style="width:300px;">
+            <label>&nbsp;</label>
+            <div style=" display: flex; flex-direction: row; align-content: space-around; justify-content: space-between; align-items: center;">
+                <!--<a data-target="#advFilterDialog" data-toggle="modal"><i class="fa fa-filter fa-2x"></i></a>-->
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Search" ng-click="filter();" />
+                <!--<a href="#contract/0/0" class="btn btn-primary" ng-show="AccessData.Add">New Contract</a>
+
+                <export data="Bills" url="'billList.html'"></export>-->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="changeStatusDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:36%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Change Status</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form name="frmExtendConract" id="frmExtendConract">
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Status</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" ng-model="JobCard.StatusId">
+                                        <option ng-value="1">Not Completed</option>
+                                        <option  ng-value="2">Completed</option>
+                                        <option  ng-value="3">Delayed</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-1">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Remarks</label>
+                                <div class="col-sm-8" >
+                                    <textarea class="form-control" style="height:100px;width:100%" ng-model="JobCard.Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary btn-sm" ng-click="updateStatus();">Change Status</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        
+        <div class="table-responsive" style="margin-top:7px;">
+            <!--<table class="table table-condensed ">
+
+            <tr class="headerRow">
+                <th style="width: 50px;" class="text-center">#</th>
+                <th style="width: 150px;">Quotation#</th>
+                <th style="width: 250px;">Panning Date</th>-->
+            <!--<th style="width: 150px;">Site</th>-->
+            <!--<th style="width: 100px;">Client</th>
+                <th style="width: 100px;">Address</th>
+                <th style="width: 100px;">Area Zone</th>
+                <th style="width: 200px;">Locality</th>
+                <th style="width: 100px;">Scaffold.Size</th>
+                <th style="width: 100px;">Total Area</th>
+                <th style="width: 100px;">Type of Work</th>
+                <th style="width: 100px;">Exp. Del. Date</th>
+                <th style="width: 100px;">Exp. Start. Date</th>
+                <th style="width: 100px;">Resources</th>
+                <th style="width: 100px;">Status</th>
+
+                <th style="width: 100px;" class="text-center">Actions</th>
+
+
+
+            </tr>
+            <tr id="tr{{item.ContractId}}" ng-repeat="item in Activities track by $index">
+                <td class="text-center">{{$index+1}}</td>
+                <td>
+                    {{item.QuotationNumber}}
+
+                </td>
+                <td>
+                    {{item.EstimatedStartDate}}
+                </td>
+                <td>{{item.Client}}</td>
+                <td>
+                    {{item.Address}}
+                </td>
+                <td>{{item.AreaZone}}</td>
+                <td>{{item.Locality}}</td>
+                <td>{{item.SizeDescription}}</td>
+                <td>{{item.Area}}</td>
+                <td>{{item.TypeOfWork}}</td>
+                <td>{{item.EstimatedEndDate | formatDate: 'dd-MM-yyyy'}}</td>
+                <td>{{item.EstimatedStartDate | formatDate: 'dd-MM-yyyy'}}</td>
+                <td> {{item.Employees}}</td>
+                <td> {{item.Status}}</td>
+                <td style="text-align: center;">
+                    <div class="flex-container" style="justify-content: space-evenly;">-->
+            <!--<a href="javascript:void()" ng-click="edit(item)"><i class="fa fa-edit fa-2x"></i> </a>
+            <a href="javascript:void()"><i class="fa fa-eye  fa-2x" ng-click="preview(item)"></i> </a>
+            <a href="javascript:void()"><i class="fa fa-list-alt" ng-click="info(item)"></i> </a>-->
+            <!--</div>
+                    </td>
+                </tr>
+
+            </table>-->
+            <div id="myGrid" style="width: 100%; max-height: 500px;"></div>
+        </div>
+
+        <div class="modal right fade" id="previewDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:50%;" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modalLabel">Preview</h4>
+                    </div>
+                    <div class="modal-body">
+                        <loadingcircle ng-show="ContractPreview == 1"></loadingcircle>
+                        <div class="row">
+                            <div class="col-sm-12" style="background: #c0c0c059; padding: 10px;">
+                                <div class="d-flex" style=" justify-content: space-around; flex-direction: row;">
+
+                                    <button class="btn btn-primary btn-sm" ng-click="printPdf()">Download PDF</button>
+                                    <button type="button" class="btn btn-primary" ng-click="billContract();" data-ng-disabled="SelectedContract.StatusId != 2">Bill Contract</button>
+                                    <button type="button" class="btn btn-primary" data-ng-disabled=" SelectedContract.StatusId != 2" ng-click="CompleteContract();">Complete Contract</button>
+                                    <button type="button" class="btn btn-primary" data-ng-disabled="SelectedContract.StatusId != 1" ng-click="Publish();">Publish Contract</button>
+                                    <button type="button" class="btn btn-danger" ng-click="openStatusDialog(3);" data-ng-disabled="SelectedContract.StatusId != 1">Delete Contract</button>
+
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                        <div id="rpt" style="zoom: 0.8;">
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" ng-click="printPdf()">Print</button>
+                        <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="delDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:36%;" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modalLabel">Delete Contract</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Reason of Deletion</label>
+                                <div class="col-sm-8">
+                                    <textarea style="height:60px" class="form-control" ng-model="SelectedContract.DeletedRemarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" ng-click="deleteContract();">Delete</button>
+                        <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="delDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:36%;" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modalLabel">Delete Contract</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Reason of Deletion</label>
+                                <div class="col-sm-8">
+                                    <textarea style="height:60px" class="form-control" ng-model="SelectedContract.DeletedRemarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-sm" ng-click="deleteContract();">Delete</button>
+                        <button id="btnCancelProfileDialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script lang="ja">
+            $('table a').click(function (e) {
+                alert(e);
+                e.preventDefault();
+
+            });
+        </script>
+    </div>
+</div>
+
+

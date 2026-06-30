@@ -1,0 +1,85 @@
+
+<div class="col-sm-12">
+
+    <!--  <pageheader heading="Ledger" />-->
+    <div class="col-sm-12">
+        <div class="col-sm-3">
+            <label>Choose Party</label>
+            <!--<searchabletext ng-id="client" data-item="Client" data-all="true" tab-index="1" selected-object="LedgerSelect" name="client_value" field-required="true"> </searchabletext>-->
+            <searchableselect name="client" tabindex="2" data-field="Accounts" data-primarytext="TradeName" ng-model="Filter.LedgerId" data-val="LedgerId" data-text="Name"></searchableselect>
+
+        </div>
+        <!--<div class="col-sm-3">
+            <label>Site</label>
+            <searchableselect id="Searchableselect1" ng-model="Filter.LedgerSiteId" data-field="LedgerSites" tab-index="1" data-val="LedgerSiteId"
+                              data-text="SiteAddress"></searchableselect>
+
+        </div>-->
+        <div class="col-sm-2 text-center">
+            <label>From</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.From" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2 text-center">
+            <label>To</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.To" type="text" class="form-control" tabindex="3" />
+            </datepicker>
+        </div>
+        <div class="col-sm-2">
+            <label>&nbsp;</label>
+            <div class="d-flex col-sm-12" style="align-items:center;justify-content:space-between;">
+                <input type="button" class="btn btn-primary mr-1" tabindex="4" value="Show" ng-click="GetAccountLedger();" />
+                <export data="TransList" url="'ledgerAnalysis.html'"></export>
+            </div>
+        </div>
+
+        <!--<div class="col-sm-1">
+            <label>&nbsp;</label>
+            <input type="button" class="btn btn-primary" tabindex="4" value="Print" ng-click="PrintLedger();" />
+
+        </div>-->
+    </div>
+    <div class="col-sm-12" style="max-height:600px; overflow-y:auto;">
+        <div class="col-sm-12">
+            <label>Previous Balance: {{PreviousCB}}</label>
+        </div>
+        <table class="table table-condensed table-responsive table-list" med-key>
+
+            <tr class="headerRow">
+
+                <th style="width: 40px">#</th>
+                <th style="width:80px">Date</th>
+
+                <th style="width: 100px" class="text-right">Debit</th>
+                <th style="width: 100px" class="text-right">Credit</th>
+                <th style="width: 150px" class="text-right">Balance</th>
+                <th style="" >Narration</th>
+
+            </tr>
+            <tr ng-repeat="item in TransList">
+
+                <td>{{$index + 1 }}</td>
+
+                <td>{{item.TransactionDate | formatDate}}</td>
+                <!--<td class="text-right">{{ (item.TransactionType == 1 ||  item.TransactionType == 3  ?  item.TransactionAmount : 0) | number:2}}</td>
+    <td class="text-right">{{ (item.TransactionType == 2 || item.TransactionType == 4 ?    item.TransactionAmount :0)| number:2}}</td>-->
+            <td class="text-right">{{item.Debit | number:2}}</td>
+                <td class="text-right">{{item.Credit | number:2}}</td>
+                <td class="text-right">
+                    {{Abs(item.Closingbalance)   }}
+                </td>
+                <td>
+                    {{item.Narration}}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script lang="ja">
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+</div>
+

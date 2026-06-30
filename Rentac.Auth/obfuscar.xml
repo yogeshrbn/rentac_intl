@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<Obfuscator>
+  <Var name="InPath" value=".\" />
+  <Var name="OutPath" value=".\Obfuscat\" />
+
+  <Var name="KeepPublicApi" value="true" />
+  <Var name="HidePrivateApi" value="true" />
+  <Var name="RenamePublicMethods" value="false" />
+  <Var name="RenameProperties" value="false" />
+  <Var name="RenameEvents" value="false" />
+  <Var name="ReuseNames" value="false" />
+  
+  <Module file="$(InPath)Rentac.Auth.dll">
+    <SkipType name="Rentac.Auth.Controllers.*" />
+    <SkipType name="Rentac.Auth.Program" />
+    <SkipType name="Rentac.Auth.Startup" />
+  </Module>
+  <Module file="$(InPath)\BAL.dll" />
+</Obfuscator>

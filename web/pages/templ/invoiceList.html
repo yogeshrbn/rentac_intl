@@ -1,0 +1,50 @@
+﻿
+<div class="">
+  <!--    <pageheader heading="Invoice List" />-->
+  
+    <div class="clearfix">&nbsp;</div>
+   <!-- <div class="alert alert-success" ng-show="Companies.length==null">
+        {{Message.NoCompaniesFound}}
+    </div>-->
+    <div class="col-lg-12">
+
+        <table class="table table-condensed table-responsive" med-key>
+            <tr class="filterRow hidden-xs">
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by invoice#" ng-model="search.Name" />
+                </th>
+                <th>
+                    <input type="text" class="form-control" placeholder="Find by job number" ng-model="search.Address1" /></th>
+                <th>
+                    <input type="button" value="Find" class="btn btn-primary" ng-click="Find();" />
+                    <!--<input type="button" value="Advance Filter" class="btn btn-primary" />-->
+                    <a href="#invoice" class="btn btn-warning">New Invoice</a>
+                </th>
+                <th></th>
+                <th colspan="2"></th>
+            </tr>
+            <tr class="headerRow">
+                <th style="width:50px;">Invoice#</th>
+                <th style="width:250px;">Client</th>
+                <th style="width:100px;">Date</th>
+                <th style="text-align:right;width:100px;">Amount</th>
+                <th style="text-align:right;width:100px;">Tax</th>
+                <th style="text-align:right;width:100px;">Net Amount</th>
+
+
+            </tr>
+            <tr ng-repeat="item in InvoiceList">
+                <td>{{item.InvoiceNumber}}
+                </td>
+                <td>{{item.Client}}
+                </td>
+                <td>{{item.InvoiceDate}}</td>
+                <td style="text-align:right;">{{item.SubTotal |number:2 }}</td>
+                <td style="text-align:right;">{{item.TotalTax |number:2 }}</td>
+                <td style="text-align:right;"> {{item.Total |number:2 }}</td>
+            </tr>
+
+        </table>
+        
+    </div>
+</div>

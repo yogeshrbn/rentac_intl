@@ -1,0 +1,67 @@
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-2">
+            <label>Warehouse</label>
+            <searchableselect id="warehouse" ng-model="Filter.WarehouseId" data-field="Warehouses" tab-index="1" data-val="WarehouseId"
+                              data-text="Name"></searchableselect>
+
+        </div>
+        <div class="col-sm-2 text-center nopadding">
+            <label>As On Date</label>
+            <datepicker date-format="dd/MM/yyyy">
+                <input ng-model="Filter.OnDate" type="text" class="form-control" tabindex="2" />
+            </datepicker>
+        </div>
+        <div class="col-sm-3">
+            <label>&nbsp;</label><br />
+            <input type="button" class="btn btn-primary" tabindex="4" value="Show" ng-click="GetStockInhand();" />
+            <button class="btn btn-primary" tabindex="4" ng-click="Print();">
+                <i class="fa fa-print"></i> Print
+            </button>
+        </div>
+
+
+
+
+
+        <div class="col-sm-12">
+
+            <table class="table table-condensed table-responsive" med-key>
+
+                <tr class="headerRow">
+
+                    <th style="width: 5%">#</th>
+                    <th style="width: 15%;">Item Code</th>
+                    <th style="width: 20%;">Item Name</th>
+                    <th style="width: 60%">On Floor</th>
+                </tr>
+                <tr ng-repeat="item in ItemsList">
+
+                    <td>{{$index + 1 }}</td>
+                    <td>{{item.Code }}</td>
+                    <td>{{item.Product }}</td>
+                    <td>{{item.ClosingBalance | number:2 }}</td>
+
+                </tr>
+                <!--<tr class="total">
+
+                <td colspan="8"></td>
+                <td>Total</td>
+
+                <td>{{LastRow.Balance |number:2 }} {{LastRow.TransactionTypeName}}</td>
+
+            </tr>-->
+            </table>
+
+        </div>
+
+
+    </div>
+
+    <script lang="ja">
+
+        $('.nav a').click(function (e) {
+            e.preventDefault();
+        });
+    </script>
+</div>

@@ -1,0 +1,105 @@
+﻿<div class="row" style=" border-top: solid 1px #aeaeae; padding-top: 10px;">
+    <div class="col-sm-6" style="border-right: solid 1px #cacaca ">
+        <div class="flex-container_v1 flex-col">
+            <label>
+                Quantity Previously Supplied: {{ReportData.prevSent}}
+            </label>
+            <strong>Supplied</strong>
+        </div>
+        <hr />
+        <div ng-repeat="item in ReportData.delivery ">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <strong>Challan#:</strong> {{item.Number}}
+                    </td>
+                    <td><strong>Date:</strong> {{item.WorkOrderDate | date}}</td>
+
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Driver:</strong> {{item.Driver}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Vechicle:</strong> {{item.Vehicle}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Cartage Paid:</strong> {{item.Freight}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Total Qty:</strong> {{item.Items | sumByKey:'SentQty'}}</td>
+                </tr>
+            </table>
+            <div class="table-responsive mt-2">
+                <table class="table table-condensed">
+                    <tr class="headerRow">
+                        <th style="width:60%">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-left">Remarks</th>
+                    </tr>
+                    <tr ng-repeat="p in item.Items ">
+                        <td>{{p.Product}}</td>
+                        <td class="text-center">{{p.SentQty}}</td>
+                        <td class="text-left">{{p.Remarks}}</td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="flex-container_v1 flex-col">
+            <label>
+                Quantity Previously Received: {{ReportData.prevReceived}}
+            </label>
+            <strong>Received</strong>
+        </div>
+        <hr />
+        <div ng-repeat="item in ReportData.returns">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <strong>Challan#:</strong> {{item.GRN}}
+                    </td>
+                    <td><strong>Date:</strong> {{item.ReceivingDate | date}}</td>
+
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Driver:</strong> {{item.Driver}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Vechicle:</strong> {{item.VehicleNo}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Cartage Paid:</strong> {{item.Freight}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Total Qty:</strong> {{item.Items | sumByKey:'Quantity'}}</td>
+                </tr>
+            </table>
+            <div class="table-responsive mt-2">
+                <table class="table table-condensed">
+                    <tr class="headerRow">
+                        <th style="width:45%;">Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Brk</th>
+                        <th class="text-center">Short</th>
+                        <th class="text-center">Scrap</th>
+
+                        <th class="text-center">Excess</th>
+                        <th class="text-left">Remarks</th>
+                    </tr>
+                    <tr ng-repeat="p in item.Items">
+                        <td>{{p.Product}}</td>
+                        <td class="text-center">{{p.Quantity}}</td>
+                        <td class="text-center">{{p.Breakage}}</td>
+                        <td class="text-center">{{p.ShortQty}}</td>
+                        <td class="text-center">{{p.Scrap}}</td>
+                        <td class="text-center">{{p.ExcessQty}}</td>
+                        <td class="text-left">{{p.Remarks}}</td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
