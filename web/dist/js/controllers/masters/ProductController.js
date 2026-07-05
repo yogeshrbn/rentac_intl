@@ -1,5 +1,5 @@
 app.controller('ProductController', function ($scope, $location, $stateParams, $state, $http, $timeout, AuthenticationService,
-    FileUploadService, ModalFactory, ProductTaxClassicationService) {
+    FileUploadService, ModalFactory, ProductTaxClassicationService, TaxService) {
     var pId = $stateParams.pId == undefined ? 0 : $stateParams.pId;
     var PRODUCT_LIST_FILTER_KEY = 'rentacProductListFilter_v1';
 
@@ -85,7 +85,26 @@ app.controller('ProductController', function ($scope, $location, $stateParams, $
 
     $scope.Categories = StaicData.ProductCategories;
     $scope.UOM = StaicData.UOM;
-    $scope.TAXES = StaicData.TAX_CATEGORY;
+    $scope.TAXES = [];
+
+    function loadTaxCategories() {
+        TaxService.getTaxCategories().then(function (e) {
+            if (e.data.Code != 200) {
+                alert(e.data.Message);
+                return;
+            }
+            $scope.TAXES = (e.data.Data || []).map(function (c) {
+                return {
+                    TaxId: c.TaxCategoryId,
+                    TaxName: c.TaxName,
+                    CGST: c.CGST,
+                    SGST: c.SGST,
+                    IGST: c.IGST
+                };
+            });
+        });
+    }
+    loadTaxCategories();
     //category.GetAll(function (e) {
     //    $scope.Categories = e.data;
     //});
@@ -355,7 +374,7 @@ app.controller('ProductController', function ($scope, $location, $stateParams, $
 
     //--end config
 });
-app.controller('ProductTaxClassificationController', function ($scope, $http, ProductTaxClassicationService) {
+app.controller('ProductTaxClassificationController', function ($scope, $http, ProductTaxClassicationService, TaxService) {
 
     $scope.productId = 0;   // set from parent scope
     $scope.companyId = 0;   // set from session/login
@@ -365,13 +384,11 @@ app.controller('ProductTaxClassificationController', function ($scope, $http, Pr
         { value: 'Service', text: 'Service' }
     ];
 
-    $scope.taxCategories = [
-        { id: 0, name: '0%' },
-        { id: 5, name: '5%' },
-        { id: 12, name: '12%' },
-        { id: 18, name: '18%' },
-        { id: 28, name: '28%' }
-    ];
+    $scope.taxCategories = [];
+
+    TaxService.getCategoryOptions().then(function (options) {
+        $scope.taxCategories = options;
+    });
 
     // Master Model
     $scope.taxClassifications = [
@@ -389,7 +406,7 @@ app.controller('ProductTaxClassificationController', function ($scope, $http, Pr
             nature: nature,
             hsnCode: '',
             sacCode: '',
-            taxCategoryId: 18,
+            taxCategoryId: 0,
             isReverseCharge: false,
             isExempt: false,
             isNilRated: false,

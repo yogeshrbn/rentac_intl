@@ -1,0 +1,41 @@
+<div class="col-md-12">
+    <button class="btn btn-primary pull-right mb-1" ng-click="showAddForm()" ng-show="AccessData.Add">
+        <i class="fa fa-plus"></i> New Tax
+    </button>
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <tr class="headerRow">
+                <th class="text-center">Sr.No</th>
+                <th sort-header="taxes" sort-field="Name">Name</th>
+                <th sort-header="taxes" sort-field="Code">Code</th>
+                <th class="text-center" sort-header="taxes" sort-field="Rate">Rate</th>
+                <th sort-header="taxes" sort-field="RateType">Rate Type</th>
+                <th sort-header="taxes" sort-field="Country">Country</th>
+                <th class="text-center">Active</th>
+                <th sort-header="taxes" sort-field="EffectiveFrom">Effective From</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="item in taxes">
+                    <td class="text-center">{{$index + 1}}</td>
+                    <td>{{item.Name}}</td>
+                    <td>{{item.Code}}</td>
+                    <td class="text-center">{{item.Rate}}</td>
+                    <td>{{item.RateType}}</td>
+                    <td>{{item.Country}}</td>
+                    <td class="text-center">
+                        <span class="label" ng-class="{'label-success': item.IsActive, 'label-default': !item.IsActive}">
+                            {{item.IsActive ? 'Yes' : 'No'}}
+                        </span>
+                    </td>
+                    <td>{{item.EffectiveFrom | formatDate}}</td>
+                    <td class="table-actions text-center">
+                        <a href="javascript:void(0)" ng-click="edit(item)" ng-show="AccessData.Edit">
+                            <i class="fa fa-edit fa-2x text-primary"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

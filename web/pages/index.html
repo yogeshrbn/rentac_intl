@@ -476,7 +476,14 @@
 
     <script src="../dist/js/ag-grid/ag-grid-community.min.js"></script>
     <script src="../dist/js/ag-grid/customHeaderComponent.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/29.1.33/document-editor/bootstrap5.css" rel="stylesheet" />
 
+    <!-- Kanban -->
+    <link href="https://cdn.syncfusion.com/ej2/24.2.3/bootstrap5.css" rel="stylesheet" />
+
+    <script src="https://cdn.syncfusion.com/ej2/33.2.3/dist/ej2.min.js"></script>
+
+    <script src="/dist/js/directives/syncfusion-directive.js?d=new Date()"></script>
 
     <link rel="stylesheet" href="../dist/css/ng-tags-input.min.css" />
     <!--<script>
@@ -547,7 +554,13 @@
 
         });
 
+        try {
 
+            //  console.log("licence is generated")
+            ej.base.registerLicense('Ngo9BigBOggjHTQxAR8/V1JHaF5cWWdCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWXhecnRWRGJdVUNxXUpWYEo=');
+        } catch (e) {
+            console.error('License registration failed:', e);
+        }
     </script>
 
 

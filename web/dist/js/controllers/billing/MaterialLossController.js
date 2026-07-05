@@ -378,7 +378,7 @@ app.controller('MatLossEditController', function ($scope, $stateParams, LedgerFa
 });
 
 //---Sale entry
-app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q, $uibModal, LedgerFactory, AuthenticationService) {
+app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q, $uibModal, LedgerFactory, AuthenticationService, ChallanTaxService, TaxService) {
 
     $scope.Billing = new $.Billing({ InvoiceId: 0, InvoiceType: 6 });
     var ledgerDTO = new $.Ledger({ LedgerId: 0 });
@@ -396,6 +396,9 @@ app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q
         defaultTaxRate: 0,
         autoRoundOffTaxable: false
     };
+    $scope.ApplyGST = true;
+    $scope.ItemTaxSettings = [];
+    $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
     $scope.DeleteItem = function (index) {
 
         $scope.$apply(function () {
@@ -463,8 +466,14 @@ app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q
 
             $q.all([req1]).then((res) => {
                 $scope.Billing.Items = res[0].data.Data.BillingItems;
-                $scope.SubTotal(0);
-
+                if ($scope.Billing.applyTax === false) {
+                    $scope.ApplyGST = false;
+                }
+                $scope._taxDataPromise.then(function () {
+                    if ($scope.SubTotal) {
+                        $scope.SubTotal(0);
+                    }
+                });
             });
         });
     }
@@ -564,6 +573,9 @@ app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q
 
 
     function addWorkOrder(fileList) {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
         var model = cloneObj($scope.Billing);
 
         var billing = new $.Transaction();
@@ -584,7 +596,7 @@ app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q
 
 
     $scope.SubTotal = function (_total) {
-        return runBillingTotalsLikeSale($scope, ledgerDTO);
+        return runBillingBillSubtotal($scope, ChallanTaxService);
     };
 
     $scope.DefaultRate = 0.0;
@@ -592,6 +604,11 @@ app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q
     FormsValidation.init('frmPurchase');
 
     init();
+    $scope.$watch('ApplyGST', function () {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
+    });
     $scope.onDiscountPercentChange = function () {
         $scope.SubTotal(0);
     }
@@ -600,7 +617,7 @@ app.controller('MatLossBillController', function ($scope, $rootScope, $state, $q
         $scope.SubTotal(0);
     }
 });
-app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $stateParams, $state, $uibModal, LedgerFactory, AuthenticationService, $crypto) {
+app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $stateParams, $state, $uibModal, LedgerFactory, AuthenticationService, $crypto, ChallanTaxService, TaxService) {
 
     $scope.Billing = new $.Billing({ InvoiceId: 0, InvoiceType: 6 });
     $scope.Billing.InvoiceId = $stateParams.key == undefined ? 0 : $crypto.decrypt($stateParams.key);
@@ -620,6 +637,9 @@ app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $s
         defaultTaxRate: 0,
         autoRoundOffTaxable: false
     };
+    $scope.ApplyGST = true;
+    $scope.ItemTaxSettings = [];
+    $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
     $scope.DeleteItem = function (index) {
 
         $scope.$apply(function () {
@@ -694,8 +714,20 @@ app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $s
                 $scope.Billing.Discount = bill.Discount;
                 $scope.Billing.DiscountPercent = bill.DiscountPercent;
                 $scope.Billing.InvoiceDate = convertDate(bill.InvoiceDate);
+                if ($scope.Billing.applyTax === false) {
+                    $scope.ApplyGST = false;
+                }
+                if (bill.AppliedTaxes && bill.AppliedTaxes.length) {
+                    $scope.Billing.AppliedTaxes = bill.AppliedTaxes;
+                }
 
-                $scope.SubTotal(0);
+                $scope._taxDataPromise.then(function () {
+                    loadSavedBillingInvoiceTaxes($scope.Billing.InvoiceId, $scope, ChallanTaxService, function () {
+                        if ($scope.SubTotal) {
+                            $scope.SubTotal(0);
+                        }
+                    });
+                });
 
             });
         });
@@ -798,6 +830,9 @@ app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $s
 
 
     function addWorkOrder(fileList) {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
         var model = cloneObj($scope.Billing);
 
         var billing = new $.Transaction();
@@ -818,7 +853,7 @@ app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $s
 
 
     $scope.SubTotal = function (_total) {
-        return runBillingTotalsLikeSale($scope, ledgerDTO);
+        return runBillingBillSubtotal($scope, ChallanTaxService);
     };
 
     $scope.DefaultRate = 0.0;
@@ -826,6 +861,11 @@ app.controller('EditMatLossBillController', function ($scope, $rootScope, $q, $s
     FormsValidation.init('frmPurchase');
 
     init();
+    $scope.$watch('ApplyGST', function () {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
+    });
     $scope.onDiscountPercentChange = function () {
         $scope.SubTotal(0);
     }

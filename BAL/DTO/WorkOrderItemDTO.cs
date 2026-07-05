@@ -82,6 +82,9 @@ namespace BAL.DTO
 
         public byte Deleted { get; set; }
 
+        public int TaxCategoryId { get; set; }
+        public List<WorkOrderTaxDTO> LineTaxes { get; set; }
+
         public double IGSTAmount { get; set; }
         public double SGSTAmount { get; set; }
         public double CGSTAmount { get; set; }

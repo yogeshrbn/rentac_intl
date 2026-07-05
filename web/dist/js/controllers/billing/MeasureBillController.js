@@ -95,20 +95,7 @@ function measureBillItemEligibleForSave(trans, item) {
     return false;
 }
 
-/** First non-zero line rate for a GST component (same idea as quotationSummaryGstRate). */
-function measureBillSummaryGstRate(items, component) {
-    if (!items || !items.length)
-        return null;
-    var field = component === 'IGST' ? 'IGSTRate' : (component === 'CGST' ? 'CGSTRate' : 'SGSTRate');
-    for (var i = 0; i < items.length; i++) {
-        var r = parseFloat(items[i][field]) || 0;
-        if (r > 0)
-            return r;
-    }
-    return null;
-}
-
-/** Persist manual GST options at end of AddInfo (hidden from user after strip on load). */
+/** Legacy AddInfo GST payload (edit fallback for bills saved before InvoiceTax line taxes). */
 var MEASURE_MANUAL_GST_RE = /\r?\n\[\[MEASURE_MANUAL_GST\]\]([\s\S]*?)\[\[\/MEASURE_MANUAL_GST\]\]\s*$/;
 
 function measureBillStripManualGstFromAddInfo(addInfo) {
@@ -129,212 +116,144 @@ function measureBillParseManualGstFromAddInfo(addInfo) {
     }
 }
 
-function measureBillMergeManualGstIntoAddInfo(addInfo, scope) {
-    var clean = measureBillStripManualGstFromAddInfo(addInfo);
-    var payload = {
-        rate: parseFloat(scope.measureBillGstRate) || 0,
-        igst: !!scope.measureBillGstApplyIgst,
-        cgst: !!scope.measureBillGstApplyCgst,
-        sgst: !!scope.measureBillGstApplySgst
-    };
-    return clean + '\n[[MEASURE_MANUAL_GST]]' + JSON.stringify(payload) + '[[/MEASURE_MANUAL_GST]]';
-}
-
-function measureBillApplyManualGstPayloadToScope(scope, data) {
-    if (!data) {
+function measureBillSeedItemTaxSettingsFromLegacyGst(scope, legacyPayload) {
+    if (!legacyPayload || !scope.ItemTaxSettings || !scope.ItemTaxSettings.length) {
         return;
     }
-    scope.measureBillSuppressManualGstTouch = true;
-    scope.measureBillGstRate = parseFloat(data.rate) || 0;
-    scope.measureBillGstApplyIgst = !!data.igst;
-    scope.measureBillGstApplyCgst = !!data.cgst;
-    scope.measureBillGstApplySgst = !!data.sgst;
-    scope.measureBillSuppressManualGstTouch = false;
-}
-
-function measureBillClearLineGstRates(line) {
-    line.IGSTRate = 0;
-    line.CGSTRate = 0;
-    line.SGSTRate = 0;
-    line.TaxRate = 0;
-}
-
-function measureBillSetLineGstRatesUnregistered(line, gstTrans) {
-    measureBillClearLineGstRates(line);
-    var rate = parseFloat(gstTrans.GstRate) || 0;
-    if (rate <= 0) {
-        return;
-    }
-    if (gstTrans.IGST) {
-        line.IGSTRate = rate;
-    }
-    if (gstTrans.CGST) {
-        line.CGSTRate = rate;
-    }
-    if (gstTrans.SGST) {
-        line.SGSTRate = rate;
-    }
-    line.TaxRate = (line.IGSTRate || 0) + (line.CGSTRate || 0) + (line.SGSTRate || 0);
-}
-
-function measureBillProductGstSlabForManualUnregistered(allSizes, productId, taxes) {
-    if (!allSizes || !taxes || !productId) {
-        return { tax: null, eligible: false };
-    }
-    var item = allSizes.find(function (o) { return o.ProductId == productId; });
-    if (!item) {
-        return { tax: null, eligible: false };
-    }
-    var tax = taxes.find(function (o) { return o.TaxId == item.TaxCategoryId; });
-    if (!tax) {
-        return { tax: null, eligible: false };
-    }
-    var sum = (parseFloat(tax.CGST) || 0) + (parseFloat(tax.SGST) || 0) + (parseFloat(tax.IGST) || 0);
-    return { tax: tax, eligible: sum > 0 };
-}
-
-function measureBillGstTransFromScope(scope) {
-    return {
-        GstRate: parseFloat(scope.measureBillGstRate) || 0,
-        IGST: !!scope.measureBillGstApplyIgst,
-        CGST: !!scope.measureBillGstApplyCgst,
-        SGST: !!scope.measureBillGstApplySgst
-    };
-}
-
-function measureBillApplyTaxRateForScope(scope, productId) {
-    var taxes = StaicData.TAX_CATEGORY;
-    var gstTrans = measureBillGstTransFromScope(scope);
-    var rate = gstTrans.GstRate;
-    var lineItems = scope.Trans.Items.filter(function (o) { return o.ProductId == productId; });
-    if (!lineItems.length) {
-        return;
-    }
-    for (var i = 0; i < lineItems.length; i++) {
-        if (!lineItems[i].DiscountAmount) {
-            lineItems[i].DiscountAmount = 0;
+    var rate = parseFloat(legacyPayload.rate) || 0;
+    scope.ItemTaxSettings.forEach(function (tax) {
+        var code = (tax.TaxCode || '').toUpperCase();
+        if (code === 'IGST' && legacyPayload.igst) {
+            tax.Selected = true;
+            tax.Rate = rate;
+        } else if (code === 'CGST' && legacyPayload.cgst) {
+            tax.Selected = true;
+            tax.Rate = rate;
+        } else if (code === 'SGST' && legacyPayload.sgst) {
+            tax.Selected = true;
+            tax.Rate = rate;
         }
-        var slab = measureBillProductGstSlabForManualUnregistered(scope.AllSizes, productId, taxes);
-        if (!slab.eligible) {
-            lineItems[i].CGST = 0;
-            lineItems[i].SGST = 0;
-            lineItems[i].IGST = 0;
-            measureBillClearLineGstRates(lineItems[i]);
-            lineItems[i].TaxName = slab.tax ? slab.tax.TaxName : '';
-            continue;
-        }
-        var taxable = lineItems[i].SubTotal - lineItems[i].DiscountAmount;
-        lineItems[i].CGST = 0;
-        lineItems[i].SGST = 0;
-        lineItems[i].IGST = 0;
-        if (rate > 0) {
-            if (gstTrans.IGST) {
-                lineItems[i].IGST = taxable * rate / 100;
-            }
-            if (gstTrans.CGST) {
-                lineItems[i].CGST = taxable * rate / 100;
-            }
-            if (gstTrans.SGST) {
-                lineItems[i].SGST = taxable * rate / 100;
-            }
-        }
-        lineItems[i].TaxName = 'GST';
-        measureBillSetLineGstRatesUnregistered(lineItems[i], gstTrans);
-    }
+    });
+    scope.ApplyGST = true;
 }
 
-function measureBillApplyTaxAllProductGroups(scope) {
-    if (!scope.Trans.Items || !scope.Trans.Items.length) {
-        return;
-    }
-    var seen = {};
-    for (var i = 0; i < scope.Trans.Items.length; i++) {
-        var pid = scope.Trans.Items[i].ProductId;
-        if (seen[pid]) {
-            continue;
-        }
-        seen[pid] = true;
-        measureBillApplyTaxRateForScope(scope, pid);
-    }
-}
-
-/** Default IGST/CGST/SGST + rate from first line product and company vs party state (no PartyType). */
-function measureBillRefreshManualGstDefaultsFromMaster(scope, options) {
-    options = options || {};
-    if (scope.measureBillManualGstUserTouched && !options.force) {
-        return;
-    }
-    if (!scope.comp || !scope.comp.StateCode) {
-        return;
-    }
-    if (!scope.ledgerDTO || !scope.ledgerDTO.Props || scope.ledgerDTO.Props.StateCode == null || scope.ledgerDTO.Props.StateCode === '') {
-        return;
-    }
-    if (!scope.AllSizes || !scope.Trans.Items || !scope.Trans.Items.length) {
-        return;
-    }
-    var firstPid = 0;
-    for (var i = 0; i < scope.Trans.Items.length; i++) {
-        if (scope.Trans.Items[i].ProductId > 0) {
-            firstPid = scope.Trans.Items[i].ProductId;
-            break;
-        }
-    }
-    var taxes = StaicData.TAX_CATEGORY;
-    scope.measureBillSuppressManualGstTouch = true;
-    if (!firstPid) {
-        scope.measureBillGstRate = 0;
-        scope.measureBillGstApplyIgst = false;
-        scope.measureBillGstApplyCgst = false;
-        scope.measureBillGstApplySgst = false;
-        scope.measureBillSuppressManualGstTouch = false;
-        return;
-    }
-    var item = scope.AllSizes.find(function (o) { return o.ProductId == firstPid; });
-    if (!item) {
-        scope.measureBillSuppressManualGstTouch = false;
-        return;
-    }
-    var tax = taxes.find(function (o) { return o.TaxId == item.TaxCategoryId; });
-    if (!tax) {
-        scope.measureBillSuppressManualGstTouch = false;
-        return;
-    }
-    var isIntra = scope.comp.StateCode == scope.ledgerDTO.Props.StateCode;
-    if (isIntra) {
-        scope.measureBillGstApplyIgst = false;
-        scope.measureBillGstApplyCgst = true;
-        scope.measureBillGstApplySgst = true;
-        scope.measureBillGstRate = parseFloat(tax.CGST) || parseFloat(tax.SGST) || 0;
-    } else {
-        scope.measureBillGstApplyIgst = true;
-        scope.measureBillGstApplyCgst = false;
-        scope.measureBillGstApplySgst = false;
-        scope.measureBillGstRate = parseFloat(tax.IGST) || 0;
-    }
-    scope.measureBillSuppressManualGstTouch = false;
-}
-
-/** When contract quotation has manual GST fields, use them as initial values. */
+/** When contract quotation has manual GST fields, seed ItemTaxSettings. */
 function measureBillTryApplyQuotationGstDefaults(scope, quotation) {
-    if (!quotation) {
+    if (!quotation || !scope.ItemTaxSettings || !scope.ItemTaxSettings.length) {
         return false;
     }
     var ig = quotation.IGST === true || quotation.IGST === 1;
     var cg = quotation.CGST === true || quotation.CGST === 1;
     var sg = quotation.SGST === true || quotation.SGST === 1;
-    var has = (quotation.GstRate != null && parseFloat(quotation.GstRate) > 0) || ig || cg || sg;
+    var rate = parseFloat(quotation.GstRate) || 0;
+    var has = rate > 0 || ig || cg || sg;
     if (!has) {
         return false;
     }
-    scope.measureBillSuppressManualGstTouch = true;
-    scope.measureBillGstRate = parseFloat(quotation.GstRate) || 0;
-    scope.measureBillGstApplyIgst = ig;
-    scope.measureBillGstApplyCgst = cg;
-    scope.measureBillGstApplySgst = sg;
-    scope.measureBillSuppressManualGstTouch = false;
-    scope.measureBillGstDefaultsApplied = true;
+    measureBillSeedItemTaxSettingsFromLegacyGst(scope, { rate: rate, igst: ig, cgst: cg, sgst: sg });
     return true;
+}
+
+function recalculateMeasureBillTaxes(scope, challanTaxService) {
+    var trans = scope.Trans;
+    if (!trans || !trans.Items) {
+        if (trans) {
+            trans.AppliedTaxes = [];
+            trans.TaxAmount = 0;
+            trans.IGST = trans.CGST = trans.SGST = 0;
+        }
+        return null;
+    }
+
+    if (scope.ApplyGST !== true) {
+        trans.AppliedTaxes = [];
+        trans.TaxAmount = 0;
+        trans.IGST = trans.CGST = trans.SGST = 0;
+        trans.Items.forEach(function (item) {
+            item.LineTaxes = [];
+            syncSaleLineLegacyGst(item);
+        });
+        return null;
+    }
+
+    var manualMappings = hasManualItemTaxes(scope.ItemTaxSettings)
+        ? buildManualTaxMappings(scope.ItemTaxSettings)
+        : null;
+
+    var result = challanTaxService.calculateChallanTaxes({
+        items: trans.Items,
+        allSizes: scope.AllSizes,
+        taxCategories: scope.TaxCategories || [],
+        manualTaxMappings: manualMappings,
+        applyGst: scope.ApplyGST === true,
+        freight: parseFloat(trans.Freight) || 0,
+        otherCharges: getSaleOtherCharges(trans),
+        freightTax: scope.ApplyFreightGST === true,
+        otherChargesTax: scope.ApplyOtherChargeGST === true,
+        getTaxableAmount: function (item) {
+            return (parseFloat(item.SubTotal) || 0) - (parseFloat(item.DiscountAmount) || 0);
+        },
+        itemFilter: function (item) {
+            return measureBillItemEligibleForSave(trans, item);
+        }
+    });
+
+    trans.AppliedTaxes = result.appliedTaxes || [];
+    trans.TaxAmount = result.taxAmount || 0;
+    trans.Items.forEach(syncSaleLineLegacyGst);
+    trans.IGST = trans.Items.reduce(function (s, a) { return s + (parseFloat(a.IGST) || 0); }, 0);
+    trans.CGST = trans.Items.reduce(function (s, a) { return s + (parseFloat(a.CGST) || 0); }, 0);
+    trans.SGST = trans.Items.reduce(function (s, a) { return s + (parseFloat(a.SGST) || 0); }, 0);
+    return result;
+}
+
+function runMeasureBillSubtotal(scope, challanTaxService) {
+    var trans = scope.Trans;
+    var config = scope.Config || {};
+    trans.Total = 0;
+    trans.SubTotal = 0;
+    trans.DiscountAmount = 0;
+    trans.TaxAmount = 0;
+    trans.FreightTax = 0;
+    trans.ChargesTax = 0;
+    trans.OtherChargeAmount = 0;
+
+    if (trans.Items && trans.Items.length > 0) {
+        for (var i = 0; i < trans.Items.length; i++) {
+            var item = trans.Items[i];
+            if (item.Quantity != null) {
+                item.SubTotal = measureBillLineSubTotal(trans, item);
+            }
+            if (scope.applyDiscount) {
+                scope.applyDiscount(item);
+            }
+        }
+        trans.SubTotal = trans.Items.reduce(function (partialSum, a) {
+            return partialSum + (parseFloat(a.SubTotal) || 0);
+        }, 0);
+        recalculateMeasureBillTaxes(scope, challanTaxService);
+    } else {
+        trans.CGST = trans.SGST = trans.IGST = 0;
+        trans.AppliedTaxes = [];
+    }
+
+    trans.OtherChargeAmount = getSaleOtherCharges(trans);
+
+    if (scope.calculateDiscount) {
+        scope.calculateDiscount();
+    }
+
+    trans.TaxAmount = (trans.AppliedTaxes && trans.AppliedTaxes.length)
+        ? trans.AppliedTaxes.reduce(function (s, t) { return s + (parseFloat(t.Amount) || 0); }, 0)
+        : ((parseFloat(trans.IGST) || 0) + (parseFloat(trans.SGST) || 0) + (parseFloat(trans.CGST) || 0));
+
+    trans.Total = (parseFloat(trans.SubTotal) || 0) - (parseFloat(trans.DiscountAmount) || 0) + trans.TaxAmount
+        + (parseFloat(trans.Freight) || 0) + trans.OtherChargeAmount;
+
+    if (typeof computeSaleBillTaxable === 'function') {
+        trans.Taxable = computeSaleBillTaxable(trans, config);
+    }
+    return trans.SubTotal;
 }
 
 /** Build contract bill lines from contract header when no quotation items exist. */
@@ -416,7 +335,6 @@ function measureBillLoadContractQuotationItems(scope, contractId, quotationIds, 
             var ids = quotationIds || [];
             if (!ids.length) {
                 scope.Trans.Items = measureBillBuildContractFallbackItems(cd, scope.MeasureUnits);
-                measureBillTryInitGstDefaults(scope);
                 if (scope.SubTotal) scope.SubTotal(0);
                 if (done) done();
                 return;
@@ -447,12 +365,18 @@ function measureBillLoadContractQuotationItems(scope, contractId, quotationIds, 
                 if (!gstQuotation && loadedQuotations.length) {
                     gstQuotation = loadedQuotations[0];
                 }
-                if (gstQuotation) {
-                    measureBillTryApplyQuotationGstDefaults(scope, gstQuotation);
+                var applyGst = function () {
+                    if (gstQuotation) {
+                        measureBillTryApplyQuotationGstDefaults(scope, gstQuotation);
+                    }
+                    if (scope.SubTotal) scope.SubTotal(0);
+                    if (done) done();
+                };
+                if (scope._taxDataPromise) {
+                    scope._taxDataPromise.then(applyGst);
+                } else {
+                    applyGst();
                 }
-                measureBillTryInitGstDefaults(scope);
-                if (scope.SubTotal) scope.SubTotal(0);
-                if (done) done();
             }
 
             angular.forEach(ids, function (qid) {
@@ -487,25 +411,8 @@ function measureBillLoadContractQuotationItems(scope, contractId, quotationIds, 
     }, { ContractId: contractId });
 }
 
-function measureBillTryInitGstDefaults(scope) {
-    if (scope.measureBillManualGstUserTouched || scope.measureBillGstDefaultsApplied) {
-        return;
-    }
-    if (!scope.comp || !scope.comp.StateCode) {
-        return;
-    }
-    if (!scope.ledgerDTO || !scope.ledgerDTO.Props || scope.ledgerDTO.Props.StateCode == null || scope.ledgerDTO.Props.StateCode === '') {
-        return;
-    }
-    if (!scope.AllSizes || !scope.Trans.Items || !scope.Trans.Items.length) {
-        return;
-    }
-    measureBillRefreshManualGstDefaultsFromMaster(scope, { force: true });
-    scope.measureBillGstDefaultsApplied = true;
-}
-
 app.controller('EditMeasureBillController', function ($scope, $rootScope, $stateParams, $state, $crypto,
-    $q, $uibModal, LedgerFactory, AuthenticationService) {
+    $q, $uibModal, LedgerFactory, AuthenticationService, ChallanTaxService, TaxService) {
 
 
     var sale = new $.Transaction({ PurchaseId: 0, InvoiceType: 9, InvoiceId: 0 });
@@ -530,24 +437,9 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
     $scope.editorOptions = {
         height: 200
     };
-    $scope.measureBillSummaryGstRate = function (component) {
-        return measureBillSummaryGstRate($scope.Trans.Items, component);
-    };
-    $scope.measureBillGstRate = 0;
-    $scope.measureBillGstApplyIgst = false;
-    $scope.measureBillGstApplyCgst = false;
-    $scope.measureBillGstApplySgst = false;
-    $scope.measureBillManualGstUserTouched = false;
-    $scope.measureBillGstDefaultsApplied = false;
-    $scope.measureBillSuppressManualGstTouch = false;
-    $scope.measureBillManualGstChanged = function () {
-        if (!$scope.measureBillSuppressManualGstTouch) {
-            $scope.measureBillManualGstUserTouched = true;
-        }
-        if ($scope.SubTotal) {
-            $scope.SubTotal(0);
-        }
-    };
+    $scope.ApplyGST = true;
+    $scope.ItemTaxSettings = [];
+    $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
     $scope.DeleteItem = function (index) {
 
         $scope.$apply(function () {
@@ -618,9 +510,6 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
                 $scope.AddInfo = $scope.Trans.AddInfo;
                 var mbGst = measureBillParseManualGstFromAddInfo($scope.Trans.AddInfo);
                 if (mbGst) {
-                    measureBillApplyManualGstPayloadToScope($scope, mbGst);
-                    $scope.measureBillManualGstUserTouched = true;
-                    $scope.measureBillGstDefaultsApplied = true;
                     $scope.Trans.AddInfo = measureBillStripManualGstFromAddInfo($scope.Trans.AddInfo);
                     $scope.AddInfo = $scope.Trans.AddInfo;
                 }
@@ -630,13 +519,10 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
                 $scope.qtnc = $scope.Trans.Tnc;
 
                 if ($scope.Trans.ChargesTax > 0) {
-
                     $scope.ApplyOtherChargeGST = true;
                 }
-
                 if ($scope.Trans.FreightTax > 0) {
                     $scope.ApplyFreightGST = true;
-
                 }
                 $scope.$evalAsync(function () {
                     if ($scope.SundryDebtors && $scope.Trans.LedgerId) {
@@ -645,12 +531,19 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
                             ledgerDTO.Props.StateCode = lg.StateCode;
                         }
                     }
-                    if (!mbGst) {
-                        measureBillTryInitGstDefaults($scope);
-                    }
-                    if ($scope.SubTotal) {
-                        $scope.SubTotal(0);
-                    }
+                    ($scope._taxDataPromise || initSaleTaxData($scope, TaxService, ChallanTaxService)).then(function () {
+                        loadSavedInvoiceTaxes($scope.Trans.InvoiceId, $scope, ChallanTaxService, function () {
+                            var hasLineTaxes = ($scope.Trans.Items || []).some(function (item) {
+                                return item.LineTaxes && item.LineTaxes.length;
+                            });
+                            if (!hasLineTaxes && mbGst) {
+                                measureBillSeedItemTaxSettingsFromLegacyGst($scope, mbGst);
+                            }
+                            if ($scope.SubTotal) {
+                                $scope.SubTotal(0);
+                            }
+                        });
+                    });
                 });
             }
 
@@ -782,7 +675,10 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
     $scope.addWorkOrder = function (fileList) {
 
         var model = cloneObj($scope.Trans);
-        model.AddInfo = measureBillMergeManualGstIntoAddInfo(model.AddInfo || '', $scope);
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+            model = cloneObj($scope.Trans);
+        }
         if (model.Items && model.Items.length) {
             if (!(model.InvoiceType === 5 && model.QuotationType === 16)) {
                 measureBillApplyApiDimensionsForSave(model.Items);
@@ -933,111 +829,14 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
     $scope.getAllProductSizesByCompany = function () {
         var product = new $.Product();
         product.GetAll(function (e) {
-            //debugger
-            //console.log('AllSizes', e.data);
             $scope.AllSizes = e.data;
-            measureBillTryInitGstDefaults($scope);
             if ($scope.SubTotal) {
                 $scope.SubTotal(0);
             }
-
         });
     }
     $scope.SubTotal = function (_total) {
-        $scope.Trans.Total = 0;
-        $scope.Trans.SubTotal = 0;
-        $scope.Trans.DiscountAmount = 0;
-        $scope.Trans.TaxAmount = 0;
-        $scope.Trans.FreightTax = 0;
-        $scope.Trans.ChargesTax = 0;
-        $scope.Trans.OtherChargeAmount = 0;
-
-        if ($scope.Trans.Items && $scope.Trans.Items.length > 0) {
-            var applyTaxOnSubtotal = (($scope.Config && $scope.Config.applyTaxOn || 'itemlevel') + '').toLowerCase() === 'subtotal';
-            for (var i = 0; i < $scope.Trans.Items.length; i++) {
-                var item = $scope.Trans.Items[i];
-                if ($scope.Trans.Items[i].Quantity != null) {
-                    $scope.Trans.Items[i].SubTotal = measureBillLineSubTotal($scope.Trans, $scope.Trans.Items[i]);
-                }
-                $scope.applyDiscount(item);
-            }
-            if (!applyTaxOnSubtotal) {
-                measureBillApplyTaxAllProductGroups($scope);
-            }
-            if (typeof applySaleBillLineGst === 'function') {
-                $.each($scope.Trans.Items, function (idx, val) {
-                    val.Discount = parseFloat(val.DiscountAmount) || 0;
-                });
-                var isIntraState = $scope.comp && ledgerDTO.Props.StateCode && $scope.comp.StateCode == ledgerDTO.Props.StateCode;
-                var gstCfg = $scope.Config;
-                if (applyTaxOnSubtotal) {
-                    measureBillApplyTaxAllProductGroups($scope);
-                    gstCfg = angular.extend({}, $scope.Config, { applyTaxOn: 'itemlevel' });
-                }
-                applySaleBillLineGst($scope.Trans.Items, gstCfg, isIntraState);
-            } else {
-                measureBillApplyTaxAllProductGroups($scope);
-            }
-            $scope.Trans.SubTotal = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + a.SubTotal; }, 0);
-            $scope.Trans.CGST = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + (parseFloat(a.CGST) || 0); }, 0);
-            $scope.Trans.SGST = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + (parseFloat(a.SGST) || 0); }, 0);
-            $scope.Trans.IGST = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + (parseFloat(a.IGST) || 0); }, 0);
-        } else {
-            $scope.Trans.CGST = $scope.Trans.SGST = $scope.Trans.IGST = 0;
-        }
-
-        $scope.calculateDiscount();
-
-        $scope.Trans.OtherChargeAmount = (parseFloat($scope.Trans.Charge1) || 0) + (parseFloat($scope.Trans.Charge2) || 0) + (parseFloat($scope.Trans.Charge3) || 0)
-            + (parseFloat($scope.Trans.Charge4) || 0) + (parseFloat($scope.Trans.Charge5) || 0);
-
-        if ($scope.ApplyFreightGST == true) {
-            $scope.Trans.FreightTaxRate = $scope.Config.FreightTax;
-        } else {
-            $scope.Trans.FreightTaxRate = 0;
-        }
-        if ($scope.ApplyOtherChargeGST == true) {
-            $scope.Trans.ChargesTaxRate = $scope.Config.ChargesTaxRate || $scope.Config.FreightTax;
-        } else {
-            $scope.Trans.ChargesTaxRate = 0;
-        }
-
-        if ($scope.Trans.Freight && $scope.ApplyFreightGST == true) {
-            var freight = parseFloat($scope.Trans.Freight);
-            $scope.Trans.FreightTax = (freight * parseFloat($scope.Trans.FreightTaxRate)) / 100;
-        } else {
-            $scope.Trans.FreightTax = 0;
-        }
-
-        if ($scope.ApplyOtherChargeGST == true) {
-            $scope.Trans.ChargesTax = ($scope.Trans.OtherChargeAmount * parseFloat($scope.Trans.ChargesTaxRate)) / 100;
-        } else {
-            $scope.Trans.ChargesTax = 0;
-        }
-
-
-        var isIntraStateBill = $scope.comp && ledgerDTO.Props.StateCode && $scope.comp.StateCode == ledgerDTO.Props.StateCode;
-
-        if ($scope.Trans.IGST == 0 && ($scope.Trans.SGST > 0 || $scope.Trans.CGST > 0)) {
-            isIntraStateBill = true;
-        }
-
-
-        if (typeof allocateFreightChargesToGst === 'function') {
-            allocateFreightChargesToGst($scope.Trans, $scope.Trans.FreightTax, $scope.Trans.ChargesTax, isIntraStateBill);
-        }
-
-        $scope.Trans.TaxAmount = (parseFloat($scope.Trans.IGST) || 0) + (parseFloat($scope.Trans.SGST) || 0) + (parseFloat($scope.Trans.CGST) || 0);
-
-        $scope.Trans.Total = (parseFloat($scope.Trans.SubTotal) || 0) - (parseFloat($scope.Trans.DiscountAmount) || 0) + $scope.Trans.TaxAmount
-            + (parseFloat($scope.Trans.Freight) || 0) + $scope.Trans.OtherChargeAmount;
-
-        if (typeof computeSaleBillTaxable === 'function') {
-            $scope.Trans.Taxable = computeSaleBillTaxable($scope.Trans, $scope.Config);
-        }
-
-        return $scope.Trans.SubTotal;
-
+        return runMeasureBillSubtotal($scope, ChallanTaxService);
     };
 
     $scope.selectedProduct = function (selected) {
@@ -1065,9 +864,6 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
         }, { ProductId: productId });
     }
     $scope.DefaultRate = 0.0;
-    $scope.applyTaxRate = function (productId) {
-        measureBillApplyTaxRateForScope($scope, productId);
-    }
 
     $scope.getAllProductSizesByCompany();
     FormsValidation.init('frmPurchase');
@@ -1084,7 +880,6 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
                 return;
             }
             $scope.comp = e.data;
-            measureBillTryInitGstDefaults($scope);
             if ($scope.Trans && $scope.Trans.Items && $scope.Trans.Items.length && $scope.SubTotal) {
                 $scope.SubTotal(0);
             }
@@ -1104,7 +899,7 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
         }
     });
 
-    $scope.$watchGroup(['measureBillGstRate', 'measureBillGstApplyIgst', 'measureBillGstApplyCgst', 'measureBillGstApplySgst', 'Trans.LedgerId'], function () {
+    $scope.$watch('ApplyGST', function () {
         if ($scope.SubTotal) {
             $scope.SubTotal(0);
         }
@@ -1145,8 +940,7 @@ app.controller('EditMeasureBillController', function ($scope, $rootScope, $state
 
     }
 });
-app.controller('MeasureBillController', function ($scope, $rootScope, $stateParams, $state, $stateParams, $crypto, $uibModal, LedgerFactory, AuthenticationService) {
-    debugger
+app.controller('MeasureBillController', function ($scope, $rootScope, $stateParams, $state, $stateParams, $crypto, $uibModal, LedgerFactory, AuthenticationService, ChallanTaxService, TaxService) {
     var sale = new $.Transaction({ PurchaseId: 0, InvoiceType: 9 });
     var cId = $stateParams.cId == undefined ? 0 : $stateParams.cId;
     $scope.contractId = 0;
@@ -1159,25 +953,9 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
     $scope.Trans.Charge4 = 0;
     $scope.Trans.Charge5 = 0;
     $scope.Trans.Items = [];
-    $scope.measureBillSummaryGstRate = function (component) {
-        return measureBillSummaryGstRate($scope.Trans.Items, component);
-    };
-    $scope.measureBillGstRate = 0;
-    $scope.measureBillGstApplyIgst = false;
-    $scope.measureBillGstApplyCgst = false;
-    $scope.measureBillGstApplySgst = false;
-    $scope.measureBillManualGstUserTouched = false;
-    $scope.measureBillGstDefaultsApplied = false;
-    $scope.measureBillSuppressManualGstTouch = false;
-    $scope.measureBillManualGstChanged = function () {
-
-        if (!$scope.measureBillSuppressManualGstTouch) {
-            $scope.measureBillManualGstUserTouched = true;
-        }
-        if ($scope.SubTotal) {
-            $scope.SubTotal(0);
-        }
-    };
+    $scope.ApplyGST = true;
+    $scope.ItemTaxSettings = [];
+    $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
 
     if (cId) {
         var contractId = $scope.contractId = $crypto.decrypt(cId);
@@ -1214,10 +992,13 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
                         $scope.Trans.Items = measureBillBuildContractFallbackItems(cd, $scope.MeasureUnits);
                     }
                     if (cd.Quotation) {
-                        measureBillTryApplyQuotationGstDefaults($scope, cd.Quotation);
-                    }
-                    measureBillTryInitGstDefaults($scope);
-                    if ($scope.SubTotal) {
+                        $scope._taxDataPromise.then(function () {
+                            measureBillTryApplyQuotationGstDefaults($scope, cd.Quotation);
+                            if ($scope.SubTotal) {
+                                $scope.SubTotal(0);
+                            }
+                        });
+                    } else if ($scope.SubTotal) {
                         $scope.SubTotal(0);
                     }
                 });
@@ -1272,12 +1053,12 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
 
             $scope.Trans.AddInfo = "";
             $scope.Trans.Tnc = "";
-            debugger
-            measureBillTryApplyQuotationGstDefaults($scope, $scope.Trans);
-            measureBillTryInitGstDefaults($scope);
-            if ($scope.SubTotal) {
-                $scope.SubTotal(0);
-            }
+            $scope._taxDataPromise.then(function () {
+                measureBillTryApplyQuotationGstDefaults($scope, $scope.Trans);
+                if ($scope.SubTotal) {
+                    $scope.SubTotal(0);
+                }
+            });
 
         }, intQuoteId);
     };
@@ -1450,7 +1231,10 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
     function addWorkOrder(fileList) {
 
         var model = cloneObj($scope.Trans);
-        model.AddInfo = measureBillMergeManualGstIntoAddInfo(model.AddInfo || '', $scope);
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+            model = cloneObj($scope.Trans);
+        }
         if (model.Items && model.Items.length) {
             if (!(model.InvoiceType === 5 && model.QuotationType === 16)) {
                 measureBillApplyApiDimensionsForSave(model.Items);
@@ -1606,110 +1390,14 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
     $scope.getAllProductSizesByCompany = function () {
         var product = new $.Product();
         product.GetAll(function (e) {
-            //debugger
-            // console.log('AllSizes', e.data);
             $scope.AllSizes = e.data;
-            measureBillTryInitGstDefaults($scope);
             if ($scope.SubTotal) {
                 $scope.SubTotal(0);
             }
-
         });
     }
     $scope.SubTotal = function (_total) {
-        $scope.Trans.Total = 0;
-        $scope.Trans.SubTotal = 0;
-        $scope.Trans.DiscountAmount = 0;
-        $scope.Trans.TaxAmount = 0;
-        $scope.Trans.FreightTax = 0;
-        $scope.Trans.ChargesTax = 0;
-        $scope.Trans.OtherChargeAmount = 0;
-
-        if ($scope.Trans.Items && $scope.Trans.Items.length > 0) {
-            var applyTaxOnSubtotal = (($scope.Config && $scope.Config.applyTaxOn || 'itemlevel') + '').toLowerCase() === 'subtotal';
-            for (var i = 0; i < $scope.Trans.Items.length; i++) {
-                var item = $scope.Trans.Items[i];
-                if ($scope.Trans.Items[i].Quantity != null) {
-                    $scope.Trans.Items[i].SubTotal = measureBillLineSubTotal($scope.Trans, $scope.Trans.Items[i]);
-                }
-                $scope.applyDiscount(item);
-            }
-
-            if (!applyTaxOnSubtotal) {
-                measureBillApplyTaxAllProductGroups($scope);
-            }
-            if (typeof applySaleBillLineGst === 'function') {
-                $.each($scope.Trans.Items, function (idx, val) {
-                    val.Discount = parseFloat(val.DiscountAmount) || 0;
-                });
-                var isIntraState = $scope.comp && ledgerDTO.Props.StateCode && $scope.comp.StateCode == ledgerDTO.Props.StateCode;
-                var gstCfg = $scope.Config;
-                if (applyTaxOnSubtotal) {
-                    measureBillApplyTaxAllProductGroups($scope);
-                    gstCfg = angular.extend({}, $scope.Config, { applyTaxOn: 'itemlevel' });
-                }
-                applySaleBillLineGst($scope.Trans.Items, gstCfg, isIntraState);
-            } else {
-                measureBillApplyTaxAllProductGroups($scope);
-            }
-            $scope.Trans.SubTotal = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + a.SubTotal; }, 0);
-            $scope.Trans.CGST = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + (parseFloat(a.CGST) || 0); }, 0);
-            $scope.Trans.SGST = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + (parseFloat(a.SGST) || 0); }, 0);
-            $scope.Trans.IGST = $scope.Trans.Items.reduce(function (partialSum, a) { return partialSum + (parseFloat(a.IGST) || 0); }, 0);
-        } else {
-            $scope.Trans.CGST = $scope.Trans.SGST = $scope.Trans.IGST = 0;
-        }
-
-        $scope.calculateDiscount();
-
-        $scope.Trans.OtherChargeAmount = (parseFloat($scope.Trans.Charge1) || 0) + (parseFloat($scope.Trans.Charge2) || 0) + (parseFloat($scope.Trans.Charge3) || 0)
-            + (parseFloat($scope.Trans.Charge4) || 0) + (parseFloat($scope.Trans.Charge5) || 0);
-
-        if ($scope.ApplyFreightGST == true) {
-            $scope.Trans.FreightTaxRate = $scope.Config.FreightTax;
-        } else {
-            $scope.Trans.FreightTaxRate = 0;
-        }
-        if ($scope.ApplyOtherChargeGST == true) {
-            $scope.Trans.ChargesTaxRate = $scope.Config.ChargesTaxRate || $scope.Config.FreightTax;
-        } else {
-            $scope.Trans.ChargesTaxRate = 0;
-        }
-
-        if ($scope.Trans.Freight && $scope.ApplyFreightGST == true) {
-            var freight = parseFloat($scope.Trans.Freight);
-            $scope.Trans.FreightTax = (freight * parseFloat($scope.Trans.FreightTaxRate)) / 100;
-        } else {
-            $scope.Trans.FreightTax = 0;
-        }
-
-        if ($scope.ApplyOtherChargeGST == true) {
-            $scope.Trans.ChargesTax = ($scope.Trans.OtherChargeAmount * parseFloat($scope.Trans.ChargesTaxRate)) / 100;
-        } else {
-            $scope.Trans.ChargesTax = 0;
-        }
-
-        var isIntraStateBill = $scope.comp && ledgerDTO.Props.StateCode && $scope.comp.StateCode == ledgerDTO.Props.StateCode;
-
-        if ($scope.Trans.IGST == 0 && ($scope.Trans.SGST > 0 || $scope.Trans.CGST > 0)) {
-            isIntraStateBill = true;
-        }
-
-        if (typeof allocateFreightChargesToGst === 'function') {
-            allocateFreightChargesToGst($scope.Trans, $scope.Trans.FreightTax, $scope.Trans.ChargesTax, isIntraStateBill);
-        }
-
-        $scope.Trans.TaxAmount = (parseFloat($scope.Trans.IGST) || 0) + (parseFloat($scope.Trans.SGST) || 0) + (parseFloat($scope.Trans.CGST) || 0);
-
-        $scope.Trans.Total = (parseFloat($scope.Trans.SubTotal) || 0) - (parseFloat($scope.Trans.DiscountAmount) || 0) + $scope.Trans.TaxAmount
-            + (parseFloat($scope.Trans.Freight) || 0) + $scope.Trans.OtherChargeAmount;
-
-        if (typeof computeSaleBillTaxable === 'function') {
-            $scope.Trans.Taxable = computeSaleBillTaxable($scope.Trans, $scope.Config);
-        }
-
-        return $scope.Trans.SubTotal;
-
+        return runMeasureBillSubtotal($scope, ChallanTaxService);
     };
     $scope.selectedProduct = function (selected) {
 
@@ -1737,9 +1425,6 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
     }
 
     $scope.DefaultRate = 0.0;
-    $scope.applyTaxRate = function (productId) {
-        measureBillApplyTaxRateForScope($scope, productId);
-    }
 
     $scope.getAllProductSizesByCompany();
     FormsValidation.init('frmPurchase');
@@ -1756,7 +1441,6 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
                 return;
             }
             $scope.comp = e.data;
-            measureBillTryInitGstDefaults($scope);
             if ($scope.Trans && $scope.Trans.Items && $scope.Trans.Items.length && $scope.SubTotal) {
                 $scope.SubTotal(0);
             }
@@ -1774,7 +1458,7 @@ app.controller('MeasureBillController', function ($scope, $rootScope, $statePara
             $scope.SubTotal(0);
         }
     });
-    $scope.$watchGroup(['measureBillGstRate', 'measureBillGstApplyIgst', 'measureBillGstApplyCgst', 'measureBillGstApplySgst', 'Trans.LedgerId'], function () {
+    $scope.$watch('ApplyGST', function () {
         if ($scope.SubTotal) {
             $scope.SubTotal(0);
         }

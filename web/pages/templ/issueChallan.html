@@ -54,7 +54,7 @@
 
                                         <datepicker date-format="dd/MM/yyyy">
                                             <input ng-model="WorkOrder.WorkOrderDate" type="text" class="form-control"
-                                                   id="val_workOrderDate" name="val_workOrderDate" maxDate="{{Today}}" ng-change="onWorkOrderDateChange()"/>
+                                                   id="val_workOrderDate" name="val_workOrderDate" maxDate="{{Today}}" ng-change="onWorkOrderDateChange()" />
                                         </datepicker>
 
 
@@ -331,7 +331,7 @@
                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" style="padding-top:10px;">
                     <ul class="qutoationSettingsTab nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
-                            <a href="#chlOtherInfo"  aria-controls="chlOtherInfo" role="tab" data-toggle="tab">Other Information</a>
+                            <a href="#chlOtherInfo" aria-controls="chlOtherInfo" role="tab" data-toggle="tab">Other Information</a>
                         </li>
                         <li role="presentation">
                             <a href="#chlOtherCharges" aria-controls="chlOtherCharges" role="tab"
@@ -469,8 +469,8 @@
                                         <label class="col-sm-12">Terms and Conditions</label>
                                         <div class="col-sm-12">
                                             <!--<textarea class="form-control" maxlength="1000" ng-model="WorkOrder.Tnc" style="height:80px;"></textarea>-->
-                                            <textarea ckeditor="editorOptions" 
-                                                       id="editor_{{WorkOrderId}}"
+                                            <textarea ckeditor="editorOptions"
+                                                      id="editor_{{WorkOrderId}}"
                                                       ng-model="WorkOrder.Tnc" data-ck-editor style="height:100px;"></textarea>
                                         </div>
                                     </div>
@@ -581,16 +581,6 @@
                             <td class="text-right"><b>SubTotal</b></td>
                             <td class="text-right" width="80px">
 
-
-
-
-
-
-
-
-
-
-
                                 <!-- {{ SubTotal(0)|number:2}}-->
                                 {{WorkOrder.SubTotal}}
                             </td>
@@ -617,39 +607,13 @@
                             <td style="width:40px"></td>
                         </tr>
 
-
-                        <tr>
-
-                            <td class="text-right">
-                                <div class="form-group">
-
-                                    <!--<input type="checkbox" ng-model="tax.Applicable" class="checkbox-inline" />-->
-                                    IGST ({{WorkOrder.Taxes.IGST  |number:2 }}%)
-                                </div>
-                            </td>
-                            <td class="text-right" width="100px">{{   WorkOrder.Taxes.IGSTAmount |number:2}}</td>
-                            <td></td>
-                        </tr>
-                        <tr>
+                        
+                        <tr ng-repeat="tax in WorkOrder.AppliedTaxes">
 
                             <td class="text-right">
-                                <div class="form-group">
-                                    <!--<input type="checkbox" ng-model="tax.Applicable" class="checkbox-inline" />-->
-                                    SGST ({{WorkOrder.Taxes.SGST  |number:2 }}%)
-                                </div>
+                                {{tax.TaxName}} ({{tax.Rate | number:2}}{{tax.RateType === 'Fixed' ? '' : '%'}})
                             </td>
-                            <td class="text-right" width="100px">{{  WorkOrder.Taxes.SGSTAmount  |number:2}}</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-
-                            <td class="text-right">
-                                <div class="form-group">
-                                    <!--<input type="checkbox" ng-model="tax.Applicable" class="checkbox-inline" />-->
-                                    CGST ({{WorkOrder.Taxes.CGST  |number:2 }}%)
-                                </div>
-                            </td>
-                            <td class="text-right" width="100px">{{  WorkOrder.Taxes.CGSTAmount |number:2}}</td>
+                            <td class="text-right" width="100px">{{tax.Amount | number:2}}</td>
                             <td></td>
                         </tr>
                         <tr>

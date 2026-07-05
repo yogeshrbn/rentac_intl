@@ -433,6 +433,7 @@
     <Compile Include="Models\MaterialAdjustPrintModel.cs" />
     <Compile Include="Models\ContractSummaryPrintModel.cs" />
     <Compile Include="Helpers\BillingConfigViewHelper.cs" />
+    <Compile Include="Helpers\BillingTaxPrintHelper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

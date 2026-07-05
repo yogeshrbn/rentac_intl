@@ -3,6 +3,7 @@ using Antlr.Runtime.Misc;
 using BAL.Common;
 using BAL.DAL;
 using BAL.DTO;
+using BAL.Helpers;
 using BAL.Enums;
 using BAL.Objects;
 using BAL.Services;
@@ -1489,19 +1490,8 @@ namespace ReportViewer.Controllers
                     {
                         ds.Tables[0].Rows[0]["QrCode"] = docPath + "/comp/" + company.QrCode;
                     }
-                    if (Convert.ToDouble(ds.Tables[0].Rows[0]["IGST"]) > 0)
-                    {
-                        ds.Tables[0].Rows[0]["IGST"] = Convert.ToDouble(ds.Tables[0].Rows[0]["IGST"]) +
-                                                        Convert.ToDouble(ds.Tables[0].Rows[0]["FreightTax"]) +
-                                                        Convert.ToDouble(ds.Tables[0].Rows[0]["chargesTax"]);
-                    }
-                    else if (Convert.ToDouble(ds.Tables[0].Rows[0]["SGST"]) > 0)
-                    {
-                        ds.Tables[0].Rows[0]["SGST"] = Convert.ToDouble(ds.Tables[0].Rows[0]["SGST"]) + Convert.ToDouble(ds.Tables[0].Rows[0]["FreightTax"]) / 2 +
-                                                        Convert.ToDouble(ds.Tables[0].Rows[0]["chargesTax"]) / 2;
-                        ds.Tables[0].Rows[0]["CGST"] = Convert.ToDouble(ds.Tables[0].Rows[0]["CGST"]) + Convert.ToDouble(ds.Tables[0].Rows[0]["FreightTax"]) / 2 +
-                                                       Convert.ToDouble(ds.Tables[0].Rows[0]["chargesTax"]) / 2;
-                    }
+                    BillingTaxPrintHelper.ApplyLegacyQuotationFreightTaxFolding(ds);
+                    QuotationPrintTaxHelper.ReplaceQuotationTaxTableForPrint(ds);
                     if (Convert.ToInt32(ds.Tables[0].Rows[0]["LedgerSiteId"]) > 0)
                     {
                         ds.Tables[0].Rows[0]["ShipAddress1"] = ds.Tables[0].Rows[0]["SiteAddress"];
@@ -1511,13 +1501,9 @@ namespace ReportViewer.Controllers
                         ds.Tables[0].Rows[0]["ShipZipCode"] = ds.Tables[0].Rows[0]["SiteZipCode"];
 
                     }
-                    var rowsToSpan = 6;
-                    rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge1"]) > 0 ? 1 : 0;
-                    rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge2"]) > 0 ? 1 : 0;
-                    rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge3"]) > 0 ? 1 : 0;
-                    rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge4"]) > 0 ? 1 : 0;
-                    rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge5"]) > 0 ? 1 : 0;
-                    rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["DiscountAmount"]) > 0 ? 1 : 0;
+                    var rowsToSpan = BillingTaxPrintHelper.BuildQuotationRowsToSpan(
+                        ds.Tables[0].Rows[0],
+                        ds.Tables.Count > 1 ? ds.Tables[1] : null);
 
 
                     var d = new { d = new { data = ds, rowsToSpan = rowsToSpan } };
@@ -1603,6 +1589,7 @@ namespace ReportViewer.Controllers
                     //    // throw new Exception("Report template could not found.");
                     //}
 
+                    QuotationPrintTaxHelper.PrepareSaleBillTaxTableForPrint(ds);
                     var d = new { data = ds };
                     string jsonText = JsonConvert.SerializeObject(d);
                     // To convert JSON text contained in string json into an XML node
@@ -2232,19 +2219,8 @@ namespace ReportViewer.Controllers
 
                         }
                     }
-                    if (Convert.ToDouble(ds.Tables[0].Rows[0]["IGST"]) > 0)
-                    {
-                        ds.Tables[0].Rows[0]["IGST"] = Convert.ToDouble(ds.Tables[0].Rows[0]["IGST"]) +
-                                                        Convert.ToDouble(ds.Tables[0].Rows[0]["FreightTax"]) +
-                                                        Convert.ToDouble(ds.Tables[0].Rows[0]["chargesTax"]);
-                    }
-                    else if (Convert.ToDouble(ds.Tables[0].Rows[0]["SGST"]) > 0)
-                    {
-                        ds.Tables[0].Rows[0]["SGST"] = Convert.ToDouble(ds.Tables[0].Rows[0]["SGST"]) + Convert.ToDouble(ds.Tables[0].Rows[0]["FreightTax"]) / 2 +
-                                                        Convert.ToDouble(ds.Tables[0].Rows[0]["chargesTax"]) / 2;
-                        ds.Tables[0].Rows[0]["CGST"] = Convert.ToDouble(ds.Tables[0].Rows[0]["CGST"]) + Convert.ToDouble(ds.Tables[0].Rows[0]["FreightTax"]) / 2 +
-                                                       Convert.ToDouble(ds.Tables[0].Rows[0]["chargesTax"]) / 2;
-                    }
+                    BillingTaxPrintHelper.ApplyLegacyQuotationFreightTaxFolding(ds);
+                    QuotationPrintTaxHelper.ReplaceQuotationTaxTableForPrint(ds);
 
                     if (Convert.ToInt32(ds.Tables[0].Rows[0]["LedgerSiteId"]) > 0)
                     {
@@ -2397,6 +2373,7 @@ namespace ReportViewer.Controllers
                     }
                     ds.Tables[0].Rows[0]["PrintBankDetails"] = printBankDetails;
                     ds.Tables[0].Rows[0]["PrintQrCode"] = printQrCode;
+                    QuotationPrintTaxHelper.PrepareSaleBillTaxTableForPrint(ds);
                     var d = new { data = ds };
 
                     string jsonText = JsonConvert.SerializeObject(d);

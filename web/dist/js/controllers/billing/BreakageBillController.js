@@ -1,6 +1,6 @@
 ﻿
 app.controller('BreakageBillController', function ($scope, $rootScope, $state, $q, $uibModal,
-    LedgerFactory, AuthenticationService, ReportService,$crypto) {
+    LedgerFactory, AuthenticationService, ReportService, $crypto, ChallanTaxService, TaxService) {
 
     $scope.Billing = new $.Billing({ InvoiceId: 0, InvoiceType: 2 });
     var ledgerDTO = new $.Ledger({ LedgerId: 0 });
@@ -18,6 +18,9 @@ app.controller('BreakageBillController', function ($scope, $rootScope, $state, $
         defaultTaxRate: 0,
         autoRoundOffTaxable: false
     };
+    $scope.ApplyGST = true;
+    $scope.ItemTaxSettings = [];
+    $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
     $scope.DeleteItem = function (index) {
 
         $scope.$apply(function () {
@@ -87,15 +90,24 @@ app.controller('BreakageBillController', function ($scope, $rootScope, $state, $
                 $scope.Billing.Items = res[0].data.Data.BillingItems;
                 $scope.Billing.BreakageDamageDetails = res[0].data.Data.BreakageDamageDetails;
                 $scope.Billing.Challans = res[0].data.Data.Challans;
-
-                
-                $scope.SubTotal(0);
-
+                if ($scope.Billing.applyTax === false) {
+                    $scope.ApplyGST = false;
+                }
+                $scope._taxDataPromise.then(function () {
+                    if ($scope.SubTotal) {
+                        $scope.SubTotal(0);
+                    }
+                });
             });
         });
     }
 
     $scope.$watch('Billing.Items', function () {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
+    }, true);
+    $scope.$watch('Billing.BreakageDamageDetails', function () {
         if ($scope.SubTotal) {
             $scope.SubTotal(0);
         }
@@ -194,6 +206,9 @@ app.controller('BreakageBillController', function ($scope, $rootScope, $state, $
 
 
     function addWorkOrder(fileList) {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
         var model = cloneObj($scope.Billing);
 
         var billing = new $.Billing();
@@ -230,7 +245,7 @@ app.controller('BreakageBillController', function ($scope, $rootScope, $state, $
 
 
     $scope.SubTotal = function (_total) {
-        return runBillingTotalsLikeSale($scope, ledgerDTO);
+        return runBreakageBillSubtotal($scope, ChallanTaxService);
     };
 
     $scope.getInfo();
@@ -240,6 +255,11 @@ app.controller('BreakageBillController', function ($scope, $rootScope, $state, $
     FormsValidation.init('frmPurchase');
 
     init();
+    $scope.$watch('ApplyGST', function () {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
+    });
     $scope.onDiscountPercentChange = function () {
         $scope.SubTotal(0);
     }
@@ -249,7 +269,7 @@ app.controller('BreakageBillController', function ($scope, $rootScope, $state, $
     }
 });
 app.controller('EditBreakageBillController', function ($scope, $rootScope, $q, $stateParams, $state, $uibModal
-    , LedgerFactory, AuthenticationService, $crypto, ReportService) {
+    , LedgerFactory, AuthenticationService, $crypto, ReportService, ChallanTaxService, TaxService) {
 
     $scope.Billing = new $.Billing({ InvoiceId: 0, InvoiceType: 2 });
     $scope.Billing.InvoiceId = $stateParams.key == undefined ? 0 : $crypto.decrypt($stateParams.key);
@@ -269,6 +289,9 @@ app.controller('EditBreakageBillController', function ($scope, $rootScope, $q, $
         defaultTaxRate: 0,
         autoRoundOffTaxable: false
     };
+    $scope.ApplyGST = true;
+    $scope.ItemTaxSettings = [];
+    $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
     $scope.DeleteItem = function (index) {
 
         $scope.$apply(function () {
@@ -344,14 +367,31 @@ app.controller('EditBreakageBillController', function ($scope, $rootScope, $q, $
                 $scope.Billing.Discount = bill.Discount;
                 $scope.Billing.DiscountPercent = bill.DiscountPercent;
                 $scope.Billing.InvoiceDate = convertDate(bill.InvoiceDate);
+                if ($scope.Billing.applyTax === false) {
+                    $scope.ApplyGST = false;
+                }
+                if (bill.AppliedTaxes && bill.AppliedTaxes.length) {
+                    $scope.Billing.AppliedTaxes = bill.AppliedTaxes;
+                }
 
-                $scope.SubTotal(0);
+                $scope._taxDataPromise.then(function () {
+                    loadSavedBillingInvoiceTaxes($scope.Billing.InvoiceId, $scope, ChallanTaxService, function () {
+                        if ($scope.SubTotal) {
+                            $scope.SubTotal(0);
+                        }
+                    });
+                });
 
             });
         });
     }
     $scope.loadData();
     $scope.$watch('Billing.Items', function () {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
+    }, true);
+    $scope.$watch('Billing.BreakageDamageDetails', function () {
         if ($scope.SubTotal) {
             $scope.SubTotal(0);
         }
@@ -450,6 +490,9 @@ app.controller('EditBreakageBillController', function ($scope, $rootScope, $q, $
 
 
     function addWorkOrder(fileList) {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
         var model = cloneObj($scope.Billing);
 
         var billing = new $.Billing();
@@ -487,7 +530,7 @@ app.controller('EditBreakageBillController', function ($scope, $rootScope, $q, $
 
 
     $scope.SubTotal = function (_total) {
-        return runBillingTotalsLikeSale($scope, ledgerDTO);
+        return runBreakageBillSubtotal($scope, ChallanTaxService);
     };
 
     $scope.getInfo();
@@ -497,6 +540,11 @@ app.controller('EditBreakageBillController', function ($scope, $rootScope, $q, $
     FormsValidation.init('frmPurchase');
 
     init();
+    $scope.$watch('ApplyGST', function () {
+        if ($scope.SubTotal) {
+            $scope.SubTotal(0);
+        }
+    });
     $scope.onDiscountPercentChange = function () {
         $scope.SubTotal(0);
     }

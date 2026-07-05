@@ -8,6 +8,8 @@ namespace BAL.DTO
 {
     public class LostItemDTO : InvoiceItemDTO
     {
+        public int Id { get; set; }
+        public List<InvoiceTaxDTO> LineTaxes { get; set; }
         public int LossItemId { get; set; }
 
 

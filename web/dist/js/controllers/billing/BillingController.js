@@ -162,9 +162,9 @@ function applyRentBillLineGst(items, config, applyTax, isIntraState) {
 }
 
 app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'FileSaver', '$state', '$crypto', '$mdDialog',
-    '$window', '$uibModal', 'ModalFactory', 'LedgerFactory', 'WorkOrderFactory',
+    '$window', '$uibModal', 'ModalFactory', 'LedgerFactory', 'WorkOrderFactory', 'ChallanTaxService', 'TaxService',
     function ($scope, $rootScope, $stateParams, FileSaver, $state, $crypto, $mdDialog, $window, $uibModal,
-        ModalFactory, LedgerFactory, WorkOrderFactory) {
+        ModalFactory, LedgerFactory, WorkOrderFactory, ChallanTaxService, TaxService) {
 
         function applyInvoiceTotalRoundOff(cfg, billing, total) {
             var method = (cfg.roundOffTotalMethod || 'none').toString().toLowerCase();
@@ -201,11 +201,27 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
             roundOffTotalMethod: 'none',
             defaultRoundOffTotal: false
         };
+        $scope.ApplyGST = true;
+        $scope.ApplyFreightGST = true;
+        $scope.ApplyOtherChargeGST = true;
+        $scope.ItemTaxSettings = [];
+        $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
         $scope.editorOptions = {
 
             height: 200
 
         };
+        $scope.AllSizes = [];
+        $scope.getAllProductSizesByCompany = function () {
+            var product = new $.Product();
+            product.GetAll(function (e) {
+                //debugger
+                // console.log('AllSizes', e.data);
+                $scope.AllSizes = e.data;
+
+            });
+        }
+        $scope.getAllProductSizesByCompany();
 
         function loadCompanyForTax() {
             var token = $rootScope.getTokenInfo();
@@ -304,6 +320,7 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
                         if ($scope.Billing && $scope.Billing.IsCashBill) {
                             $scope.Billing.applyTax = false;
                         }
+                        $scope.ApplyGST = $scope.Billing.applyTax !== false;
 
                     }
                 }
@@ -338,6 +355,13 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
         $scope.$watch('Billing.IsCashBill', function (cash) {
             if (cash) {
                 $scope.Billing.applyTax = false;
+                $scope.ApplyGST = false;
+            }
+        });
+
+        $scope.$watch('ApplyGST', function () {
+            if ($scope.CalSubTotal) {
+                $scope.CalSubTotal();
             }
         });
 
@@ -375,6 +399,7 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
                 if ($scope.Billing.IsCashBill) {
                     $scope.Billing.applyTax = false;
                 }
+                $scope.ApplyGST = $scope.Billing.applyTax !== false;
 
                 $scope.LossCharges = e.data.LostItems;
                 $scope.ClosingBalance = e.data.StockBalanceAfterBill;
@@ -388,6 +413,10 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
                 $scope.Billing.AccountLedger = e.data.AccountLedger;
                 $scope.Billing.OtherCharges = e.data.OtherCharges;
                 $scope.Billing.PO = e.data.PO || [];
+                debugger
+                $scope._taxDataPromise.then(function () {
+                    $scope.CalSubTotal();
+                });
 
             }, billing);
             // getStockBalance();
@@ -489,8 +518,11 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
                 return;
             }
 
-
+            $scope.CalSubTotal();
             $scope.Billing.LossItems = $scope.LossCharges;
+            if ($scope.Billing.BreakageDamageDetails && $scope.Billing.BreakageDamageDetails.length) {
+                $scope.Billing.BreakageItems = $scope.Billing.Breakage || $scope.Billing.BreakageItems || [];
+            }
 
             var billing = cloneObj($scope.Billing);
             billing.From = formatdate(billing.From);
@@ -618,102 +650,12 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
             return otherCharge;
         }
         $scope.CalSubTotal = function () {
-            var subTotal = 0,
-                taxAmount = 0,
-                damageBaseTotal = 0;
-            $scope.Billing.FreightTax = 0;
-            $scope.Billing.BreakageTax = 0;
-
-            $scope.Billing.PaidAmount = 0;
-            // $scope.CalculateSum();
-            // BreakageAmount = GRN damage cost total (set after damage loop in CalSubTotal)
-            var totalItemDiscount = applyRentBillLineDiscounts($scope.Billing.Items, $scope.Config, $scope.Billing);
-            var isIntraState = resolveBillIsIntraState($scope.comp, $scope.Accounts, $scope.Billing.LedgerId);
-            applyRentBillLineGst($scope.Billing.Items, $scope.Config, $scope.Billing.applyTax, isIntraState);
-
-            $scope.Billing.SubTotal = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.Amount, 0);
-            $scope.Billing.CGST = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.CGST, 0);
-            $scope.Billing.SGST = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.SGST, 0);
-            $scope.Billing.IGST = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.IGST, 0);
-
-            if ($scope.Billing.BreakageDamageDetails && $scope.Billing.BreakageDamageDetails.length) {
-                var applyTxDmg = $scope.Billing.applyTax;
-                var baseLossCost = 0;
-                for (var ddi = 0; ddi < $scope.Billing.BreakageDamageDetails.length; ddi++) {
-                    var ddr = $scope.Billing.BreakageDamageDetails[ddi];
-                    var dcost = parseFloat(ddr.Cost != null ? ddr.Cost : ddr.cost) || 0;
-                    damageBaseTotal += dcost;
-                    var igRd = applyTxDmg ? (parseFloat(ddr.IGSTRate != null ? ddr.IGSTRate : ddr.igstRate) || 0) : 0;
-                    var cgRd = applyTxDmg ? (parseFloat(ddr.CGSTRate != null ? ddr.CGSTRate : ddr.cgstRate) || 0) : 0;
-                    var sgRd = applyTxDmg ? (parseFloat(ddr.SGSTRate != null ? ddr.SGSTRate : ddr.sgstRate) || 0) : 0;
-                    ddr.IGST = parseFloat((dcost * igRd / 100).toFixed(2));
-                    ddr.CGST = parseFloat((dcost * cgRd / 100).toFixed(2));
-                    ddr.SGST = parseFloat((dcost * sgRd / 100).toFixed(2));
-                    $scope.Billing.IGST += ddr.IGST;
-                    $scope.Billing.CGST += ddr.CGST;
-                    $scope.Billing.SGST += ddr.SGST;
-                }
-            }
-            if ($scope.Billing.TotalLossAmount > 0) {
-
-                // var applyTxDmg = $scope.Billing.applyTax;
-
-                for (var ddi = 0; ddi < $scope.LossCharges.length; ddi++) {
-                    var ddr = $scope.LossCharges[ddi];
-
-                    $scope.Billing.IGST += ddr.IGST;
-                    $scope.Billing.CGST += ddr.CGST;
-                    $scope.Billing.SGST += ddr.SGST;
-                }
-            }
-
-            $scope.Billing.BreakageAmount = damageBaseTotal;
-            $scope.taxableValueBase();
-
-            if ($scope.Payments) {
-                $scope.Billing.PaidAmount = $scope.Payments.reduce((partialSum, a) => partialSum + a.PaidAmount, 0);
-            }
-
-            taxAmount = $scope.Billing.IGST + $scope.Billing.SGST + $scope.Billing.CGST;
-            var otherChargeAmount = $scope.fnOtherChargesTotal();
-            $scope.Billing.ChargesTax = 0;
-            if ($scope.Config.FreightTax > 0 && $scope.Billing.applyTax) {
-                $scope.Billing.FreightTax = $scope.Billing.Freight * $scope.Config.FreightTax / 100.00;
-                if (otherChargeAmount > 0)
-                    $scope.Billing.ChargesTax = otherChargeAmount * $scope.Config.FreightTax / 100.00;
-            }
-
-            $scope.Billing.TaxAmount = taxAmount;
-
-            // $scope.Billing.Total = parseFloat($scope.Billing.Total1) + taxAmount + $scope.Billing.FreightTax;
-            $scope.Billing.Total = parseFloat($scope.Billing.SubTotal) + taxAmount + parseFloat($scope.Billing.Freight) + $scope.Billing.FreightTax;
-            var afterTaxAmount = $scope.Billing.Total + otherChargeAmount + $scope.Billing.ChargesTax;
-
-            //if ($scope.Billing.DiscountPercent > 0) {
-            //    $scope.Billing.Discount = round((afterTaxAmount * $scope.Billing.DiscountPercent) / 100);
-            //}
-            //-- apply discuont if selected at invoicelevel            
-            //-- this typeof discount called cash discount as GST has been calculated before discount
-            if ($scope.Config.discount_type != 'itemlevel') {
-                if ($scope.Billing.DiscountPercent > 0) {
-                    $scope.Billing.Discount = round((afterTaxAmount * $scope.Billing.DiscountPercent) / 100);
-                }
-            }
-            else {
-                if ($scope.Billing.DiscountPercent > 0) {
-                    $scope.Billing.Discount = totalItemDiscount;
-                }
-
-            }
-            $scope.Billing.Total = afterTaxAmount + $scope.Billing.BreakageAmount + $scope.Billing.TotalLossAmount;
-            $scope.Billing.Total = $scope.Billing.Total - $scope.Billing.Discount - $scope.Billing.PaidAmount;
-
+            runGenBillSubtotal($scope, ChallanTaxService);
             $scope.Billing.Total = applyInvoiceTotalRoundOff($scope.Config, $scope.Billing, $scope.Billing.Total);
             if (($scope.Config.roundOffTotalMethod || 'none').toString().toLowerCase() !== 'none') {
                 $scope.Billing.RoundOff = true;
             }
             return $scope.Billing.Total;
-
         }
 
         //function GetTaxes() {
@@ -901,7 +843,7 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
         }
         var modal
         $scope.showTaxItems = function () {
-
+            debugger
             modal = $uibModal.open({
                 windowClass: 'right',
                 templateUrl: 'templ/taxItems.html',
@@ -948,6 +890,7 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
         }
 
         $scope.openBillTaxSettings = function () {
+            $scope.ApplyGST = $scope.Billing.applyTax !== false;
             var div = '<div></div>';
             $(div).load('templ/dialogs/billTaxSettings.dialog.html?d=' + new Date().getTime(), function () {
                 var html = $(this).html();
@@ -966,6 +909,7 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
                             if ($dialogScope.Billing && $dialogScope.Billing.IsCashBill) {
                                 $dialogScope.Billing.applyTax = false;
                             }
+                            $dialogScope.ApplyGST = $dialogScope.Billing.applyTax !== false;
                             if (typeof $dialogScope.CalSubTotal === 'function') {
                                 $dialogScope.CalSubTotal();
                             }
@@ -987,19 +931,16 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
         }
 
         $scope.$watch('LossCharges', function (e, y) {
-
+            if (!e) {
+                return;
+            }
             $.each(e, function (index, value) {
-
                 value.Amount = parseFloat(value.Quantity) * parseFloat(value.Rate);
-                value.IGST = value.IGSTRate * value.Amount / 100;
-                value.CGST = value.CGSTRate * value.Amount / 100;
-                value.SGST = value.SGSTRate * value.Amount / 100;
-
             });
             if ($scope.LossCharges) {
-                $scope.Billing.LossIGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.IGST, 0);
-                $scope.Billing.LossSGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.SGST, 0);
-                $scope.Billing.LossCGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.CGST, 0);
+                $scope.Billing.LossIGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + (parseFloat(a.IGST) || 0), 0);
+                $scope.Billing.LossSGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + (parseFloat(a.SGST) || 0), 0);
+                $scope.Billing.LossCGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + (parseFloat(a.CGST) || 0), 0);
             }
 
             $scope.calcLossTotal();
@@ -1027,19 +968,22 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
             }
         }
         $scope.$watch('Billing.Breakage', function (e, y) {
-
+            if (!e) {
+                return;
+            }
+            var useDamageDetails = $scope.Billing.BreakageDamageDetails && $scope.Billing.BreakageDamageDetails.length;
             $.each(e, function (index, value) {
-
                 value.Amount = parseFloat(value.Quantity) * parseFloat(value.Rate);
-                value.IGST = value.IGSTRate * value.Amount / 100;
-                value.CGST = value.CGSTRate * value.Amount / 100;
-                value.SGST = value.SGSTRate * value.Amount / 100;
-
+                if (!useDamageDetails) {
+                    value.IGST = value.IGSTRate * value.Amount / 100;
+                    value.CGST = value.CGSTRate * value.Amount / 100;
+                    value.SGST = value.SGSTRate * value.Amount / 100;
+                }
             });
             if ($scope.Billing.Breakage) {
-                $scope.Billing.Breakage.IGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.IGST, 0);
-                $scope.Billing.Breakage.SGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.SGST, 0);
-                $scope.Billing.Breakage.CGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.CGST, 0);
+                $scope.Billing.Breakage.IGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + (parseFloat(a.IGST) || 0), 0);
+                $scope.Billing.Breakage.SGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + (parseFloat(a.SGST) || 0), 0);
+                $scope.Billing.Breakage.CGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + (parseFloat(a.CGST) || 0), 0);
             }
             $scope.calcBreakageTotal();
             $scope.CalSubTotal();
@@ -1051,9 +995,9 @@ app.controller('BillingController', ['$scope', '$rootScope', '$stateParams', 'Fi
 
 ]);
 app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'FileSaver', '$state', '$crypto', '$mdDialog',
-    '$q', '$rootScope', '$uibModal', 'ModalFactory', 'LedgerFactory', 'WorkOrderFactory',
+    '$q', '$rootScope', '$uibModal', 'ModalFactory', 'LedgerFactory', 'WorkOrderFactory', 'ChallanTaxService', 'TaxService',
     function ($scope, $stateParams, $location, FileSaver, $state, $crypto, $mdDialog, $q, $rootScope, $uibModal,
-        ModalFactory, LedgerFactory, WorkOrderFactory) {
+        ModalFactory, LedgerFactory, WorkOrderFactory, ChallanTaxService, TaxService) {
 
         function applyInvoiceTotalRoundOff(cfg, billing, total) {
             var method = (cfg.roundOffTotalMethod || 'none').toString().toLowerCase();
@@ -1117,6 +1061,11 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
             , roundOffTotalMethod: 'none'
             , defaultRoundOffTotal: false
         };
+        $scope.ApplyGST = true;
+        $scope.ApplyFreightGST = true;
+        $scope.ApplyOtherChargeGST = true;
+        $scope.ItemTaxSettings = [];
+        $scope._taxDataPromise = initSaleTaxData($scope, TaxService, ChallanTaxService);
 
         function loadCompanyForTaxEdit() {
             var token = $rootScope.getTokenInfo();
@@ -1245,9 +1194,14 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
                     if ($scope.Billing && $scope.Billing.IsCashBill) {
                         $scope.Billing.applyTax = false;
                     }
+                    $scope.ApplyGST = $scope.Billing.applyTax !== false;
 
                     $scope.BillGenerated = true;
-                    $scope.CalSubTotal();
+                    $scope._taxDataPromise.then(function () {
+                        loadSavedGenBillInvoiceTaxes($scope.Billing.InvoiceId, $scope, ChallanTaxService, function () {
+                            $scope.CalSubTotal();
+                        });
+                    });
                     if ($scope.BillData && $scope.BillData.length > 0) {
                         displaySave(true);
                     }
@@ -1259,6 +1213,13 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
         $scope.$watch('Billing.IsCashBill', function (cash) {
             if (cash) {
                 $scope.Billing.applyTax = false;
+                $scope.ApplyGST = false;
+            }
+        });
+
+        $scope.$watch('ApplyGST', function () {
+            if ($scope.CalSubTotal) {
+                $scope.CalSubTotal();
             }
         });
 
@@ -1327,6 +1288,7 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
                 if ($scope.Billing.IsCashBill) {
                     $scope.Billing.applyTax = false;
                 }
+                $scope.ApplyGST = $scope.Billing.applyTax !== false;
                 $scope.Billing.AccountLedger = e.data.AccountLedger;
                 $scope.LossCharges = e.data.LostItems;
                 $scope.Billing.OtherCharges = e.data.OtherCharges;
@@ -1337,6 +1299,9 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
                     displaySave(true);
                     //$scope.getBreakageForBill();
                 }
+                $scope._taxDataPromise.then(function () {
+                    $scope.CalSubTotal();
+                });
             }, modal);
             // getStockBalance();
             //   LedgerFactory.GetAccountBalanceForBill($scope.Billing, getLedger);
@@ -1379,8 +1344,12 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
             if (!validateForm()) {
                 return;
             }
-            var billing = new $.Billing();
+            $scope.CalSubTotal();
             $scope.Billing.LossItems = $scope.LossCharges;
+            if ($scope.Billing.BreakageDamageDetails && $scope.Billing.BreakageDamageDetails.length) {
+                $scope.Billing.BreakageItems = $scope.Billing.Breakage || $scope.Billing.BreakageItems || [];
+            }
+            var billing = new $.Billing();
             var model = cloneObj($scope.Billing);
             model.From = formatdate(model.From);
             model.To = formatdate(model.To);
@@ -1486,144 +1455,16 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
             return otherCharge;
         }
         $scope.CalSubTotal = function () {
-            var subTotal = 0,
-                taxAmount = 0,
-                damageBaseTotal = 0;
-            $scope.Billing.FreightTax = 0;
-            $scope.Billing.BreakageTax = 0;
-            $scope.Billing.BreakageAmount = 0;
-            $scope.Billing.PaidAmount = 0;
             if (!$scope.Billing.Items) {
                 return;
             }
-            //   $scope.CalculateSum();
-            if (!$scope.Billing.TotalLossAmount) {
-                $scope.Billing.TotalLossAmount = 0;
-            }
-
-            var totalItemDiscount = applyRentBillLineDiscounts($scope.Billing.Items, $scope.Config, $scope.Billing);
-            var isIntraStateEdit = resolveBillIsIntraState($scope.comp, $scope.Accounts, $scope.Billing.LedgerId);
-            applyRentBillLineGst($scope.Billing.Items, $scope.Config, $scope.Billing.applyTax, isIntraStateEdit);
-
-            $scope.Billing.SubTotal = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.Amount, 0);
-            // BreakageAmount = GRN damage cost total (set after damage loop)
-
-            //if ($scope.Billing.Taxes != null) {
-            //    for (var i = 0; i < $scope.Billing.Taxes.length; i++) {
-            //        //if ($scope.Billing.Taxes[i].Applicable) {
-            //        //  taxAmount += (  $scope.Billing.Total1 )* $scope.Billing.Taxes[i].Rate / 100.00;
-            //        //taxAmount+= $scope.Billing.Taxes[i].TaxAmount +   ($scope.Billing.Freight )* $scope.Billing.Taxes[i].Rate / 100.00 + (  $scope.totalBreakageAmount() )* $scope.Billing.Taxes[i].Rate / 100.00;
-            //        //taxAmount+= ($scope.TotalLossCharges() )* $scope.Billing.Taxes[i].Rate / 100.00;
-            //        //$scope.Billing.FreightTax+=  (  $scope.Billing.Freight )* $scope.Billing.Taxes[i].Rate / 100.00;
-            //        //$scope.Billing.BreakageTax+=  (  $scope.totalBreakageAmount() )* $scope.Billing.Taxes[i].Rate / 100.00;
-            //        //$scope.Billing.LossTax +=  (  $scope.TotalLossCharges() )* $scope.Billing.Taxes[i].Rate / 100.00;
-
-            //        //  taxAmount += $scope.Billing.SubTotal * $scope.Billing.Taxes[i].Rate / 100.00;
-            //        // $scope.Billing.Taxes[i].TaxAmount = $scope.Billing.SubTotal * $scope.Billing.Taxes[i].Rate / 100.00;
-
-            //        // }
-            //    }
-            //}
-
-            if ($scope.Billing.Items) {
-                $scope.Billing.CGST = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.CGST, 0);
-                $scope.Billing.SGST = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.SGST, 0);
-                $scope.Billing.IGST = $scope.Billing.Items.reduce((partialSum, a) => partialSum + a.IGST, 0);
-            }
-            if ($scope.Billing.BreakageDamageDetails && $scope.Billing.BreakageDamageDetails.length) {
-                var applyTxDmg2 = $scope.Billing.applyTax;
-                for (var ddj = 0; ddj < $scope.Billing.BreakageDamageDetails.length; ddj++) {
-                    var ddr2 = $scope.Billing.BreakageDamageDetails[ddj];
-                    var dcost2 = parseFloat(ddr2.Cost != null ? ddr2.Cost : ddr2.cost) || 0;
-                    damageBaseTotal += dcost2;
-                    var igRd2 = applyTxDmg2 ? (parseFloat(ddr2.IGSTRate != null ? ddr2.IGSTRate : ddr2.igstRate) || 0) : 0;
-                    var cgRd2 = applyTxDmg2 ? (parseFloat(ddr2.CGSTRate != null ? ddr2.CGSTRate : ddr2.cgstRate) || 0) : 0;
-                    var sgRd2 = applyTxDmg2 ? (parseFloat(ddr2.SGSTRate != null ? ddr2.SGSTRate : ddr2.sgstRate) || 0) : 0;
-                    ddr2.IGST = parseFloat((dcost2 * igRd2 / 100).toFixed(2));
-                    ddr2.CGST = parseFloat((dcost2 * cgRd2 / 100).toFixed(2));
-                    ddr2.SGST = parseFloat((dcost2 * sgRd2 / 100).toFixed(2));
-                    $scope.Billing.IGST += ddr2.IGST;
-                    $scope.Billing.CGST += ddr2.CGST;
-                    $scope.Billing.SGST += ddr2.SGST;
-                }
-            }
-            $scope.Billing.BreakageAmount = damageBaseTotal;
-
-            if ($scope.Billing.TotalLossAmount > 0) {
-
-                // var applyTxDmg = $scope.Billing.applyTax;
-
-                for (var ddi = 0; ddi < $scope.LossCharges.length; ddi++) {
-                    var ddr = $scope.LossCharges[ddi];
-
-                    $scope.Billing.IGST += ddr.IGST;
-                    $scope.Billing.CGST += ddr.CGST;
-                    $scope.Billing.SGST += ddr.SGST;
-                }
-            }
-            $scope.taxableValueBase();
-            if ($scope.Payments) {
-                $scope.Billing.PaidAmount = $scope.Payments.reduce((partialSum, a) => partialSum + a.PaidAmount, 0);
-            }
-            //if ($scope.LossCharges) {
-
-            //    $scope.Billing.CGST += $scope.LossCharges.reduce((partialSum, a) => partialSum + a.CGST, 0);
-            //    $scope.Billing.SGST += $scope.LossCharges.reduce((partialSum, a) => partialSum + a.SGST, 0);
-            //    $scope.Billing.IGST += $scope.LossCharges.reduce((partialSum, a) => partialSum + a.IGST, 0);
-            //    $scope.Billing.LossTax = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.IGST + a.SGST + a.CGST, 0);
-
-            //}
-            //if ($scope.Billing.Breakage) {
-            //    $scope.Billing.CGST += $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.CGST, 0);
-            //    $scope.Billing.SGST += $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.SGST, 0);
-            //    $scope.Billing.IGST += $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.IGST, 0);
-
-            //    $scope.Billing.BreakageTax = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.IGST + a.SGST + a.CGST, 0);
-            //}
-            taxAmount = $scope.Billing.IGST + $scope.Billing.SGST + $scope.Billing.CGST;
-            var otherChargeAmount = $scope.fnOtherChargesTotal();
-            $scope.Billing.ChargesTax = 0;
-            if ($scope.Config.FreightTax > 0 && $scope.Billing.applyTax) {
-                $scope.Billing.FreightTax = $scope.Billing.Freight * $scope.Config.FreightTax / 100.00;
-                if (otherChargeAmount > 0)
-                    $scope.Billing.ChargesTax = otherChargeAmount * $scope.Config.FreightTax / 100.00;
-
-            }
-
-            $scope.Billing.TaxAmount = taxAmount;
-
-            // $scope.Billing.Total = parseFloat($scope.Billing.Total1) + taxAmount + $scope.Billing.FreightTax;
-            $scope.Billing.Total = parseFloat($scope.Billing.SubTotal) + taxAmount + parseFloat($scope.Billing.Freight) + $scope.Billing.FreightTax;
-
-            var afterTaxAmount = $scope.Billing.Total + otherChargeAmount + $scope.Billing.ChargesTax;
-            //---
-            if ($scope.Config.discount_type != 'itemlevel') {
-                if ($scope.Billing.DiscountPercent > 0) {
-                    $scope.Billing.Discount = round((afterTaxAmount * $scope.Billing.DiscountPercent) / 100);
-                }
-            }
-            else {
-                if ($scope.Billing.DiscountPercent > 0) {
-                    $scope.Billing.Discount = totalItemDiscount;
-                }
-
-            }
-
-
-            $scope.Billing.Total = afterTaxAmount + $scope.Billing.BreakageAmount + $scope.Billing.TotalLossAmount;
-
-
-            $scope.Billing.Total = $scope.Billing.Total - $scope.Billing.Discount - $scope.Billing.PaidAmount;
-
+            runGenBillSubtotal($scope, ChallanTaxService);
             $scope.Billing.Total = applyInvoiceTotalRoundOff($scope.Config, $scope.Billing, $scope.Billing.Total);
             if (($scope.Config.roundOffTotalMethod || 'none').toString().toLowerCase() !== 'none') {
                 $scope.Billing.RoundOff = true;
             }
             return $scope.Billing.Total;
-
         }
-
-
 
         //$scope.GetTaxes = function () {
         //    var Tax = new $.Tax({
@@ -1942,6 +1783,7 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
         }
 
         $scope.openBillTaxSettings = function () {
+            $scope.ApplyGST = $scope.Billing.applyTax !== false;
             var div = '<div></div>';
             $(div).load('templ/dialogs/billTaxSettings.dialog.html?d=' + new Date().getTime(), function () {
                 var html = $(this).html();
@@ -1960,6 +1802,7 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
                             if ($dialogScope.Billing && $dialogScope.Billing.IsCashBill) {
                                 $dialogScope.Billing.applyTax = false;
                             }
+                            $dialogScope.ApplyGST = $dialogScope.Billing.applyTax !== false;
                             if (typeof $dialogScope.CalSubTotal === 'function') {
                                 $dialogScope.CalSubTotal();
                             }
@@ -1980,19 +1823,16 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
             }
         }
         $scope.$watch('LossCharges', function (e, y) {
-
+            if (!e) {
+                return;
+            }
             $.each(e, function (index, value) {
-
                 value.Amount = parseFloat(value.Quantity) * parseFloat(value.Rate);
-                value.IGST = value.IGSTRate * value.Amount / 100;
-                value.CGST = value.CGSTRate * value.Amount / 100;
-                value.SGST = value.SGSTRate * value.Amount / 100;
-
             });
             if ($scope.LossCharges) {
-                $scope.Billing.LossIGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.IGST, 0);
-                $scope.Billing.LossSGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.SGST, 0);
-                $scope.Billing.LossCGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + a.CGST, 0);
+                $scope.Billing.LossIGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + (parseFloat(a.IGST) || 0), 0);
+                $scope.Billing.LossSGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + (parseFloat(a.SGST) || 0), 0);
+                $scope.Billing.LossCGST = $scope.LossCharges.reduce((partialSum, a) => partialSum + (parseFloat(a.CGST) || 0), 0);
             }
 
             $scope.calcLossTotal();
@@ -2020,19 +1860,22 @@ app.controller('EditBillController', ['$scope', '$stateParams', '$location', 'Fi
             }
         }
         $scope.$watch('Billing.Breakage', function (e, y) {
-
+            if (!e) {
+                return;
+            }
+            var useDamageDetails = $scope.Billing.BreakageDamageDetails && $scope.Billing.BreakageDamageDetails.length;
             $.each(e, function (index, value) {
-
                 value.Amount = parseFloat(value.Quantity) * parseFloat(value.Rate);
-                value.IGST = value.IGSTRate * value.Amount / 100;
-                value.CGST = value.CGSTRate * value.Amount / 100;
-                value.SGST = value.SGSTRate * value.Amount / 100;
-
+                if (!useDamageDetails) {
+                    value.IGST = value.IGSTRate * value.Amount / 100;
+                    value.CGST = value.CGSTRate * value.Amount / 100;
+                    value.SGST = value.SGSTRate * value.Amount / 100;
+                }
             });
             if ($scope.Billing.Breakage) {
-                $scope.Billing.Breakage.IGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.IGST, 0);
-                $scope.Billing.Breakage.SGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.SGST, 0);
-                $scope.Billing.Breakage.CGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + a.CGST, 0);
+                $scope.Billing.Breakage.IGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + (parseFloat(a.IGST) || 0), 0);
+                $scope.Billing.Breakage.SGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + (parseFloat(a.SGST) || 0), 0);
+                $scope.Billing.Breakage.CGST = $scope.Billing.Breakage.reduce((partialSum, a) => partialSum + (parseFloat(a.CGST) || 0), 0);
             }
             $scope.calcBreakageTotal();
             $scope.CalSubTotal();

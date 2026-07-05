@@ -49,6 +49,8 @@ namespace FarmaAPI.Controllers
                 objCompany.State = obj.State;
                 objCompany.ZipCode = obj.ZipCode;
                 objCompany.TIN = obj.TIN;
+                objCompany.VAT = obj.VAT;
+
                 objCompany.TAN = obj.TAN;
                 objCompany.PAN = obj.PAN;
                 objCompany.SignAuthority = obj.SignAuthority;

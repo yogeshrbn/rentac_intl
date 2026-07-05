@@ -43,7 +43,14 @@ namespace BAL.DAL
                     dataOBject.TotalOtherCharges = dataOBject.OtherCharges.Sum(o => o.Amount);
                 }
                 dataOBject.Freight = siteObj.Freight;
-                dataOBject.TotalTax = dataOBject.IGSTAmount + dataOBject.CGSTAmount + dataOBject.SGSTAmount;
+                if (siteObj.AppliedTaxes != null && siteObj.AppliedTaxes.Count > 0)
+                {
+                    ApplyHeaderTaxTotalsFromAppliedTaxes(dataOBject, siteObj.AppliedTaxes);
+                }
+                else
+                {
+                    dataOBject.TotalTax = dataOBject.IGSTAmount + dataOBject.CGSTAmount + dataOBject.SGSTAmount;
+                }
                 dataOBject.SubTotal = siteObj.SubTotal;
                 dataOBject.Total = dataOBject.SubTotal + siteObj.Freight + dataOBject.TotalTax + dataOBject.TotalOtherCharges;
 
@@ -286,57 +293,50 @@ namespace BAL.DAL
                         try
                         {
                             objSql.NewCommand();
-                            //   var delSql = new SQL();
-
                             objSql.AddParameter("@siteId", DbType.Int32, ParameterDirection.Input, 0, siteId);
-                            //   objSql.AddParameter("@companyId", DbType.Int32, ParameterDirection.Input, 0, site.CompanyId);
                             objSql.ExecuteNonQuery(DELETE_SITEITEMS);
                         }
                         catch (Exception ex)
                         {
                             throw new Exception("Error while updating challan items" + ex.Message);
                         }
+
+                        objSql.NewCommand();
+                        objSql.AddParameter("@SiteId", DbType.Int32, ParameterDirection.Input, 0, siteId);
+                        objSql.ExecuteNonQuery(WORKORDER_TAX_DEL_BY_SITE);
+
                         foreach (WorkOrderItemDTO item in site.Items)
                         {
                             item.WorkOrder = new WorkOrderDTO(_workOrderId);
                             item.SiteId = siteId;
-                            item.WorkOrderItemId = 0;
                             if (item.PurchaseQty == 0)
                             {
                                 continue;
                             }
-                            //if (item.Deleted == 1)
-                            //{
-                            //    objSql.NewCommand();
-                            //    objSql.AddParameter("@workOrderItemId", DbType.Int32, ParameterDirection.Input, 0, item.WorkOrderItemId);
-                            //    objSql.ExecuteNonQuery(WORKORDER_ITEMS_DEL);
-                            //    continue;
-                            //}
+
+                            ApplyLegacyGstAmountsToItem(item, site);
+
                             objSql.NewCommand();
                             WorkOrderItemDAL itemDAL = new WorkOrderItemDAL();
+                            int workOrderItemId = itemDAL.Save(item, objSql);
+                            item.WorkOrderItemId = workOrderItemId;
 
-                            item.IGSTAmount = (site.IGSTRate * item.SubTotal) / 100;
-                            item.SGSTAmount = (site.SGSTRate * item.SubTotal) / 100;
-                            item.CGSTAmount = (site.CGSTRate * item.SubTotal) / 100;
-
-                            itemDAL.Save(item, objSql);
+                            if (item.LineTaxes != null)
+                            {
+                                foreach (WorkOrderTaxDTO lineTax in item.LineTaxes)
+                                {
+                                    lineTax.WorkOrderItemId = workOrderItemId;
+                                    lineTax.SiteId = siteId;
+                                    lineTax.ProductId = item.ProductId;
+                                    objSql.NewCommand();
+                                    AddWorkOrderTax(lineTax, objSql);
+                                }
+                            }
                         }
 
                     }
-                    var productIds = site.Items.Select(o => o.ProductId.ToString()).ToList();
 
-                    string products = String.Join(",", productIds);
-                    //delete products in case of update
-
-                    if (site.Taxes != null)
-                    {
-                        foreach (TaxDTO item in site.Taxes)
-                        {
-                            objSql.NewCommand();
-                            site.SiteId = siteId;
-                            AddTax(site, item, objSql);
-                        }
-                    }
+                    site.SiteId = siteId;
                 }
                 if (localTransaction)
                 {
@@ -503,21 +503,75 @@ namespace BAL.DAL
             return objSql.ContructList<WorkOrderItemDTO>(objSql.ExecuteDataSet(GET_SITE_ITEMS));
         }
 
-        bool AddTax(SiteDTO site, TaxDTO taxDto, SQL objSql)
+        void AddWorkOrderTax(WorkOrderTaxDTO taxDto, SQL objSql)
         {
-            //   taxDto.Amount = site.SubTotal;
+            objSql.AddParameter("@WorkOrderItemId", DbType.Int32, ParameterDirection.Input, 0, taxDto.WorkOrderItemId);
+            objSql.AddParameter("@SiteId", DbType.Int32, ParameterDirection.Input, 0, taxDto.SiteId);
+            objSql.AddParameter("@ProductId", DbType.Int32, ParameterDirection.Input, 0, taxDto.ProductId);
+            objSql.AddParameter("@TaxCategoryId", DbType.Int32, ParameterDirection.Input, 0, taxDto.TaxCategoryId);
             objSql.AddParameter("@TaxId", DbType.Int32, ParameterDirection.Input, 0, taxDto.TaxId);
-            objSql.AddParameter("@Rate", DbType.Double, ParameterDirection.Input, 0, taxDto.Rate);
-            objSql.AddParameter("@Amount", DbType.Double, ParameterDirection.Input, 0, taxDto.TaxAmount);
-            objSql.AddParameter("@SiteId", DbType.Int32, ParameterDirection.Input, 0, site.SiteId);
-            objSql.AddParameter("@ProductId", DbType.Int32, ParameterDirection.Input, 0, taxDto.ItemValue);
-            return objSql.ExecuteNonQuery(ADD_TAX) > 0;
+            objSql.AddParameter("@TaxName", DbType.String, ParameterDirection.Input, 100, taxDto.TaxName ?? string.Empty);
+            objSql.AddParameter("@TaxCode", DbType.String, ParameterDirection.Input, 20, (object)taxDto.TaxCode ?? DBNull.Value);
+            objSql.AddParameter("@Rate", DbType.Decimal, ParameterDirection.Input, 0, taxDto.Rate);
+            objSql.AddParameter("@RateType", DbType.String, ParameterDirection.Input, 20, taxDto.RateType ?? "Percentage");
+            objSql.AddParameter("@Amount", DbType.Decimal, ParameterDirection.Input, 0, taxDto.Amount);
+            objSql.ExecuteNonQuery(ADD_TAX);
         }
-        internal List<TaxDTO> GetSiteTaxes(int siteId)
+
+        void ApplyLegacyGstAmountsToItem(WorkOrderItemDTO item, SiteDTO site)
+        {
+            if (item.LineTaxes != null && item.LineTaxes.Count > 0)
+            {
+                item.IGSTAmount = (double)item.LineTaxes
+                    .Where(t => IsTaxCode(t.TaxCode, "IGST"))
+                    .Sum(t => t.Amount);
+                item.CGSTAmount = (double)item.LineTaxes
+                    .Where(t => IsTaxCode(t.TaxCode, "CGST"))
+                    .Sum(t => t.Amount);
+                item.SGSTAmount = (double)item.LineTaxes
+                    .Where(t => IsTaxCode(t.TaxCode, "SGST"))
+                    .Sum(t => t.Amount);
+                return;
+            }
+
+            item.IGSTAmount = (site.IGSTRate * item.SubTotal) / 100;
+            item.SGSTAmount = (site.SGSTRate * item.SubTotal) / 100;
+            item.CGSTAmount = (site.CGSTRate * item.SubTotal) / 100;
+        }
+
+        void ApplyHeaderTaxTotalsFromAppliedTaxes(WorkOrderDTO workOrder, List<WorkOrderTaxDTO> appliedTaxes)
+        {
+            workOrder.IGSTAmount = (double)appliedTaxes
+                .Where(t => IsTaxCode(t.TaxCode, "IGST"))
+                .Sum(t => t.Amount);
+            workOrder.CGSTAmount = (double)appliedTaxes
+                .Where(t => IsTaxCode(t.TaxCode, "CGST"))
+                .Sum(t => t.Amount);
+            workOrder.SGSTAmount = (double)appliedTaxes
+                .Where(t => IsTaxCode(t.TaxCode, "SGST"))
+                .Sum(t => t.Amount);
+            workOrder.TotalTax = workOrder.IGSTAmount + workOrder.CGSTAmount + workOrder.SGSTAmount;
+
+            var igst = appliedTaxes.FirstOrDefault(t => IsTaxCode(t.TaxCode, "IGST"));
+            var cgst = appliedTaxes.FirstOrDefault(t => IsTaxCode(t.TaxCode, "CGST"));
+            var sgst = appliedTaxes.FirstOrDefault(t => IsTaxCode(t.TaxCode, "SGST"));
+
+            workOrder.IGSTRate = igst != null ? (double)igst.Rate : 0;
+            workOrder.CGSTRate = cgst != null ? (double)cgst.Rate : 0;
+            workOrder.SGSTRate = sgst != null ? (double)sgst.Rate : 0;
+        }
+
+        static bool IsTaxCode(string taxCode, string expectedCode)
+        {
+            return !string.IsNullOrWhiteSpace(taxCode)
+                && taxCode.Equals(expectedCode, StringComparison.OrdinalIgnoreCase);
+        }
+
+        internal List<WorkOrderTaxDTO> GetSiteTaxes(int siteId)
         {
             SQL objSql = new SQL();
             objSql.AddParameter("@SiteId", DbType.Int32, ParameterDirection.Input, 0, siteId);
-            return objSql.ContructList<TaxDTO>(objSql.ExecuteDataSet(GET_TAX));
+            return objSql.ContructList<WorkOrderTaxDTO>(objSql.ExecuteDataSet(GET_TAX));
         }
         internal bool UpdateSiteInfo(SiteDTO siteDto)
         {
@@ -1367,6 +1421,7 @@ namespace BAL.DAL
         const string GET_SITE_ITEMS = "p_SiteItems_sel";
         const string ADD_TAX = "p_WorkOrderTax_ins";
         const string GET_TAX = "p_WorkOrderTax_sel";
+        const string WORKORDER_TAX_DEL_BY_SITE = "p_WorkOrderTax_delBySite";
         const string ITEM_ISSUED_REGISTER = "p_ItemsIssuedRegister";
         const string PARTY_DELIVERY_CHALLANS = "p_partyDeliveryChallans";
         const string PARTY_RETURN_CHALLANS = "p_partyReturnChallans";

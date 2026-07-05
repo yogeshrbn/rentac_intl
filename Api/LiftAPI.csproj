@@ -502,6 +502,7 @@
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\SaltController.cs" />
     <Compile Include="Controllers\StateCityController.cs" />
+    <Compile Include="Controllers\ProductTaxClassificationController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

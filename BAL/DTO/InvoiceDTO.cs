@@ -160,7 +160,7 @@ namespace BAL.DTO
         public int ProductSizeId { get; set; }
         public int ChallanId { get; set; }
 
-        public short TaxCategoryId { get; set; }
+        public int TaxCategoryId { get; set; }
 
 
 
@@ -221,6 +221,8 @@ namespace BAL.DTO
         public string ContactPerson { get; set; }
         public string ContactPersonPhone { get; set; }
         public List<QuotationItemDTO> Items { get; set; }
+        public List<QuotationTaxDTO> AppliedTaxes { get; set; }
+      //  public List<QuotationManualTaxDTO> ManualItemTaxes { get; set; }
         public double LossCharges { get; set; }
         public double OtherChargeAmount { get; set; }
 
@@ -268,6 +270,7 @@ namespace BAL.DTO
     /// <summary>Quotation line item. <see cref="QuotationDTO.LineTotalMode"/> on each row is an optional per-line subtotal mode for contract (type 16); leave empty to use the quotation header.</summary>
     public class QuotationItemDTO : QuotationDTO
     {
+        public int QuotationItemId { get; set; }
         public int ProductId { get; set; }
         public string Item { get; set; }
         public string Product { get; set; }
@@ -307,6 +310,7 @@ namespace BAL.DTO
         /// <summary>SGST rate % for this line (persisted on QuotationItems).</summary>
         public double SGSTRate { get; set; }
         public double Duration { get; set; }
+        public List<QuotationTaxDTO> LineTaxes { get; set; }
     }
 
     public class BillChallanDto : MasterDTO

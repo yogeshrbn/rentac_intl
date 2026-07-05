@@ -33,8 +33,53 @@ namespace BAL.Objects
             return dal.GetAllTaxes(companyId);
         }
 
+        public async Task<IEnumerable<TaxCategoryDTO>> GetAllTaxCategories()
+        {
+            TaxDAL dal = new TaxDAL();
 
-        //public abstract void GetTaxes();
+            return await dal.GetAllTaxCategories();
+        }
+
+        public async Task<TaxCategoryDTO> GetTaxCategoryById(int taxCategoryId)
+        {
+            TaxDAL dal = new TaxDAL();
+            return await dal.GetTaxCategoryById(taxCategoryId);
+        }
+
+        public async Task<int> SaveTaxCategory(TaxCategoryDTO dto)
+        {
+            TaxDAL dal = new TaxDAL();
+            return await dal.SaveTaxCategory(dto);
+        }
+
+        public async Task DeleteTaxCategory(int taxCategoryId)
+        {
+            TaxDAL dal = new TaxDAL();
+            await dal.DeleteTaxCategory(taxCategoryId);
+        }
+
+        public async Task<IEnumerable<TaxMasterDTO>> GetAllTaxMasters(int companyId)
+        {
+            TaxDAL dal = new TaxDAL();
+            return await dal.GetAllTaxMasters(companyId);
+        }
+
+        public async Task<TaxMasterDTO> GetTaxMasterById(int id, int companyId)
+        {
+            TaxDAL dal = new TaxDAL();
+            return await dal.GetTaxMasterById(id, companyId);
+        }
+
+        public async Task<int> SaveTaxMaster(TaxMasterDTO dto)
+        {
+            TaxDAL dal = new TaxDAL();
+            return await dal.SaveTaxMaster(dto);
+        }
+        public async Task<IEnumerable<TaxCategoryMappingDTO>> GetTaxesByCategoryId(int taxCategoryId)
+        {
+            TaxDAL dal = new TaxDAL();
+            return await dal.GetTaxesByCategoryId(taxCategoryId);
+        }
         //public abstract void SaveTax(int id = 0);
 
     }

@@ -30,6 +30,7 @@ namespace BAL.DTO
         public int ParentSiteId { get; set; }
         //   public List<WorkOrderItemDTO> Items { get; set; }
         public List<TaxDTO> Taxes { get; set; }
+        public List<WorkOrderTaxDTO> AppliedTaxes { get; set; }
         //   public bool Closed { get; set; }
         public bool PaymentClosed { get; set; }
         //     public string Vehicle { get; set; }

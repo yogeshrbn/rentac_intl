@@ -140,12 +140,19 @@
                     <div class="row">
                         <div class="col-sm-7 siteBox">
                             <div class="col-sm-offset-5 form-group">
-                                <!--<label for="inputEmail3" class="col-sm-4 control-label">Tax Apply</label>
-                                <div class="col-sm-8">
-                                    <input type="radio" class="radio-inline" name="taxApply" /> Exclusive
-                                    <input type="radio" class="radio-inline" name="taxApply" /> Inclusive
-
-                                </div>-->
+                                <input type="checkbox" ng-model="ApplyGST" /> <label>Apply Tax On Items</label><br />
+                                <div ng-repeat="tax in ItemTaxSettings" style="margin-top:6px;">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" ng-model="tax.Selected" ng-change="SubTotal(0)" />
+                                        {{tax.TaxName}} <span ng-if="tax.TaxCode">({{tax.TaxCode}})</span>
+                                    </label>
+                                    <span style="margin-left:8px;">Rate %</span>
+                                    <input type="text" class="form-control maskednumber"
+                                           style="display:inline-block;width:90px;vertical-align:middle;"
+                                           ng-model="tax.Rate"
+                                           ng-change="SubTotal(0)"
+                                           ng-disabled="!tax.Selected" />
+                                </div>
                             </div>
                             <div class="clearfix">&nbsp;</div>
                             <div class="col-sm-12">
@@ -191,23 +198,11 @@
 
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr ng-repeat="tax in Trans.AppliedTaxes">
                                     <td class="text-right">
-                                        IGST
+                                        {{tax.TaxName}} ({{tax.Rate}}{{tax.RateType === 'Fixed' ? '' : '%'}})
                                     </td>
-                                    <td class="text-right">{{Trans.Items|sum:'IGST' |number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        CGST
-                                    </td>
-                                    <td class="text-right">{{Trans.Items|sum:'CGST' |number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        SGST
-                                    </td>
-                                    <td class="text-right">{{Trans.Items|sum:'SGST' |number:2}}</td>
+                                    <td class="text-right">{{tax.Amount | number:2}}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-right text-bold">

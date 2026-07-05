@@ -22,6 +22,8 @@
             PAN: null,
             SignAuthority: null,
             GSTNo: null,
+            VAT: null,
+
             ReportHeader: null,
             StateId: 0,
             Logo: null,
@@ -146,6 +148,7 @@
             SysDefined: 0,
             AccountGroup: null,
             GSTNo: null, OpeningBal: null, TransType: null,
+            VAT:null,
             AadharCard: null, ServiceTaxNumber: null,
             PAN: null, ContactPersonName: null,
             ContactPersonDesignation: null,
@@ -3452,14 +3455,15 @@
             HTTP.Exec(USER_CREATE);
         },
 
-        ResetPassword: function (o) {
+        ResetPassword: function (o,data) {
             var HTTP = new $.ApiCaller({ http: HTTP_SERVICE });
-            HTTP.init(this);
+            HTTP.init(data);
             HTTP.Success = function (e) {
                 o.call(null, e);
             };
             HTTP.Exec(USER_RESET_PASSWORD);
         },
+      
         ActivateDeActivate: function (o) {
             var HTTP = new $.ApiCaller({ http: HTTP_SERVICE });
             HTTP.init(this);
@@ -3675,6 +3679,8 @@
         this.PRINT_QUOTATION = "Sales/PrintQuotation";
         this.DELETE_QUOTATION = "Sales/UpdatedQuotationStatus";
         this.LINK_QUOTATION_LEDGER = "Sales/LinkQuotationToLedger";
+        this.GET_QUOTATION_TAXES = "Sales/GetQuotationTaxes";
+        this.GET_INVOICE_TAXES = "Sales/GetInvoiceTaxes";
 
 
 
@@ -3716,6 +3722,22 @@
                 o.call(null, e);
             };
             HTTP.Exec(url, 'GET');
+        },
+        GetQuotationTaxes: function (o,data) {
+            var HTTP = new $.ApiCaller({ http: HTTP_SERVICE });
+            HTTP.init(data);
+            HTTP.Success = function (e) {
+                o.call(null, e);
+            };
+            HTTP.Exec(this.GET_QUOTATION_TAXES, null);
+        },
+        GetInvoiceTaxes: function (o, data) {
+            var HTTP = new $.ApiCaller({ http: HTTP_SERVICE });
+            HTTP.init(data);
+            HTTP.Success = function (e) {
+                o.call(null, e);
+            };
+            HTTP.Exec(this.GET_INVOICE_TAXES, null);
         },
         LinkQuotationToLedger: function (o, data) {
             var HTTP = new $.ApiCaller({ http: HTTP_SERVICE });

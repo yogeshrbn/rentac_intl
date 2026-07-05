@@ -1,5 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:util="urn:util-format">
+
+  <xsl:template name="quotationTaxRowName">
+    <xsl:choose>
+      <xsl:when test="normalize-space(TaxName) != ''">
+        <xsl:value-of select="TaxName"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="Name"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="printQuotationLineTaxes">
+    <xsl:param name="cellTag">td</xsl:param>
+    <xsl:for-each select="d/data/Table1">
+      <tr>
+        <xsl:element name="{$cellTag}">
+          <xsl:attribute name="class">text-right</xsl:attribute>
+          <xsl:attribute name="style">border-right:0px;</xsl:attribute>
+          <xsl:call-template name="quotationTaxRowName"/>
+          <xsl:text> (</xsl:text>
+          <xsl:value-of select="format-number(number(Rate), '#0.##')"/>
+          <xsl:text>%)</xsl:text>
+        </xsl:element>
+        <xsl:element name="{$cellTag}">
+          <xsl:attribute name="class">text-right</xsl:attribute>
+          <xsl:value-of select="format-number(number(Amount | TaxAmount), '#.00')"/>
+        </xsl:element>
+      </tr>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="printQuotationHeaderTaxes">
+    <xsl:param name="cellTag">td</xsl:param>
+    <xsl:if test="number(d/data/Table/FreightTax) &gt; 0">
+      <tr>
+        <xsl:element name="{$cellTag}">
+          <xsl:attribute name="class">text-right</xsl:attribute>
+          <xsl:attribute name="style">border-right:0px;</xsl:attribute>
+          Freight Tax
+        </xsl:element>
+        <xsl:element name="{$cellTag}">
+          <xsl:attribute name="class">text-right</xsl:attribute>
+          <xsl:value-of select="format-number(number(d/data/Table/FreightTax), '#.00')"/>
+        </xsl:element>
+      </tr>
+    </xsl:if>
+    <xsl:if test="number(d/data/Table/chargesTax) &gt; 0">
+      <tr>
+        <xsl:element name="{$cellTag}">
+          <xsl:attribute name="class">text-right</xsl:attribute>
+          <xsl:attribute name="style">border-right:0px;</xsl:attribute>
+          Other Charges Tax
+        </xsl:element>
+        <xsl:element name="{$cellTag}">
+          <xsl:attribute name="class">text-right</xsl:attribute>
+          <xsl:value-of select="format-number(number(d/data/Table/chargesTax), '#.00')"/>
+        </xsl:element>
+      </tr>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="printQuotationLegacyGst">
+    <xsl:param name="cellTag">td</xsl:param>
+    <tr>
+      <xsl:element name="{$cellTag}">
+        <xsl:attribute name="class">text-right</xsl:attribute>
+        <xsl:attribute name="style">border-right:0px;</xsl:attribute>
+        IGST
+      </xsl:element>
+      <xsl:element name="{$cellTag}">
+        <xsl:attribute name="class">text-right</xsl:attribute>
+        <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#.00')"/>
+      </xsl:element>
+    </tr>
+    <tr>
+      <xsl:element name="{$cellTag}">
+        <xsl:attribute name="class">text-right</xsl:attribute>
+        <xsl:attribute name="style">border-top: 0px; border-right: 0px;</xsl:attribute>
+        SGST
+      </xsl:element>
+      <xsl:element name="{$cellTag}">
+        <xsl:attribute name="class">text-right</xsl:attribute>
+        <xsl:attribute name="style">border-top:0px;</xsl:attribute>
+        <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#.00')"/>
+      </xsl:element>
+    </tr>
+    <tr>
+      <xsl:element name="{$cellTag}">
+        <xsl:attribute name="class">text-right</xsl:attribute>
+        <xsl:attribute name="style">border-top: 0px; border-right: 0px;</xsl:attribute>
+        CGST
+      </xsl:element>
+      <xsl:element name="{$cellTag}">
+        <xsl:attribute name="class">text-right</xsl:attribute>
+        <xsl:attribute name="style">border-top:0px;</xsl:attribute>
+        <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#.00')"/>
+      </xsl:element>
+    </tr>
+  </xsl:template>
+
+  <xsl:template name="printQuotationTaxSection">
+    <xsl:param name="cellTag">td</xsl:param>
+    <xsl:choose>
+      <xsl:when test="count(d/data/Table1) &gt; 0">
+        <xsl:call-template name="printQuotationLineTaxes">
+          <xsl:with-param name="cellTag" select="$cellTag"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="printQuotationLegacyGst">
+          <xsl:with-param name="cellTag" select="$cellTag"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
@@ -281,24 +398,9 @@
                 <xsl:value-of select="format-number(d/data/Table/chargesTax,'#.00')"/>
               </th>
             </tr>-->
-              <tr>
-                <td class="text-right" colspan="2"  style="border-right:0px;">IGST</td>
-                <td  class="text-right">
-                  <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#.00')"/>
-                </td>
-              </tr>
-              <tr>
-                <td class="text-right" colspan="2"  style="border-top: 0px; border-right: 0px;">SGST</td>
-                <td style="border-top:0px;"  class="text-right" >
-                  <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#.00')"/>
-                </td>
-              </tr>
-              <tr>
-                <td class="text-right" colspan="2"  style="border-top: 0px; border-right: 0px;">CGST</td>
-                <td style="border-top:0px;"  class="text-right" >
-                  <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#.00')"/>
-                </td>
-              </tr>
+              <xsl:call-template name="printQuotationTaxSection">
+                <xsl:with-param name="cellTag" select="'td'"/>
+              </xsl:call-template>
               <tr>
                 <td class="text-right" colspan="2"  style="border-top: 0px; border-right: 0px;">Discount</td>
                 <td style="border-top:0px;"  class="text-right" >
@@ -432,24 +534,9 @@
                 <xsl:value-of select="format-number(d/data/Table/chargesTax,'#.00')"/>
               </th>
             </tr>-->
-              <tr>
-                <th class="text-right" colspan="2"  style="border-right:0px;">IGST</th>
-                <th  class="text-right">
-                  <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#.00')"/>
-                </th>
-              </tr>
-              <tr>
-                <th class="text-right" colspan="2"  style="border-top: 0px; border-right: 0px;">SGST</th>
-                <th style="border-top:0px;"  class="text-right" >
-                  <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#.00')"/>
-                </th>
-              </tr>
-              <tr>
-                <th class="text-right" colspan="2"  style="border-top: 0px; border-right: 0px;">CGST</th>
-                <th style="border-top:0px;"  class="text-right" >
-                  <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#.00')"/>
-                </th>
-              </tr>
+              <xsl:call-template name="printQuotationTaxSection">
+                <xsl:with-param name="cellTag" select="'th'"/>
+              </xsl:call-template>
               <tr>
                 <th class="text-right" colspan="2"  style="border-top: 0px; border-right: 0px;">Discount</th>
                 <th style="border-top:0px;"  class="text-right" >

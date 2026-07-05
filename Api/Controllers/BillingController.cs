@@ -372,6 +372,11 @@ namespace FarmaAPI.Controllers
                         b.CGSTRate = Convert.ToDouble(br["CGSTRate"]);
                         b.SGSTRate = Convert.ToDouble(br["SGSTRate"]);
                         b.ChallanId = Convert.ToInt32(br["ChallanId"]);
+                        if (br["TaxCategoryId"] != null)
+                        {
+                            b.TaxCategoryId = Convert.ToInt16(br["TaxCategoryId"]);
+                        }
+                        b.LineTaxes = ParseInvoiceLineTaxes(br["LineTaxes"]);
                         // b.BreakageAmount = b.SubTotal * b.Rate;
                         breakageItems.Add(b);
                     }
@@ -483,6 +488,11 @@ namespace FarmaAPI.Controllers
                         lstDTO.IGSTRate = Convert.ToDouble(item["IGSTRate"]);
                         lstDTO.CGSTRate = Convert.ToDouble(item["CGSTRate"]);
                         lstDTO.SGSTRate = Convert.ToDouble(item["SGSTRate"]);
+                        if (item["TaxCategoryId"] != null)
+                        {
+                            lstDTO.TaxCategoryId = Convert.ToInt32(item["TaxCategoryId"]);
+                        }
+                        lstDTO.LineTaxes = ParseInvoiceLineTaxes(item["LineTaxes"]);
 
                         lstDTO.Amount = lstDTO.Quantity * lstDTO.Rate;
                         //lstDTO.LostDate = Utils.FormatDate(Convert.ToString(jsonObject.GetValue("To")));
@@ -678,11 +688,56 @@ namespace FarmaAPI.Controllers
                 }
 
                 b.Total = b.SubTotal;
-                b.TaxCategoryId = 0;
+                if (item["TaxCategoryId"] != null && item["TaxCategoryId"].Type != JTokenType.Null)
+                {
+                    b.TaxCategoryId = Convert.ToInt16(item["TaxCategoryId"]);
+                }
+                if (item["ChallanId"] != null && item["ChallanId"].Type != JTokenType.Null)
+                {
+                    b.ChallanId = Convert.ToInt32(item["ChallanId"]);
+                }
+                b.LineTaxes = ParseInvoiceLineTaxes(item["LineTaxes"]);
 
                 billItems.Add(b);
             }
             return billItems;
+        }
+
+        static List<InvoiceTaxDTO> ParseInvoiceLineTaxes(JToken lineTaxesToken)
+        {
+            if (lineTaxesToken == null || lineTaxesToken.Type != JTokenType.Array)
+            {
+                return null;
+            }
+
+            var lineTaxes = new List<InvoiceTaxDTO>();
+            foreach (var lt in lineTaxesToken)
+            {
+                var tax = new InvoiceTaxDTO();
+                tax.TaxId = Convert.ToInt32(lt["TaxId"]);
+                tax.Rate = Convert.ToDouble(lt["Rate"]);
+                tax.Amount = Convert.ToDouble(lt["Amount"]);
+                tax.TaxAmount = tax.Amount;
+                if (lt["TaxCategoryId"] != null && lt["TaxCategoryId"].Type != JTokenType.Null)
+                {
+                    tax.TaxCategoryId = Convert.ToInt32(lt["TaxCategoryId"]);
+                }
+                if (lt["TaxCode"] != null)
+                {
+                    tax.TaxCode = Convert.ToString(lt["TaxCode"]);
+                }
+                if (lt["RateType"] != null)
+                {
+                    tax.RateType = Convert.ToString(lt["RateType"]);
+                }
+                var taxName = lt["TaxName"] ?? lt["Name"];
+                if (taxName != null)
+                {
+                    tax.Name = Convert.ToString(taxName);
+                }
+                lineTaxes.Add(tax);
+            }
+            return lineTaxes.Count > 0 ? lineTaxes : null;
         }
 
         public async Task<bool> AddBreakageBill(BillingDTO dto, DateTime from, DateTime to, int ledgerId)

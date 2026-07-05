@@ -151,6 +151,28 @@
                             </div>
 
                             <div class="col-sm-12 mt-1">
+                                <div class="form-horizontal" style="margin-bottom:10px;">
+                                    <span>
+                                        <input type="checkbox" ng-model="ApplyGST" /> <label>Apply Tax On Items</label><br />
+                                    </span>
+                                    <label class="control-label">Tax on items (taxable = line amount after line discount)</label>
+                                    <div ng-repeat="tax in ItemTaxSettings" style="margin-top:6px;">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" ng-model="tax.Selected" ng-change="SubTotal(0)" />
+                                            {{tax.TaxName}} <span ng-if="tax.TaxCode">({{tax.TaxCode}})</span>
+                                        </label>
+                                        <span style="margin-left:8px;">Rate %</span>
+                                        <input type="text" class="form-control maskednumber"
+                                               style="display:inline-block;width:90px;vertical-align:middle;"
+                                               ng-model="tax.Rate"
+                                               ng-change="SubTotal(0)"
+                                               ng-disabled="!tax.Selected" />
+                                    </div>
+                                    <p class="text-muted" style="font-size:12px;margin-top:6px;">
+                                        Selected taxes apply to all lines and override product tax category.
+                                        Leave all unchecked to use each product's tax category.
+                                    </p>
+                                </div>
                                 <input type="button" style="width: 100px;" class="btn btn-default" ui-sref="billList" value="Cancel" />
 
                                 <input type="button" style="width: 100px;" class="btn btn-primary ml-1" ng-show="AccessData.Add ? true : false " value="Save" ng-click="Save();" />
@@ -162,7 +184,7 @@
                                 <tr>
                                     <td class="text-right">SubTotal</td>
                                     <td class="text-right" width="80px">
-                                        {{ SubTotal(0) | number:2 }}
+                                        {{ Billing.SubTotal | number:2 }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -181,23 +203,11 @@
                                     <td class="text-right">Taxable value</td>
                                     <td class="text-right">{{ Billing.Taxable | number:2 }}</td>
                                 </tr>
-                                <tr>
+                                <tr ng-repeat="tax in Billing.AppliedTaxes">
                                     <td class="text-right">
-                                        IGST
+                                        {{tax.TaxName}}<span ng-if="tax.Rate"> ({{tax.Rate}}%)</span>
                                     </td>
-                                    <td class="text-right">{{ Billing.IGST | number:2 }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        CGST
-                                    </td>
-                                    <td class="text-right">{{ Billing.CGST | number:2 }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        SGST
-                                    </td>
-                                    <td class="text-right">{{ Billing.SGST | number:2 }}</td>
+                                    <td class="text-right">{{tax.Amount | number:2}}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-right text-bold">

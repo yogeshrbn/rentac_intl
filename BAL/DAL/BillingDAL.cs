@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -180,14 +181,27 @@ namespace BAL.DAL
         //    return dataObject;
 
         //}
-        bool AddTax(BillingDTO dto, TaxDTO taxDto, SQL objSql)
+        bool AddTax(BillingDTO dto, TaxDTO taxDto, SQL objSql, int invoiceItemId = 0)
         {
-            taxDto.Amount = dto.SubTotal;
+            if (invoiceItemId <= 0)
+            {
+                taxDto.Amount = dto.SubTotal;
+            }
+            var lineAmount = taxDto.TaxAmount > 0 ? taxDto.TaxAmount : taxDto.Amount;
             objSql.AddParameter("@TaxId", DbType.Int32, ParameterDirection.Input, 0, taxDto.TaxId);
             objSql.AddParameter("@Rate", DbType.Double, ParameterDirection.Input, 0, taxDto.Rate);
-            objSql.AddParameter("@Amount", DbType.Double, ParameterDirection.Input, 0, taxDto.TaxAmount);
+            objSql.AddParameter("@Amount", DbType.Double, ParameterDirection.Input, 0, lineAmount);
             objSql.AddParameter("@InvoiceId", DbType.Int32, ParameterDirection.Input, 0, dto.InvoiceId);
-            objSql.AddParameter("@ProductId", DbType.Int32, ParameterDirection.Input, 0, taxDto.ItemValue);
+            var productId = taxDto.ItemValue;
+            if (productId <= 0 && taxDto is InvoiceTaxDTO invoiceTax)
+            {
+                productId = invoiceTax.ProductId;
+            }
+            objSql.AddParameter("@ProductId", DbType.Int32, ParameterDirection.Input, 0, productId > 0 ? (object)productId : DBNull.Value);
+            if (invoiceItemId > 0)
+            {
+                objSql.AddParameter("@InvoiceItemId", DbType.Int32, ParameterDirection.Input, 0, invoiceItemId);
+            }
 
             return objSql.ExecuteNonQuery(ADD_TAX) > 0;
         }
@@ -309,6 +323,27 @@ namespace BAL.DAL
                 {
                     billDto.BillableItems = items.Where(o => !o.IsBreakage).ToList();
                 }
+                if (billDto.InvoiceType == 4 || billDto.InvoiceType == 7
+                    || billDto.InvoiceType == 5 || billDto.InvoiceType == 9
+                    || billDto.InvoiceType == 2
+                    || billDto.InvoiceType == 1 || billDto.InvoiceType == 8)
+                {
+                    var lineTaxes = GetInvoiceTaxes(billDto.InvoiceId);
+                    if (lineTaxes != null && lineTaxes.Count > 0 && billDto.BillableItems != null)
+                    {
+                        var taxesByItem = lineTaxes.GroupBy(t => t.InvoiceItemId)
+                            .ToDictionary(g => g.Key, g => g.ToList());
+                        foreach (var item in billDto.BillableItems)
+                        {
+                            if (taxesByItem.TryGetValue(item.Id, out var itemTaxes))
+                            {
+                                item.LineTaxes = itemTaxes;
+                                ApplyLegacyGstToBillingItem(item);
+                            }
+                        }
+                        billDto.AppliedTaxes = AggregateInvoiceTaxes(lineTaxes);
+                    }
+                }
                 if (!String.IsNullOrEmpty(billDto.PONumbers))
                 {
                     billDto.PO = billDto.PONumbers.Split(',').Select(o => new BillPODto
@@ -322,6 +357,35 @@ namespace BAL.DAL
                 if (lossItems != null)
                 {
                     billDto.LostItems = lossItems.ToList();
+                }
+                if ((billDto.InvoiceType == 6 || billDto.InvoiceType == 1 || billDto.InvoiceType == 8)
+                    && billDto.LostItems != null && billDto.LostItems.Count > 0)
+                {
+                    var lossLineTaxes = GetInvoiceTaxes(billDto.InvoiceId);
+                    if (lossLineTaxes != null && lossLineTaxes.Count > 0)
+                    {
+                        var taxesByItem = lossLineTaxes.GroupBy(t => t.InvoiceItemId)
+                            .ToDictionary(g => g.Key, g => g.ToList());
+                        foreach (var item in billDto.LostItems)
+                        {
+                            if (taxesByItem.TryGetValue(item.Id, out var itemTaxes))
+                            {
+                                item.LineTaxes = itemTaxes;
+                                var billingItem = new BillingItemDTO
+                                {
+                                    IGST = item.IGST,
+                                    CGST = item.CGST,
+                                    SGST = item.SGST,
+                                    LineTaxes = itemTaxes
+                                };
+                                ApplyLegacyGstToBillingItem(billingItem);
+                                item.IGST = billingItem.IGST;
+                                item.CGST = billingItem.CGST;
+                                item.SGST = billingItem.SGST;
+                            }
+                        }
+                        billDto.AppliedTaxes = AggregateInvoiceTaxes(lossLineTaxes);
+                    }
                 }
                 objSql.NewCommand();
                 //objSql.AddParameter("@parentInvoiceId", DbType.Int32, ParameterDirection.Input, 0, billDto.InvoiceId);
@@ -390,6 +454,28 @@ namespace BAL.DAL
                     catch
                     {
                         billDto.BreakageDamageDetails = new List<BreakageDamageDetailDTO>();
+                    }
+                }
+
+                if (billDto.InvoiceType == 1 || billDto.InvoiceType == 8)
+                {
+                    var allLineTaxes = GetInvoiceTaxes(billDto.InvoiceId);
+                    if (allLineTaxes != null && allLineTaxes.Count > 0)
+                    {
+                        var taxesByItem = allLineTaxes.GroupBy(t => t.InvoiceItemId)
+                            .ToDictionary(g => g.Key, g => g.ToList());
+                        if (billDto.BreakageItems != null)
+                        {
+                            foreach (var item in billDto.BreakageItems)
+                            {
+                                if (taxesByItem.TryGetValue(item.Id, out var itemTaxes))
+                                {
+                                    item.LineTaxes = itemTaxes;
+                                    ApplyLegacyGstToBillingItem(item);
+                                }
+                            }
+                        }
+                        billDto.AppliedTaxes = AggregateInvoiceTaxes(allLineTaxes);
                     }
                 }
 
@@ -715,7 +801,17 @@ namespace BAL.DAL
                 dataOBject.InvoiceNumber = inv.InvoiceNumber;
                 string strProductIds = "";
                 int del = 0;
+                bool isLineTaxBill = dataOBject.InvoiceType == 4 || dataOBject.InvoiceType == 7
+                    || dataOBject.InvoiceType == 5 || dataOBject.InvoiceType == 9
+                    || dataOBject.InvoiceType == 2 || dataOBject.InvoiceType == 6
+                    || dataOBject.InvoiceType == 1 || dataOBject.InvoiceType == 8;
                 #region ItemAndTax
+                if (isLineTaxBill)
+                {
+                    objSql.NewCommand();
+                    objSql.AddParameter("@invoiceId", DbType.Int32, ParameterDirection.Input, 0, dataOBject.InvoiceId);
+                    await objSql.ExecuteNonQueryAsync(DEL_INVOICE_TAX);
+                }
                 if (dataOBject.BillableItems != null)
                 {
                     var invoiceItems = dataOBject.BillableItems.Select(o => o.ProductId).ToList();
@@ -730,18 +826,33 @@ namespace BAL.DAL
 
                     foreach (BillingItemDTO item in dataOBject.BillableItems)
                     {
-                        // item.WorkOrder = new BillingItemDTO { InvoiceId = _invoiceId };
                         item.InvoiceId = _invoiceId;
                         objSql.NewCommand();
                         item.IsLost = false;
 
-
+                        ApplyLegacyGstToBillingItem(item);
                         item.Total = item.SubTotal + item.IGST + item.SGST + item.CGST;
 
-                        AddItem(item, objSql);
+                        int invoiceItemId = AddItem(item, objSql);
+                        if (isLineTaxBill && item.LineTaxes != null)
+                        {
+                            foreach (InvoiceTaxDTO lineTax in item.LineTaxes)
+                            {
+                                lineTax.InvoiceItemId = invoiceItemId;
+                                lineTax.InvoiceId = dataOBject.InvoiceId;
+                                lineTax.ProductId = item.ProductId;
+                                lineTax.ItemValue = item.ProductId;
+                                if (lineTax.TaxAmount <= 0 && lineTax.Amount > 0)
+                                {
+                                    lineTax.TaxAmount = lineTax.Amount;
+                                }
+                                objSql.NewCommand();
+                                AddTax(dataOBject, lineTax, objSql, invoiceItemId);
+                            }
+                        }
+
                         if (dataOBject.InvoiceType == 4 || dataOBject.InvoiceType == 7)
                         {
-                            //update item balance
                             var inventory = new InventoryDAL();
                             var i = await inventory.UpdateItemBalance(dataOBject.FinYearId, dataOBject.CompanyId, item.ProductId);
                             if (i == 0)
@@ -752,19 +863,22 @@ namespace BAL.DAL
 
                     }
                 }
-                foreach (TaxDTO item in dataOBject.ApplicableTaxes)
+                if (!isLineTaxBill)
                 {
-                    objSql.NewCommand();
+                    foreach (TaxDTO item in dataOBject.ApplicableTaxes)
+                    {
+                        objSql.NewCommand();
 
 
-                    objSql.AddParameter("@invoiceId", DbType.Int32, ParameterDirection.Input, 0, dataOBject.InvoiceId);
-                    objSql.AddParameter("@taxId", DbType.Int32, ParameterDirection.Input, 0, item.TaxId);
+                        objSql.AddParameter("@invoiceId", DbType.Int32, ParameterDirection.Input, 0, dataOBject.InvoiceId);
+                        objSql.AddParameter("@taxId", DbType.Int32, ParameterDirection.Input, 0, item.TaxId);
 
-                    var x = await objSql.ExecuteNonQueryAsync(DEL_INVOICE_TAX);
+                        var x = await objSql.ExecuteNonQueryAsync(DEL_INVOICE_TAX);
 
-                    objSql.NewCommand();
+                        objSql.NewCommand();
 
-                    AddTax(dataOBject, item, objSql);
+                        AddTax(dataOBject, item, objSql);
+                    }
                 }
                 //if (dataOBject.LostItems != null)
                 //{
@@ -795,13 +909,31 @@ namespace BAL.DAL
                         item.IGSTRate = lostItem.IGSTRate;
                         item.CGSTRate = lostItem.CGSTRate;
                         item.SGSTRate = lostItem.SGSTRate;
-                        item.Total = item.SubTotal + item.IGST + item.SGST + item.CGST;
+                        item.LineTaxes = lostItem.LineTaxes;
                         item.IsLost = true;
                         item.ChallanId = lostItem.ChallanId;
 
                         item.InvoiceId = _invoiceId;
+                        ApplyLegacyGstToBillingItem(item);
+                        item.Total = item.SubTotal + item.IGST + item.SGST + item.CGST;
                         objSql.NewCommand();
-                        AddItem(item, objSql);
+                        int invoiceItemId = AddItem(item, objSql);
+                        if (isLineTaxBill && item.LineTaxes != null)
+                        {
+                            foreach (InvoiceTaxDTO lineTax in item.LineTaxes)
+                            {
+                                lineTax.InvoiceItemId = invoiceItemId;
+                                lineTax.InvoiceId = dataOBject.InvoiceId;
+                                lineTax.ProductId = item.ProductId;
+                                lineTax.ItemValue = item.ProductId;
+                                if (lineTax.TaxAmount <= 0 && lineTax.Amount > 0)
+                                {
+                                    lineTax.TaxAmount = lineTax.Amount;
+                                }
+                                objSql.NewCommand();
+                                AddTax(dataOBject, lineTax, objSql, invoiceItemId);
+                            }
+                        }
 
                     }
                 }
@@ -844,13 +976,31 @@ namespace BAL.DAL
                         item.IGSTRate = lostItem.IGSTRate;
                         item.CGSTRate = lostItem.CGSTRate;
                         item.SGSTRate = lostItem.SGSTRate;
+                        item.LineTaxes = lostItem.LineTaxes;
 
+                        ApplyLegacyGstToBillingItem(item);
                         item.Total = item.SubTotal + item.IGST + item.SGST + item.CGST;
                         item.IsBreakage = true;
                         item.ChallanId = lostItem.ChallanId;
                         item.InvoiceId = _invoiceId;
                         objSql.NewCommand();
-                        AddItem(item, objSql);
+                        int breakageInvoiceItemId = AddItem(item, objSql);
+                        if (isLineTaxBill && item.LineTaxes != null)
+                        {
+                            foreach (InvoiceTaxDTO lineTax in item.LineTaxes)
+                            {
+                                lineTax.InvoiceItemId = breakageInvoiceItemId;
+                                lineTax.InvoiceId = dataOBject.InvoiceId;
+                                lineTax.ProductId = item.ProductId;
+                                lineTax.ItemValue = item.ProductId;
+                                if (lineTax.TaxAmount <= 0 && lineTax.Amount > 0)
+                                {
+                                    lineTax.TaxAmount = lineTax.Amount;
+                                }
+                                objSql.NewCommand();
+                                AddTax(dataOBject, lineTax, objSql, breakageInvoiceItemId);
+                            }
+                        }
 
                         //if(lostItem.ChallanId == 0)
                         //{
@@ -1058,7 +1208,7 @@ namespace BAL.DAL
             objSql.AddParameter("@InvoiceId", DbType.Int32, ParameterDirection.Input, 0, dto.InvoiceId);
             return objSql.ExecuteNonQuery(ADD_TAX) > 0;
         }
-        public void AddItem(BillingItemDTO dto, SQL objSql)
+        public int AddItem(BillingItemDTO dto, SQL objSql)
         {
             try
             {
@@ -1115,7 +1265,15 @@ namespace BAL.DAL
                 objSql.AddParameter("@qtyCalculation", DbType.String, ParameterDirection.Input, 0, dto.QtyCalculation);
 
 
-                objSql.ExecuteNonQuery(ADD_ITEMS);
+                var result= objSql.ExecuteScalar(ADD_ITEMS);
+
+                //objSql.NewCommand();
+                //var result = objSql.ExecuteScalar("SELECT CAST(ISNULL(SCOPE_IDENTITY(), 0) AS INT)");
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
+                return 0;
 
             }
             catch (Exception ex)
@@ -1125,15 +1283,10 @@ namespace BAL.DAL
 
 
         }
-        public void AddQuotationItem(QuotationItemDTO dto, SQL objSql)
+        public int AddQuotationItem(QuotationItemDTO dto, SQL objSql)
         {
             try
             {
-                //objSql.AddParameter("@ProductId", DbType.Int64, ParameterDirection.Input, 0, dto.ProductId);
-                //objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, dto.QuotationId);
-                //objSql.ExecuteNonQuery(DEL_QUOTATION_ITEMS);
-
-
                 objSql.NewCommand();
 
                 objSql.AddParameter("@ProductId", DbType.Int64, ParameterDirection.Input, 0, dto.ProductId);
@@ -1170,16 +1323,21 @@ namespace BAL.DAL
                 objSql.AddParameter("@area", DbType.Single, ParameterDirection.Input, 0, dto.Area);
                 objSql.AddParameter("@lineTotalMode", DbType.String, ParameterDirection.Input, 0, string.IsNullOrWhiteSpace(dto.LineTotalMode) ? (object)DBNull.Value : dto.LineTotalMode.Trim());
 
+               var result = objSql.ExecuteScalar(ADD_QUOTATION_ITEMS);
 
-                objSql.ExecuteNonQuery(ADD_QUOTATION_ITEMS);
+                //objSql.NewCommand();
+             //   var result = objSql.ExecuteScalar("SELECT CAST(ISNULL(SCOPE_IDENTITY(), 0) AS INT)");
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
 
+                return 0;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-
         }
         public List<BillingItemDTO> BillingItemsTax(int invoiceId)
         {
@@ -1247,7 +1405,11 @@ namespace BAL.DAL
 
 
                 dataOBject.TaxAmount = 0;
-                if (dataOBject.BillableItems.Count > 0)
+                if (dataOBject.AppliedTaxes != null && dataOBject.AppliedTaxes.Count > 0)
+                {
+                    dataOBject.TaxAmount = (double)dataOBject.AppliedTaxes.Sum(t => t.Amount);
+                }
+                else if (dataOBject.BillableItems.Count > 0)
                 {
                     dataOBject.TaxAmount = dataOBject.BillableItems.Sum(o => o.IGST + o.CGST + o.SGST);
                 }
@@ -1388,12 +1550,51 @@ namespace BAL.DAL
 
                 objSql.ExecuteNonQuery(DEL_QUOTATION_ITEMS);
 
+                objSql.NewCommand();
+                objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, dataOBject.QuotationId);
+                objSql.ExecuteNonQuery(QUOTATION_TAX_DEL_BY_QUOTATION);
+
+                //objSql.NewCommand();
+                //objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, dataOBject.QuotationId);
+                //objSql.ExecuteNonQuery(QUOTATION_MANUAL_TAX_DEL_BY_QUOTATION);
+
+                if (dataOBject.AppliedTaxes != null)
+                {
+                    //foreach (QuotationTaxDTO lineTax in dataOBject.AppliedTaxes)
+                    //{
+                    //   // manualTax.QuotationId = dataOBject.QuotationId;
+                    //    objSql.NewCommand();
+                    //  //  AddQuotationManualTax(manualTax, objSql);
+
+                    //    lineTax.QuotationItemId = 0;
+                    //    lineTax.QuotationId = dataOBject.QuotationId;
+                    //    lineTax.ProductId = 0;
+                    //    objSql.NewCommand();
+                    //    AddQuotationTax(lineTax, objSql);
+
+                    //}
+                }
+
                 foreach (QuotationItemDTO item in dataOBject.BillableItems)
                 {
-                    // item.WorkOrder = new BillingItemDTO { InvoiceId = _invoiceId };
                     item.QuotationId = dataOBject.QuotationId;
+                    ApplyLegacyGstToQuotationItem(item);
+
                     objSql.NewCommand();
-                    AddQuotationItem(item, objSql);
+                    int quotationItemId = AddQuotationItem(item, objSql);
+                    item.QuotationItemId = quotationItemId;
+
+                    if (item.LineTaxes != null)
+                    {
+                        foreach (QuotationTaxDTO lineTax in item.LineTaxes)
+                        {
+                            lineTax.QuotationItemId = quotationItemId;
+                            lineTax.QuotationId = dataOBject.QuotationId;
+                            lineTax.ProductId = item.ProductId;
+                            objSql.NewCommand();
+                            AddQuotationTax(lineTax, objSql);
+                        }
+                    }
                 }
 
 
@@ -1672,6 +1873,11 @@ namespace BAL.DAL
                 objSql.AddParameter("@quotationId", DbType.Int32, ParameterDirection.Input, 0, quotationId);
                 var items = await objSql.QueryAsync<QuotationItemDTO>(GET_QUOTATION_ITEMS);
                 d.Items = items.ToList();
+
+                //objSql.NewCommand();
+                //objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, quotationId);
+                //var manualTaxes = await objSql.QueryAsync<QuotationManualTaxDTO>(QUOTATION_MANUAL_TAX_SEL);
+                //d.ManualItemTaxes = manualTaxes.ToList();
             }
             return d;
         }
@@ -1680,6 +1886,139 @@ namespace BAL.DAL
             SQL objSql = new SQL();
             objSql.AddParameter("@quotationId", DbType.Int32, ParameterDirection.Input, 0, quotationId);
             return objSql.ExecuteDataSet(GET_QUOTATION_ITEMS);
+        }
+
+        internal List<QuotationTaxDTO> GetQuotationTaxes(int quotationId)
+        {
+            SQL objSql = new SQL();
+            objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, quotationId);
+            return objSql.ContructList<QuotationTaxDTO>(objSql.ExecuteDataSet(QUOTATION_TAX_SEL));
+        }
+
+        internal List<InvoiceTaxDTO> GetInvoiceTaxes(int invoiceId)
+        {
+            SQL objSql = new SQL();
+            objSql.AddParameter("@InvoiceId", DbType.Int32, ParameterDirection.Input, 0, invoiceId);
+            return objSql.ContructList<InvoiceTaxDTO>(objSql.ExecuteDataSet(INVOICE_TAX_SEL_BY_INVOICE));
+        }
+
+        static List<InvoiceTaxDTO> AggregateInvoiceTaxes(List<InvoiceTaxDTO> lineTaxes)
+        {
+            if (lineTaxes == null || lineTaxes.Count == 0)
+            {
+                return new List<InvoiceTaxDTO>();
+            }
+
+            return lineTaxes
+                .GroupBy(t => t.TaxId)
+                .Select(g =>
+                {
+                    var first = g.First();
+                    return new InvoiceTaxDTO
+                    {
+                        TaxId = first.TaxId,
+                        Name = first.Name,
+                        TaxCode = first.TaxCode,
+                        Rate = first.Rate,
+                        RateType = first.RateType,
+                        Amount = g.Sum(x => x.Amount),
+                        TaxAmount = g.Sum(x => x.TaxAmount > 0 ? x.TaxAmount : x.Amount)
+                    };
+                })
+                .OrderBy(t => t.Name)
+                .ToList();
+        }
+
+        static void ApplyLegacyGstToBillingItem(BillingItemDTO item)
+        {
+            if (item.LineTaxes == null || item.LineTaxes.Count == 0)
+            {
+                return;
+            }
+
+            item.IGST = item.LineTaxes
+                .Where(t => IsTaxCode(t.TaxCode, "IGST"))
+                .Sum(t => t.Amount);
+            item.CGST = item.LineTaxes
+                .Where(t => IsTaxCode(t.TaxCode, "CGST"))
+                .Sum(t => t.Amount);
+            item.SGST = item.LineTaxes
+                .Where(t => IsTaxCode(t.TaxCode, "SGST"))
+                .Sum(t => t.Amount);
+
+            var igst = item.LineTaxes.FirstOrDefault(t => IsTaxCode(t.TaxCode, "IGST"));
+            var cgst = item.LineTaxes.FirstOrDefault(t => IsTaxCode(t.TaxCode, "CGST"));
+            var sgst = item.LineTaxes.FirstOrDefault(t => IsTaxCode(t.TaxCode, "SGST"));
+
+            item.IGSTRate = igst != null ? igst.Rate : 0;
+            item.CGSTRate = cgst != null ? cgst.Rate : 0;
+            item.SGSTRate = sgst != null ? sgst.Rate : 0;
+            item.Total = item.SubTotal + item.IGST + item.CGST + item.SGST;
+        }
+
+        static bool IsTaxCode(string taxCode, string expectedCode)
+        {
+            return !string.IsNullOrWhiteSpace(taxCode)
+                && taxCode.Equals(expectedCode, StringComparison.OrdinalIgnoreCase);
+        }
+
+        void AddQuotationTax(QuotationTaxDTO taxDto, SQL objSql)
+        {
+            objSql.AddParameter("@QuotationItemId", DbType.Int32, ParameterDirection.Input, 0, taxDto.QuotationItemId);
+            objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, taxDto.QuotationId);
+            objSql.AddParameter("@ProductId", DbType.Int32, ParameterDirection.Input, 0, taxDto.ProductId);
+            objSql.AddParameter("@TaxCategoryId", DbType.Int32, ParameterDirection.Input, 0, taxDto.TaxCategoryId);
+            objSql.AddParameter("@TaxId", DbType.Int32, ParameterDirection.Input, 0, taxDto.TaxId);
+            objSql.AddParameter("@TaxName", DbType.String, ParameterDirection.Input, 100, taxDto.TaxName ?? string.Empty);
+            objSql.AddParameter("@TaxCode", DbType.String, ParameterDirection.Input, 20, (object)taxDto.TaxCode ?? DBNull.Value);
+            objSql.AddParameter("@Rate", DbType.Decimal, ParameterDirection.Input, 0, taxDto.Rate);
+            objSql.AddParameter("@RateType", DbType.String, ParameterDirection.Input, 20, taxDto.RateType ?? "Percentage");
+            objSql.AddParameter("@Amount", DbType.Decimal, ParameterDirection.Input, 0, taxDto.Amount);
+            objSql.ExecuteNonQuery(QUOTATION_TAX_INS);
+        }
+
+        void AddQuotationManualTax(QuotationManualTaxDTO taxDto, SQL objSql)
+        {
+            objSql.AddParameter("@QuotationId", DbType.Int32, ParameterDirection.Input, 0, taxDto.QuotationId);
+            objSql.AddParameter("@TaxId", DbType.Int32, ParameterDirection.Input, 0, taxDto.TaxId);
+            objSql.AddParameter("@TaxName", DbType.String, ParameterDirection.Input, 100, taxDto.TaxName ?? string.Empty);
+            objSql.AddParameter("@TaxCode", DbType.String, ParameterDirection.Input, 20, (object)taxDto.TaxCode ?? DBNull.Value);
+            objSql.AddParameter("@Rate", DbType.Decimal, ParameterDirection.Input, 0, taxDto.Rate);
+            objSql.AddParameter("@RateType", DbType.String, ParameterDirection.Input, 20, taxDto.RateType ?? "Percentage");
+            objSql.ExecuteNonQuery(QUOTATION_MANUAL_TAX_INS);
+        }
+
+        static void ApplyLegacyGstToQuotationItem(QuotationItemDTO item)
+        {
+            if (item.LineTaxes == null || item.LineTaxes.Count == 0)
+            {
+                return;
+            }
+
+            item.IGST = (double)item.LineTaxes
+                .Where(t => IsQuotationTaxCode(t.TaxCode, "IGST"))
+                .Sum(t => t.Amount);
+            item.CGST = (double)item.LineTaxes
+                .Where(t => IsQuotationTaxCode(t.TaxCode, "CGST"))
+                .Sum(t => t.Amount);
+            item.SGST = (double)item.LineTaxes
+                .Where(t => IsQuotationTaxCode(t.TaxCode, "SGST"))
+                .Sum(t => t.Amount);
+
+            var igst = item.LineTaxes.FirstOrDefault(t => IsQuotationTaxCode(t.TaxCode, "IGST"));
+            var cgst = item.LineTaxes.FirstOrDefault(t => IsQuotationTaxCode(t.TaxCode, "CGST"));
+            var sgst = item.LineTaxes.FirstOrDefault(t => IsQuotationTaxCode(t.TaxCode, "SGST"));
+
+            item.IGSTRate = igst != null ? (double)igst.Rate : 0;
+            item.CGSTRate = cgst != null ? (double)cgst.Rate : 0;
+            item.SGSTRate = sgst != null ? (double)sgst.Rate : 0;
+            item.TaxRate = item.IGSTRate + item.CGSTRate + item.SGSTRate;
+            item.Total = item.SubTotal + item.IGST + item.CGST + item.SGST;
+        }
+
+        static bool IsQuotationTaxCode(string taxCode, string expectedCode)
+        {
+            return IsTaxCode(taxCode, expectedCode);
         }
 
         #endregion
@@ -2141,6 +2480,7 @@ namespace BAL.DAL
         const string CHECK_BILL = "p_CheckForBill";
         const string ADD_TAX = "p_InvoiceTax_ins";
         const string DEL_INVOICE_TAX = "p_InvoiceTax_del";
+        const string INVOICE_TAX_SEL_BY_INVOICE = "p_InvoiceTax_selByInvoice";
         const string GET_BREAKAGE_FOR_BILL = "p_getBreakage_ItemsForBill";
         const string GET_BREAKAGE_DAMAGE_DETAILS_FOR_BILL = "p_getBreakageDamageDetailsForBill";
         const string DEL_INVOICE_BREAKAGE_DAMAGE = "p_InvoiceBreakageDamageComponent_del";
@@ -2179,6 +2519,12 @@ namespace BAL.DAL
         const string QUOTATION_BYID = "p_getQuotation_byId";
 
         const string GET_QUOTATION_ITEMS = "p_getQuotationItems";
+        const string QUOTATION_TAX_INS = "p_QuotationTax_ins";
+        const string QUOTATION_TAX_SEL = "p_QuotationTax_sel";
+        const string QUOTATION_TAX_DEL_BY_QUOTATION = "p_QuotationTax_delByQuotation";
+        const string QUOTATION_MANUAL_TAX_INS = "p_QuotationManualTax_ins";
+        const string QUOTATION_MANUAL_TAX_SEL = "p_QuotationManualTax_sel";
+        const string QUOTATION_MANUAL_TAX_DEL_BY_QUOTATION = "p_QuotationManualTax_delByQuotation";
         const string ADD_EWAY_BILL = "p_EwayBill_ins";
         const string UPDATE_EWAY_BILL = "p_EwayBill_upd";
         const string EWAYBILL_DETAILS_INS = "p_EwayBillDetails_ins";

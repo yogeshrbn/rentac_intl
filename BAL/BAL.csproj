@@ -244,6 +244,7 @@
     <Compile Include="Common\ApiResponseMessage.cs" />
     <Compile Include="Common\DataCopier.cs" />
     <Compile Include="Common\QuickReceiptDocumentHelper.cs" />
+    <Compile Include="Helpers\QuotationPrintTaxHelper.cs" />
     <Compile Include="Common\LoggedInUserInfo.cs" />
     <Compile Include="Data\Contracts\IDBBackupRespository.cs" />
     <Compile Include="Data\Contracts\IProductionRepository.cs" />
@@ -367,6 +368,8 @@
     <Compile Include="DTO\SubscriptionDTO.cs" />
     <Compile Include="DTO\TaskDTO.cs" />
     <Compile Include="DTO\TaxCategoryDTO.cs" />
+    <Compile Include="DTO\TaxCategoryMappingDTO.cs" />
+    <Compile Include="DTO\TaxMasterDTO.cs" />
     <Compile Include="DTO\Template.cs" />
     <Compile Include="DTO\TransactionDTO.cs" />
     <Compile Include="DTO\TransactionLookupDTO.cs" />
@@ -378,6 +381,10 @@
     <Compile Include="DTO\View\StockTransactionViewDTO.cs" />
     <Compile Include="DTO\WarehouseDTO.cs" />
     <Compile Include="DTO\WhatsappDTO.cs" />
+    <Compile Include="DTO\WorkOrderTaxDTO.cs" />
+    <Compile Include="DTO\QuotationTaxDTO.cs" />
+    <Compile Include="DTO\InvoiceTaxDTO.cs" />
+    <Compile Include="DTO\QuotationManualTaxDTO.cs" />
     <Compile Include="DTO\WorkOrderChageDTO.cs" />
     <Compile Include="DTO\WorkOrderItemDTO.cs" />
     <Compile Include="DTO\CompanyDTO.cs" />

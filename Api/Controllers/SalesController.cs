@@ -463,9 +463,47 @@ namespace FarmaAPI.Controllers
                 b.Total = b.SubTotal + b.IGST + b.CGST + b.SGST;
 
                 b.ChallanId = Convert.ToInt32(item["ChallanId"]);
+                b.LineTaxes = ParseInvoiceLineTaxes(item["LineTaxes"]);
                 billItems.Add(b);
             }
             return billItems;
+        }
+
+        static List<InvoiceTaxDTO> ParseInvoiceLineTaxes(JToken lineTaxesToken)
+        {
+            if (lineTaxesToken == null || lineTaxesToken.Type != JTokenType.Array)
+            {
+                return null;
+            }
+
+            var lineTaxes = new List<InvoiceTaxDTO>();
+            foreach (var lt in lineTaxesToken)
+            {
+                var tax = new InvoiceTaxDTO();
+                tax.TaxId = Convert.ToInt32(lt["TaxId"]);
+                tax.Rate = Convert.ToDouble(lt["Rate"]);
+                tax.Amount = Convert.ToDouble(lt["Amount"]);
+                tax.TaxAmount = tax.Amount;
+                if (lt["TaxCategoryId"] != null && lt["TaxCategoryId"].Type != JTokenType.Null)
+                {
+                    tax.TaxCategoryId = Convert.ToInt32(lt["TaxCategoryId"]);
+                }
+                if (lt["TaxCode"] != null)
+                {
+                    tax.TaxCode = Convert.ToString(lt["TaxCode"]);
+                }
+                if (lt["RateType"] != null)
+                {
+                    tax.RateType = Convert.ToString(lt["RateType"]);
+                }
+                var taxName = lt["TaxName"] ?? lt["Name"];
+                if (taxName != null)
+                {
+                    tax.Name = Convert.ToString(taxName);
+                }
+                lineTaxes.Add(tax);
+            }
+            return lineTaxes.Count > 0 ? lineTaxes : null;
         }
         List<LostItemDTO> AddLostItem(JToken items)
         {
@@ -489,8 +527,7 @@ namespace FarmaAPI.Controllers
                 b.SubTotal = (b.Quantity * b.Rate);
                 b.Amount = (b.Quantity * b.Rate);
                 b.ChallanId = Convert.ToInt32(item["ChallanId"]);
-
-
+                b.LineTaxes = ParseInvoiceLineTaxes(item["LineTaxes"]);
 
                 billItems.Add(b);
             }
@@ -743,6 +780,20 @@ namespace FarmaAPI.Controllers
                 msg.Code = ApiMessageCodes.ERROR;
             }
             return msg;
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetQuotationTaxes([FromBody] QuotationDTO dto)
+        {
+            var billing = new Billing();
+            return Request.CreateResponse(HttpStatusCode.OK, billing.GetQuotationTaxes(dto.QuotationId));
+        }
+
+        [HttpPost]
+        public HttpResponseMessage GetInvoiceTaxes([FromBody] BillingDTO dto)
+        {
+            var billing = new Billing();
+            return Request.CreateResponse(HttpStatusCode.OK, billing.GetInvoiceTaxes(dto.InvoiceId));
         }
 
         [HttpPost]

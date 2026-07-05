@@ -22,7 +22,7 @@ using System.Web.Http.Results;
 namespace FarmaAPI.Controllers
 {
     [Authorize]
-    public class ProductController : ApiController
+    public class ProductController : BaseApiController
     {
         ILogger _logger = LogManager.GetCurrentClassLogger();
         string tempRoot = HttpContext.Current.Server.MapPath("~/temp/");

@@ -242,6 +242,44 @@ angular.module('medRack').factory('ModalFactory', ['$window', '$mdDialog',
                     });
                 });
             },
+            AddEditTaxCategory: function (controller, data) {
+                var div = '<div style="width:50%;max-height:500px !important;"></div>';
+
+                $(div).load('templ/dialogs/addEditTaxCategory.html?d=' + new Date().getTime(), function () {
+                    var html = $(this).html();
+
+                    $mdDialog.show({
+                        clickOutsideToClose: true,
+                        locals: {
+                            localData: data
+                        },
+                        preserveScope: true,
+                        height: '200',
+                        template: html,
+                        parent: angular.element(document.body),
+                        controller: controller
+                    });
+                });
+            },
+            AddEditTax: function (controller, data) {
+                var div = '<div style="width:60%;max-height:600px !important;"></div>';
+
+                $(div).load('templ/dialogs/addEditTax.html?d=' + new Date().getTime(), function () {
+                    var html = $(this).html();
+
+                    $mdDialog.show({
+                        clickOutsideToClose: true,
+                        locals: {
+                            localData: data
+                        },
+                        preserveScope: true,
+                        height: '400',
+                        template: html,
+                        parent: angular.element(document.body),
+                        controller: controller
+                    });
+                });
+            },
             ShowBillingDialog: function (controller, $scope) {
                 var div = '<div ></div>';
                 debugger

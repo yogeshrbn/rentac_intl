@@ -84,6 +84,8 @@ namespace FarmaAPI.Controllers
 
                 objClient.AadharCard = Convert.ToString(wObj["AadharCard"]);
                 objClient.GSTNo = Convert.ToString(wObj["GSTNo"]);
+                objClient.VAT = Convert.ToString(wObj["VAT"]);
+
                 if (!String.IsNullOrEmpty(Convert.ToString(wObj["OpeningBal"])))
                 {
                     objClient.OpeningBal = Convert.ToDouble(wObj["OpeningBal"]);

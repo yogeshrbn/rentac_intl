@@ -3513,5 +3513,31 @@
 
       "menuCluster": "admin-users"
     }
+  },
+  {
+    "name": "taxcategories",
+    "templateUrl": "templ/tax/tax-categories.html",
+    "title": "Tax Categories",
+    "toolbar": "no",
+    "controller": "TaxCategoryListController",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
+  },
+  {
+    "name": "taxes",
+    "templateUrl": "templ/tax/taxes.html",
+    "title": "Taxes",
+    "toolbar": "no",
+    "controller": "TaxListController",
+    "data": {
+      "authorizedRoles": [
+        "ADMIN"
+      ],
+      "menuCluster": "admin-users"
+    }
   }
 ]

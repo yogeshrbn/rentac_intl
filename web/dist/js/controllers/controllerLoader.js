@@ -6,7 +6,11 @@ document.write('<script src="../dist/js/factory/filterService.js?d=' + d +'"></s
 document.write('<script src="../dist/js/factory/paymentFactory.js?d=' + d +'"></script>');
 document.write('<script src="../dist/js/factory/productionService.js?d=' + d + '"></script>');
 document.write('<script src="../dist/js/factory/backupService.js?d=' + d + '"></script>');
+document.write('<script src="../dist/js/factory/taxService.js?d=' + d + '"></script>');
+document.write('<script src="../dist/js/factory/productTaxClassificationService.js?d=' + d + '"></script>');
+document.write('<script src="../dist/js/factory/challanTaxService.js?d=' + d + '"></script>');
 
+document.write('<script src="../dist/js/controllers/taxes/taxController.js?d=' + d + '"></script>');
 document.write('<script src="../dist/js/controllers/tools/backupController.js?d=' + d + '"></script>');
 
 document.write('<script src="../dist/js/controllers/CompanyController.js?d=' + d +'"></script>');

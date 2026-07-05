@@ -67,6 +67,7 @@ namespace BAL.DAL
                 objSql.AddParameter("@RbnClientId", DbType.Int16, ParameterDirection.Input, 0, _data.RbnClientId);
                 objSql.AddParameter("@CompanyId", DbType.Int16, ParameterDirection.Input, 0, _data.CompanyId);
                 objSql.AddParameter("@creditDays", DbType.Int16, ParameterDirection.Input, 0, _data.CreditDays);
+                objSql.AddParameter("@VAT", DbType.String, ParameterDirection.Input, 0, _data.VAT);
 
 
 
@@ -1206,6 +1207,7 @@ namespace BAL.DAL
                 objSql.AddParameter("@useForBilling", DbType.Byte, ParameterDirection.Input, 0, dto.UseForBilling);
                 objSql.AddParameter("@projectOwnerId", DbType.Int32, ParameterDirection.Input, 0, dto.ProjectOwnerId);
                 objSql.AddParameter("@billingToSiteId", DbType.Int32, ParameterDirection.Input, 0, dto.BillingToSiteId);
+                objSql.AddParameter("@VAT", DbType.String, ParameterDirection.Input, 0, dto.VAT);
 
                 if (dto.PODate != null && dto.PODate.Value.Year > 2000)
                 {

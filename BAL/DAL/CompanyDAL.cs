@@ -55,6 +55,7 @@ namespace BAL.DAL
                 objSql.AddParameter("@qrCode", DbType.String, ParameterDirection.Input, 0, _data.QrCode);
                 objSql.AddParameter("@warehouses", DbType.String, ParameterDirection.Input, 0, _data.Warehouses);
                 objSql.AddParameter("@defaultWarehouseId", DbType.Int32, ParameterDirection.Input, 0, _data.DefaultWarehouseId);
+                objSql.AddParameter("@VAT", DbType.String, ParameterDirection.Input, 0, _data.VAT);
 
                 if (_data.CompanyId == 0)
                 {

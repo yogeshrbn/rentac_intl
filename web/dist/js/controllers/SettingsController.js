@@ -2153,7 +2153,8 @@ app.controller('UserController', ['$scope', '$routeParams', '$http', '$rootScope
             }
 
             function resetPwd() {
-
+                debugger
+                var _data = { UserId: $scope.User.UserId, Password: $scope.User.Password };
                 $scope.User.ResetPassword(function (e) {
                     if (e.status == 200 && e.data == "SUCCESS") {
                         loadUsers();
@@ -2161,7 +2162,7 @@ app.controller('UserController', ['$scope', '$routeParams', '$http', '$rootScope
                     } else {
                         alert(e.data);
                     }
-                });
+                }, _data);
 
             }
         }

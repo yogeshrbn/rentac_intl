@@ -107,115 +107,21 @@
     <Folder Include="Db\" />
     <Folder Include="Functions\" />
     <Folder Include="PostRun\" />
+    <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SP\sp02.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp03.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\view001.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp004.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\view002.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp005.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp006.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp007.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp008.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SP\sp009.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PreRun\table020.sql" />
-    <EmbeddedResource Include="PreRun\table021.sql" />
-    <EmbeddedResource Include="PreRun\table023.sql" />
-    <EmbeddedResource Include="PreRun\table024.sql" />
-    <EmbeddedResource Include="PreRun\table025.sql" />
-    <EmbeddedResource Include="PreRun\table026.sql" />
-    <EmbeddedResource Include="PreRun\table027_GRNItems_DamageComponent.sql" />
-    <EmbeddedResource Include="PreRun\table028_GRNItemDamageComponents.sql" />
-    <EmbeddedResource Include="PreRun\table029_InvoiceBreakageDamageComponent.sql" />
-    <EmbeddedResource Include="PreRun\table030_WorkOrder_Dispatched.sql" />
-    <EmbeddedResource Include="PreRun\table031_GRN_InwardConfirm.sql" />
-    <EmbeddedResource Include="PreRun\table032_WorkOrder_GRN_ModifiedColumns.sql" />
-    <EmbeddedResource Include="PreRun\table033_Ledger_CreditDays.sql" />
-    <EmbeddedResource Include="PreRun\table034_WorkOrder_SezDescription.sql" />
-    <EmbeddedResource Include="PreRun\table035_Quotation_PartyType_ManualGst.sql" />
-    <EmbeddedResource Include="PreRun\table036_WorkOrder_GRN_AdjType.sql" />
-    <EmbeddedResource Include="PreRun\table037_Purchase_WarehouseId.sql" />
-    <EmbeddedResource Include="PreRun\table038_WorkOrder_ShipFrom.sql" />
-    <EmbeddedResource Include="PreRun\table039_Invoice_Taxable.sql" />
-    <EmbeddedResource Include="PreRun\table040_GRN_ShipFrom.sql" />
-    <EmbeddedResource Include="PreRun\table041_Invoice_PrintAllPO.sql" />
-    <EmbeddedResource Include="PreRun\table042_ClientSites_Documents.sql" />
-    <EmbeddedResource Include="PreRun\table043_Contract_ApproximateWeight.sql" />
-    <EmbeddedResource Include="PreRun\table044_Quotation_ContractArea.sql" />
-    <EmbeddedResource Include="PreRun\table045_QuotationItems_LineArea.sql" />
-    <EmbeddedResource Include="PreRun\table046_Quotation_LineTotalMode.sql" />
-    <EmbeddedResource Include="PreRun\table047_LedgerTransactions_ContractId.sql" />
-    <EmbeddedResource Include="PreRun\table048_InvoiceItems_Unit.sql" />
-    <EmbeddedResource Include="PreRun\table049_QuotationItems_GstRates.sql" />
-    <EmbeddedResource Include="PreRun\table050_ContractDocuments.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="PreRun\table022.sql" />
-    <EmbeddedResource Include="PreRun\table041_Invoice_PONumbers.sql" />
-    <EmbeddedResource Include="SP\sp0037_GRN_PONumber.sql" />
-    <EmbeddedResource Include="SP\sp0038_Billing_FilterChallansByPO.sql" />
-    <EmbeddedResource Include="SP\sp0039_partyQtyVarianceReports.sql" />
-    <EmbeddedResource Include="SP\sp0040_Quotation_party_manual_gst_procs.sql" />
-    <EmbeddedResource Include="SP\sp0041_MaterialAdjust_AdjType_procs.sql" />
-    <EmbeddedResource Include="SP\sp0039_ClientSites_BillingToSiteId.sql" />
-    <EmbeddedResource Include="SP\sp0042_Purchase_Warehouse_procs.sql" />
-    <EmbeddedResource Include="SP\sp0043_WorkOrder_ShipFrom_procs.sql" />
-    <EmbeddedResource Include="SP\sp0044_Invoice_Taxable_procs.sql" />
-    <EmbeddedResource Include="SP\sp0045_GRN_ShipFrom_procs.sql" />
-    <EmbeddedResource Include="SP\sp0046_Invoice_PrintAllPO_procs.sql" />
-    <EmbeddedResource Include="SP\sp0047_ClientSites_Documents_procs.sql" />
-    <EmbeddedResource Include="SP\sp0048_Challan_next_preview_procs.sql" />
-    <EmbeddedResource Include="SP\sp0049_GRN_next_receiving_challan_preview_procs.sql" />
-    <EmbeddedResource Include="SP\sp0050_Quotation_link_party_procs.sql" />
-    <EmbeddedResource Include="SP\sp0051_Contract_ApproximateWeight_procs.sql" />
-    <EmbeddedResource Include="SP\sp0052_Quotation_ContractArea_procs.sql" />
-    <EmbeddedResource Include="SP\sp0053_QuotationItems_LineArea_procs.sql" />
-    <EmbeddedResource Include="SP\sp0054_Quotation_LineTotalMode_procs.sql" />
-    <EmbeddedResource Include="SP\sp0055_contracts_list_range_filters_procs.sql" />
-    <EmbeddedResource Include="SP\sp0056_LedgerTransactions_ContractId_procs.sql" />
-    <EmbeddedResource Include="SP\sp0057_InvoiceItems_Unit_procs.sql" />
-    <EmbeddedResource Include="SP\sp0058_ContractBillingReport_preview_columns_doc.sql" />
-    <EmbeddedResource Include="SP\sp0060_ContractDocuments_procs.sql" />
-    <EmbeddedResource Include="SP\sp0061_QuotationItems_GstRates_procs.sql" />
-    <EmbeddedResource Include="PreRun\table052_GRN_TransferWorkOrderId.sql" />
-    <EmbeddedResource Include="SP\sp0062_GRN_TransferWorkOrderId_procs.sql" />
-    <EmbeddedResource Include="PreRun\table053_LedgerTransactions_ReceiptDocumentPath.sql" />
-    <EmbeddedResource Include="SP\sp0063_LedgerTransactions_receiptPath_procs.sql" />
-    <EmbeddedResource Include="SP\sp0064_LedgerTransactions_clr_receiptPath_procs.sql" />
-    <EmbeddedResource Include="PreRun\table054_Quotation_UnregisteredPartyPhone.sql" />
-    <EmbeddedResource Include="SP\sp0065_Quotation_UnregisteredPartyPhone_procs.sql" />
-    <EmbeddedResource Include="PreRun\table055_QuotationItems_LineTotalMode.sql" />
-    <EmbeddedResource Include="PreRun\table056_Quotation_ContractId.sql" />
-    <EmbeddedResource Include="PreRun\table057_Quotation_InvoiceId.sql" />
-    <EmbeddedResource Include="PreRun\table057_LedgerTransactions_TotalTds.sql" />
-    <EmbeddedResource Include="PreRun\table058_LedgerTransactionDetails_TdsAmount.sql" />
-    <EmbeddedResource Include="SP\sp0066_QuotationItems_LineTotalMode_procs.sql" />
-    <EmbeddedResource Include="SP\sp0067_Quotation_ContractId_procs.sql" />
-    <EmbeddedResource Include="SP\sp0068_Quotation_InvoiceId_procs.sql" />
-    <EmbeddedResource Include="SP\sp0068_LedgerTransaction_Tds_procs.sql" />
-    <EmbeddedResource Include="PreRun\table059_Quotation_ValidUntil.sql" />
-    <EmbeddedResource Include="SP\sp0069_Quotation_ValidUntil_procs.sql" />
+    <EmbeddedResource Include="SP\sp0070_taxCategory_procs.sql" />
+    <EmbeddedResource Include="PreRun\table071_Taxes.sql" />
+    <EmbeddedResource Include="SP\sp0071_taxMaster_procs.sql" />
+    <EmbeddedResource Include="PreRun\table072_TaxCategoryMappings.sql" />
+    <EmbeddedResource Include="SP\sp0072_taxCategoryMapping_procs.sql" />
+    <EmbeddedResource Include="PreRun\table073_WorkOrderTax.sql" />
+    <EmbeddedResource Include="SP\sp0074_workOrderTax_procs.sql" />
+    <EmbeddedResource Include="PreRun\table074_QuotationTax.sql" />
+    <EmbeddedResource Include="SP\sp0075_quotationTax_procs.sql" />
+    <EmbeddedResource Include="PreRun\table076_QuotationManualTax.sql" />
+    <EmbeddedResource Include="SP\sp0076_quotationManualTax_procs.sql" />
+    <EmbeddedResource Include="SP\sp0077_invoiceTax_procs.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

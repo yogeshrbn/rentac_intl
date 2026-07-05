@@ -267,6 +267,208 @@ function quotationSummaryGstRate(items, component) {
     return null;
 }
 
+function getQuotationOtherCharges(trans) {
+    return (parseFloat(trans.Charge1) || 0)
+        + (parseFloat(trans.Charge2) || 0)
+        + (parseFloat(trans.Charge3) || 0)
+        + (parseFloat(trans.Charge4) || 0)
+        + (parseFloat(trans.Charge5) || 0);
+}
+
+function hasManualItemTaxes(itemTaxSettings) {
+    return (itemTaxSettings || []).some(function (tax) {
+        return tax.Selected && (parseFloat(tax.Rate) || 0) > 0;
+    });
+}
+
+function buildManualTaxMappings(itemTaxSettings) {
+    return (itemTaxSettings || []).filter(function (tax) {
+        return tax.Selected && (parseFloat(tax.Rate) || 0) > 0;
+    }).map(function (tax) {
+        return {
+            TaxId: tax.TaxId,
+            TaxName: tax.TaxName,
+            TaxCode: tax.TaxCode,
+            Rate: parseFloat(tax.Rate) || 0,
+            RateType: tax.RateType || 'Percentage'
+        };
+    });
+}
+
+function getSelectedManualItemTaxesForSave(itemTaxSettings) {
+    return buildManualTaxMappings(itemTaxSettings).map(function (tax) {
+        return {
+            TaxId: tax.TaxId,
+            TaxName: tax.TaxName,
+            TaxCode: tax.TaxCode,
+            Rate: tax.Rate,
+            RateType: tax.RateType
+        };
+    });
+}
+
+function initItemTaxSettings(taxMasters, savedManualTaxes, legacyTrans) {
+    var savedMap = {};
+    (savedManualTaxes || []).forEach(function (tax) {
+        savedMap[tax.TaxId] = tax;
+    });
+
+    var settings = (taxMasters || []).filter(function (tax) {
+        return tax.IsActive !== false;
+    }).map(function (tax) {
+        var saved = savedMap[tax.Id];
+        return {
+            TaxId: tax.Id,
+            TaxName: tax.Name,
+            TaxCode: tax.Code,
+            RateType: tax.RateType || 'Percentage',
+            Rate: saved ? parseFloat(saved.Rate) || 0 : parseFloat(tax.Rate) || 0,
+            Selected: !!saved
+        };
+    });
+
+    if ((!savedManualTaxes || !savedManualTaxes.length) && legacyTrans) {
+        var legacyRate = parseFloat(legacyTrans.GstRate) || 0;
+        if (legacyRate > 0) {
+            settings.forEach(function (tax) {
+                var code = (tax.TaxCode || '').toUpperCase();
+                if ((code === 'IGST' && legacyTrans.IGST)
+                    || (code === 'CGST' && legacyTrans.CGST)
+                    || (code === 'SGST' && legacyTrans.SGST)) {
+                    tax.Selected = true;
+                    tax.Rate = legacyRate;
+                }
+            });
+        }
+    }
+
+    return settings;
+}
+
+function loadQuotationTaxMasters(scope, taxService) {
+    return taxService.getTaxMasters(true).then(function (response) {
+        var taxMasters = [];
+        if (response.data && response.data.Code === 200 && response.data.Data) {
+            taxMasters = response.data.Data;
+        }
+        scope.ItemTaxSettings = initItemTaxSettings(
+            taxMasters,
+            scope.Trans.ManualItemTaxes,
+            scope.Trans
+        );
+        return taxMasters;
+    }).catch(function () {
+        scope.ItemTaxSettings = initItemTaxSettings([], scope.Trans.ManualItemTaxes, scope.Trans);
+        return [];
+    });
+}
+
+function syncQuotationLineLegacyGst(item) {
+    item.IGST = 0;
+    item.CGST = 0;
+    item.SGST = 0;
+    item.IGSTRate = 0;
+    item.CGSTRate = 0;
+    item.SGSTRate = 0;
+
+    (item.LineTaxes || []).forEach(function (tax) {
+        var code = (tax.TaxCode || '').toUpperCase();
+        var amount = parseFloat(tax.Amount) || 0;
+        var rate = parseFloat(tax.Rate) || 0;
+        if (code === 'IGST') {
+            item.IGST += amount;
+            item.IGSTRate = rate;
+        } else if (code === 'CGST') {
+            item.CGST += amount;
+            item.CGSTRate = rate;
+        } else if (code === 'SGST') {
+            item.SGST += amount;
+            item.SGSTRate = rate;
+        }
+    });
+
+    item.TaxRate = (item.IGSTRate || 0) + (item.CGSTRate || 0) + (item.SGSTRate || 0);
+    item.Total = (parseFloat(item.SubTotal) || 0) + item.IGST + item.CGST + item.SGST;
+}
+
+function recalculateQuotationTaxes(scope, taxService) {
+    var trans = scope.Trans;
+    if (!trans || !trans.Items) {
+        if (trans) {
+            trans.AppliedTaxes = [];
+            trans.TaxAmount = 0;
+        }
+        return null;
+    }
+
+    if (scope.ApplyGST !== true) {
+        trans.AppliedTaxes = [];
+        trans.TaxAmount = 0;
+        trans.Items.forEach(function (item) {
+            item.LineTaxes = [];
+            syncQuotationLineLegacyGst(item);
+        });
+        return null;
+    }
+
+    var manualMappings = hasManualItemTaxes(scope.ItemTaxSettings)
+        ? buildManualTaxMappings(scope.ItemTaxSettings)
+        : null;
+
+    var result = taxService.calculateChallanTaxes({
+        items: trans.Items,
+        allSizes: scope.AllSizes,
+        taxCategories: scope.TaxCategories || [],
+        manualTaxMappings: manualMappings,
+        applyGst: scope.ApplyGST === true,
+        freight: (parseFloat(trans.Freight) || 0) + (parseFloat(trans.FreightIn) || 0),
+        otherCharges: getQuotationOtherCharges(trans),
+        freightTax: scope.ApplyFreightGST === true,
+        otherChargesTax: scope.ApplyOtherChargeGST === true,
+        getTaxableAmount: function (item) {
+            return (parseFloat(item.SubTotal) || 0) - (parseFloat(item.DiscountAmount) || 0);
+        },
+        itemFilter: function (item) {
+            return parseFloat(item.Quantity) > 0;
+        }
+    });
+
+    trans.AppliedTaxes = result.appliedTaxes || [];
+    trans.TaxAmount = result.taxAmount || 0;
+    trans.Items.forEach(syncQuotationLineLegacyGst);
+    return result;
+}
+
+function loadSavedQuotationTaxes(quotationId, scope, taxService) {
+    if (!quotationId) {
+        return;
+    }
+
+    var loader = new $.Transaction();
+    var model = { QuotationId: quotationId };
+    loader.GetQuotationTaxes(function (e) {
+        var lineTaxes = e.data || [];
+        var taxesByItem = {};
+
+        lineTaxes.forEach(function (tax) {
+            if (!taxesByItem[tax.QuotationItemId]) {
+                taxesByItem[tax.QuotationItemId] = [];
+            }
+            taxesByItem[tax.QuotationItemId].push(tax);
+        });
+
+        (scope.Trans.Items || []).forEach(function (item) {
+            item.LineTaxes = item.QuotationItemId ? (taxesByItem[item.QuotationItemId] || []) : [];
+            syncQuotationLineLegacyGst(item);
+        });
+
+        scope.Trans.AppliedTaxes = taxService.aggregateUniqueTaxes(lineTaxes);
+        scope.Trans.TaxAmount = scope.Trans.AppliedTaxes.reduce(function (sum, tax) {
+            return sum + (parseFloat(tax.Amount) || 0);
+        }, 0);
+    }, model);
+}
+
 //--sales register
 app.controller('QuotationListController', function ($scope, $rootScope, $state, $crypto, $mdDialog, ReportService, ModalFactory, $timeout, LedgerFactory) {
     $scope._stateData = $state.current.data;
@@ -741,7 +943,7 @@ app.controller('SalesItemsController', function ($scope, $mdDialog, salesId) {
 });
 //---Sale entry
 app.controller('QuotationController', function ($scope, $rootScope, $stateParams, $state, $http,
-    ModalFactory, $uibModal, LedgerFactory, AuthenticationService, $timeout) {
+    ModalFactory, $uibModal, LedgerFactory, AuthenticationService, $timeout, ChallanTaxService, TaxService) {
 
     $scope._stateData = $state.current.data;
 
@@ -902,10 +1104,9 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
 
     function init() {
         $scope.TransItem = new $.TransItem({ PurchaseRate: $scope.DefaultRate });
-        //   $scope.Trans = new $.LedgerTrasaction({});
         $scope.Trans.EntryType = $scope.TranType == 1 ? 8 : 9;
         $scope.Trans.PurchaseDate = convertDate(new Date());
-        // getNextWorkOrderNumber();
+        $scope.Trans.AppliedTaxes = [];
     }
     $scope.Save = function () {
 
@@ -971,7 +1172,14 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
         //    alert('Please select the party site');
         //    return;
         //}
+
         model.BillableItems = model.Items;
+        model.AppliedTaxes = $scope.Trans.AppliedTaxes || [];
+        model.ManualItemTaxes = getSelectedManualItemTaxesForSave($scope.ItemTaxSettings);
+        if (model.ManualItemTaxes && model.ManualItemTaxes.length > 0) {
+            model.AppliedTaxes = model.ManualItemTaxes;
+            model.ManualItemTaxes = [];
+        }
         var qNumber = model.QuotationNumber;
         if ($scope.Config.editnumber == true && (!qNumber || qNumber.length < 1)) {
             alert('Please enter a quotation number');
@@ -1065,7 +1273,7 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
         }
     }
     $scope.$watch('Trans.Items', function () {
-
+        console.log('trans.items')
         $scope.SubTotal(0);
     }, true);
     //add new item to be issued
@@ -1087,16 +1295,6 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
         if ($scope.Trans.QuotationType == 16)
             copyContractLineDefaultsFromHeader($scope.TransItem, $scope.Trans);
 
-        //var itemExist = $scope.Trans.QuotationType == 16
-        //    ? $scope.Trans.Items.find(o => contractLinesMatch(o, $scope.TransItem))
-        //    : $scope.Trans.Items.find(o => o.ProductId == $scope.TransItem.ProductId);
-        //if (itemExist) {
-        //    itemExist.Quantity = parseInt(itemExist.Quantity) + parseInt($scope.TransItem.Quantity);
-        //    if ($scope.Trans.QuotationType == 16)
-        //        itemExist.SubTotal = contractLineSubTotal(getEffectiveLineTotalMode(itemExist, $scope.Trans, $scope.Config), itemExist.Quantity, itemExist.Rate, itemExist.Area, $scope.Trans.Area, itemExist, $scope.Trans);
-        //    else
-        //        itemExist.SubTotal = itemExist.Quantity * itemExist.Rate * quotationLineDurationFactor($scope.Trans.QuotationType, itemExist.Duration);
-        //} else {
 
         if ($scope.Trans.QuotationType == 16)
             $scope.TransItem.SubTotal = contractLineSubTotal(getEffectiveLineTotalMode($scope.TransItem, $scope.Trans, $scope.Config), $scope.TransItem.Quantity, $scope.TransItem.Rate, $scope.TransItem.Area, $scope.Trans.Area, $scope.TransItem, $scope.Trans);
@@ -1118,15 +1316,29 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
         item.DiscountAmount = (item.SubTotal * item.DiscountPercent) / 100;
 
     }
+    $scope.TaxCategories = [];
+    $scope.ItemTaxSettings = [];
+
+    function loadTaxCategories() {
+        TaxService.getTaxCategories(null, true).then(function (response) {
+            if (response.data && response.data.Code === 200) {
+                $scope.TaxCategories = response.data.Data || [];
+            }
+        });
+    }
+
+    function loadTaxSettings() {
+        loadTaxCategories();
+        loadQuotationTaxMasters($scope, TaxService);
+    }
+
     function getAllProductSizesByCompany() {
         var product = new $.Product();
         product.GetAll(function (e) {
-            //debugger
-            console.log('AllSizes', e.data);
             $scope.AllSizes = e.data;
-
         });
     }
+
     $scope.SubTotal = function (_total) {
         $scope.Trans.Total = 0;
         $scope.Trans.SubTotal = 0;
@@ -1137,13 +1349,11 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
         $scope.Trans.OtherChargeAmount = 0;
 
         if ($scope.Trans.Items) {
-
             for (var i = 0; i < $scope.Trans.Items.length; i++) {
                 var item = $scope.Trans.Items[i];
                 if (item.Quantity != null) {
                     if ($scope.Trans.QuotationType == 16) {
                         item.QtyArea = contractLineQtyArea(item.Quantity, item.Area, $scope.Trans.Area);
-                         
                         var _days = contractLinePeriodDaysInclusive(item.From, item.To);
                         item.Days = _days == null ? 0 : _days;
                         item.SubTotal = contractLineSubTotal(getEffectiveLineTotalMode(item, $scope.Trans, $scope.Config), item.Quantity, item.Rate, item.Area, $scope.Trans.Area, item, $scope.Trans);
@@ -1153,67 +1363,29 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
                     }
                 }
                 applyDiscount(item);
-                applyTaxRate(item.ProductId);
             }
-            $scope.Trans.SubTotal = $scope.Trans.Items.reduce((partialSum, a) => partialSum + a.SubTotal, 0);
 
+            $scope.Trans.SubTotal = $scope.Trans.Items.reduce(function (sum, a) {
+                return sum + (parseFloat(a.SubTotal) || 0);
+            }, 0);
 
-            //if ($scope.Trans.Items) {
-            //    for (var i = 0; i < $scope.Trans.Items.length; i++) {
-            //        var item = $scope.Trans.Items[i];
-            //        applyDiscount(item);
-            //        applyTaxRate(item.ProductId);
-            //    }
-            //}
-            $scope.Trans.TaxAmount = $scope.Trans.Items.reduce(function (partialSum, a) {
-                if (!a.IGST) {
-                    a.IGST = 0;
-                }
-                if (!a.CGST) {
-                    a.CGST = 0;
-                }
-                if (!a.SGST) {
-                    a.SGST = 0;
-                }
-                return partialSum + a.IGST + a.CGST + a.SGST;
-            }, 0)
-
+            recalculateQuotationTaxes($scope, ChallanTaxService);
         }
-        // if ($scope.Trans.SubTotal == 0) {
+
         calculateDiscount();
 
-        //}
-        if ($scope.Config) {
-            if ($scope.ApplyFreightGST == true) {
-                $scope.Trans.FreightTaxRate = $scope.Config.FreightTax;
-            } else {
-                $scope.Trans.FreightTaxRate = 0;
-            }
-            if ($scope.ApplyOtherChargeGST == true) {
-                $scope.Trans.ChargesTaxRate = $scope.Config.FreightTax;
-            } else {
-                $scope.Trans.ChargesTaxRate = 0;
-            }
+        $scope.Trans.OtherChargeAmount = getQuotationOtherCharges($scope.Trans);
+        $scope.Trans.FreightTax = 0;
+        $scope.Trans.ChargesTax = 0;
 
-            if ($scope.Trans.Freight && $scope.ApplyFreightGST == true) {
-                var freight = parseFloat($scope.Trans.Freight) + parseFloat($scope.Trans.FreightIn);
-                $scope.Trans.FreightTax = (freight * $scope.Trans.FreightTaxRate) / 100
-            }
-
-            $scope.Trans.OtherChargeAmount = parseFloat($scope.Trans.Charge1) + parseFloat($scope.Trans.Charge2) + parseFloat($scope.Trans.Charge3)
-                + parseFloat($scope.Trans.Charge4) + parseFloat($scope.Trans.Charge5);
-            if ($scope.ApplyOtherChargeGST == true) {
-                $scope.Trans.ChargesTax = ($scope.Trans.OtherChargeAmount * $scope.Trans.ChargesTaxRate) / 100
-            }
-        }
-
-
-        $scope.Trans.Total = $scope.Trans.SubTotal - parseInt($scope.Trans.DiscountAmount, 0) + $scope.Trans.TaxAmount
-            + parseFloat($scope.Trans.Freight) + parseFloat($scope.Trans.FreightTax) +
-            $scope.Trans.OtherChargeAmount + $scope.Trans.ChargesTax;
+        $scope.Trans.Total = $scope.Trans.SubTotal
+            - parseFloat($scope.Trans.DiscountAmount || 0)
+            + ($scope.Trans.TaxAmount || 0)
+            + (parseFloat($scope.Trans.Freight) || 0)
+            + (parseFloat($scope.Trans.FreightIn) || 0)
+            + $scope.Trans.OtherChargeAmount;
 
         return $scope.Trans.SubTotal;
-
     };
     $scope.selectedProduct = function (selected) {
 
@@ -1285,6 +1457,9 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
         if ($scope.Trans.QuotationType == 16)
             $scope.SubTotal(0);
     });
+    $scope.$watch('Trans.Freight', function (n, o) {
+        $scope.SubTotal(0);
+    });
     $scope.setAddInfoAndTnc = function () {
         if ($scope.Trans.QuotationType == 15) {
             $scope.Trans.AddInfo = $scope.RentAddInfo;
@@ -1328,114 +1503,12 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
     }, true);
 
     $scope.$watch('ApplyGST', function () {
-
         $scope.SubTotal(0);
-
     }, true);
 
-    $scope.$watch('Trans.PartyType', function (n, o) {
-        if (o === undefined || n === o) return;
-        if (n === 2) {
-            $scope.Trans.LedgerId = 0;
-            $scope.Trans.LedgerSiteId = 0;
-            $scope.LedgerSites = [];
-            $scope.ApplyGST = false;
-        } else if (n === 1) {
-            $scope.Trans.UnregisteredPartyName = '';
-            $scope.Trans.UnregisteredPartyAddress = '';
-            $scope.Trans.UnregisteredPartyPhone = '';
-            $scope.Trans.GstRate = 0;
-            //$scope.Trans.IGST = false;
-            //$scope.Trans.CGST = false;
-            //$scope.Trans.SGST = false;
-            $scope.ApplyGST = false;
-        }
+    $scope.$watch('ItemTaxSettings', function () {
         $scope.SubTotal(0);
-    });
-
-    $scope.$watchGroup(['Trans.GstRate', 'Trans.IGST', 'Trans.CGST', 'Trans.SGST'], function () {
-        $scope.SubTotal(0);
-    });
-
-    function applyTaxRate(productId) {
-        var taxes = StaicData.TAX_CATEGORY;
-        var pt = parseInt($scope.Trans.PartyType, 10) || 1;
-        var lineItems = $scope.Trans.Items.filter(o => o.ProductId == productId);
-        if (!lineItems.length) {
-            return;
-        }
-
-      //  if (pt === 2) {
-            var rate = parseFloat($scope.Trans.GstRate) || 0;
-            for (var i = 0; i < lineItems.length; i++) {
-                if (!lineItems[i].DiscountAmount) {
-                    lineItems[i].DiscountAmount = 0;
-                }
-                var slab = quotationProductGstSlabForManualUnregistered($scope.AllSizes, lineItems[i].ProductId, taxes);
-                if (!slab.eligible) {
-                    lineItems[i].CGST = 0;
-                    lineItems[i].SGST = 0;
-                    lineItems[i].IGST = 0;
-                    clearLineGstRates(lineItems[i]);
-                    lineItems[i].TaxName = slab.tax ? slab.tax.TaxName : '';
-                    continue;
-                }
-                var taxable = lineItems[i].SubTotal - lineItems[i].DiscountAmount;
-                lineItems[i].CGST = 0;
-                lineItems[i].SGST = 0;
-                lineItems[i].IGST = 0;
-                if (rate > 0) {
-                    if ($scope.Trans.IGST) {
-                        lineItems[i].IGST = taxable * rate / 100;
-                    }
-                    if ($scope.Trans.CGST) {
-                        lineItems[i].CGST = taxable * rate / 100;
-                    }
-                    if ($scope.Trans.SGST) {
-                        lineItems[i].SGST = taxable * rate / 100;
-                    }
-                }
-                lineItems[i].TaxName = 'GST';
-                setLineGstRatesUnregistered(lineItems[i], $scope.Trans);
-            }
-            return;
-       // }
-
-        if ($scope.AllSizes) {
-            var item = $scope.AllSizes.find(o => o.ProductId == productId);
-            if (item) {
-                var tax = taxes.find(o => o.TaxId == item.TaxCategoryId);
-                var isIntraState = $scope.comp && ledgerDTO.Props && $scope.comp.StateCode == ledgerDTO.Props.StateCode;
-
-                if (tax) {
-                    for (var i = 0; i < lineItems.length; i++) {
-                        if (!lineItems[i].DiscountAmount) {
-                            lineItems[i].DiscountAmount = 0;
-                        }
-                        lineItems[i].CGST = 0;
-                        lineItems[i].SGST = 0;
-                        lineItems[i].IGST = 0;
-                        setLineGstRatesFromTaxCategory(lineItems[i], tax, isIntraState);
-                        lineItems[i].TaxName = tax.TaxName;
-                        if ($scope.ApplyGST == true) {
-                            if (isIntraState) {
-                                lineItems[i].CGST = (lineItems[i].SubTotal - lineItems[i].DiscountAmount) * tax.CGST / 100;
-                                lineItems[i].SGST = (lineItems[i].SubTotal - lineItems[i].DiscountAmount) * tax.SGST / 100;
-                            }
-                            else {
-                                lineItems[i].IGST = (lineItems[i].SubTotal - lineItems[i].DiscountAmount) * tax.IGST / 100;
-                            }
-                        }
-                    }
-                } else {
-                    for (var j = 0; j < lineItems.length; j++) {
-                        clearLineGstRates(lineItems[j]);
-                    }
-                }
-            }
-        }
-
-    }
+    }, true);
 
     function unwrapGrnLineItems(res) {
         var body = res && res.data;
@@ -1547,6 +1620,7 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
     }
 
     getAllProductSizesByCompany();
+    loadTaxSettings();
 
     function getInfo() {
 
@@ -1676,7 +1750,7 @@ app.controller('QuotationController', function ($scope, $rootScope, $stateParams
     }
 });
 app.controller('QuotationEditController', function ($scope, $rootScope, $stateParams, $state, $http, $crypto,
-    $uibModal, LedgerFactory, AuthenticationService) {
+    $uibModal, LedgerFactory, AuthenticationService, ChallanTaxService, TaxService) {
 
     $scope._stateData = $state.current.data;
 
@@ -1753,7 +1827,7 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
             ledgerDTO.Props.StateCode = ledger.StateCode
             $scope.SelectedLedger = ledger;
         }
-        
+
     });
     //  $scope.WorkOrder.SiteInfo = new $.Site({ WorkOrderId: $scope.WorkOrderId, SiteId: sId });
     var selectedWorkOrderItemIndex = -1;
@@ -1821,10 +1895,9 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
 
     function init() {
         $scope.TransItem = new $.TransItem({ PurchaseRate: $scope.DefaultRate });
-        //   $scope.Trans = new $.LedgerTrasaction({});
         $scope.Trans.EntryType = $scope.TranType == 1 ? 8 : 9;
         $scope.Trans.PurchaseDate = convertDate(new Date());
-        // getNextWorkOrderNumber();
+        $scope.Trans.AppliedTaxes = [];
     }
     $scope.Save = function () {
         var res = $scope.Trans.Items.filter(function (v) {
@@ -1899,6 +1972,8 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
         //model.AddInfo = $scope.RentAddInfo;
         //model.Tnc = $scope.Renttnc;
         model.BillableItems = model.Items;
+        model.AppliedTaxes = $scope.Trans.AppliedTaxes || [];
+        model.ManualItemTaxes = getSelectedManualItemTaxesForSave($scope.ItemTaxSettings);
         if (!model.PoDate) {
             model.PoDate = '';
         }
@@ -2036,15 +2111,29 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
         item.DiscountAmount = (item.SubTotal * item.DiscountPercent) / 100;
 
     }
+    $scope.TaxCategories = [];
+    $scope.ItemTaxSettings = [];
+
+    function loadTaxCategories() {
+        TaxService.getTaxCategories(null, true).then(function (response) {
+            if (response.data && response.data.Code === 200) {
+                $scope.TaxCategories = response.data.Data || [];
+            }
+        });
+    }
+
+    function loadTaxSettings() {
+        loadTaxCategories();
+        loadQuotationTaxMasters($scope, TaxService);
+    }
+
     function getAllProductSizesByCompany() {
         var product = new $.Product();
         product.GetAll(function (e) {
-            //debugger
-            console.log('AllSizes', e.data);
             $scope.AllSizes = e.data;
-
         });
     }
+
     $scope.SubTotal = function (_total) {
         $scope.Trans.Total = 0;
         $scope.Trans.SubTotal = 0;
@@ -2055,13 +2144,11 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
         $scope.Trans.OtherChargeAmount = 0;
 
         if ($scope.Trans.Items) {
-
             for (var i = 0; i < $scope.Trans.Items.length; i++) {
                 var item = $scope.Trans.Items[i];
                 if (item.Quantity != null) {
                     if ($scope.Trans.QuotationType == 16) {
                         item.QtyArea = contractLineQtyArea(item.Quantity, item.Area, $scope.Trans.Area);
-                        debugger
                         var _daysEd = contractLinePeriodDaysInclusive(item.From, item.To);
                         item.Days = _daysEd == null ? 0 : _daysEd;
                         item.SubTotal = contractLineSubTotal(getEffectiveLineTotalMode(item, $scope.Trans, $scope.Config), item.Quantity, item.Rate, item.Area, $scope.Trans.Area, item, $scope.Trans);
@@ -2071,67 +2158,29 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
                     }
                 }
                 applyDiscount(item);
-                applyTaxRate(item.ProductId);
             }
-            $scope.Trans.SubTotal = $scope.Trans.Items.reduce((partialSum, a) => partialSum + a.SubTotal, 0);
 
+            $scope.Trans.SubTotal = $scope.Trans.Items.reduce(function (sum, a) {
+                return sum + (parseFloat(a.SubTotal) || 0);
+            }, 0);
 
-            //if ($scope.Trans.Items) {
-            //    for (var i = 0; i < $scope.Trans.Items.length; i++) {
-            //        var item = $scope.Trans.Items[i];
-            //        applyDiscount(item);
-            //        applyTaxRate(item.ProductId);
-            //    }
-            //}
-            $scope.Trans.TaxAmount = $scope.Trans.Items.reduce(function (partialSum, a) {
-                if (!a.IGST) {
-                    a.IGST = 0;
-                }
-                if (!a.CGST) {
-                    a.CGST = 0;
-                }
-                if (!a.SGST) {
-                    a.SGST = 0;
-                }
-                return partialSum + a.IGST + a.CGST + a.SGST;
-            }, 0)
-
+            recalculateQuotationTaxes($scope, ChallanTaxService);
         }
-        // if ($scope.Trans.SubTotal == 0) {
+
         calculateDiscount();
 
-        //}
-        if ($scope.Config) {
-            if ($scope.ApplyFreightGST == true) {
-                $scope.Trans.FreightTaxRate = $scope.Config.FreightTax;
-            } else {
-                $scope.Trans.FreightTaxRate = 0;
-            }
-            if ($scope.ApplyOtherChargeGST == true) {
-                $scope.Trans.ChargesTaxRate = $scope.Config.FreightTax;
-            } else {
-                $scope.Trans.ChargesTaxRate = 0;
-            }
+        $scope.Trans.OtherChargeAmount = getQuotationOtherCharges($scope.Trans);
+        $scope.Trans.FreightTax = 0;
+        $scope.Trans.ChargesTax = 0;
 
-            if ($scope.Trans.Freight && $scope.ApplyFreightGST == true) {
-                var freight = parseFloat($scope.Trans.Freight)
-                $scope.Trans.FreightTax = (freight * $scope.Trans.FreightTaxRate) / 100
-            }
-
-            $scope.Trans.OtherChargeAmount = parseFloat($scope.Trans.Charge1) + parseFloat($scope.Trans.Charge2) + parseFloat($scope.Trans.Charge3)
-                + parseFloat($scope.Trans.Charge4) + parseFloat($scope.Trans.Charge5);
-            if ($scope.ApplyOtherChargeGST == true) {
-                $scope.Trans.ChargesTax = ($scope.Trans.OtherChargeAmount * $scope.Trans.ChargesTaxRate) / 100
-            }
-        }
-
-
-        $scope.Trans.Total = $scope.Trans.SubTotal - parseInt($scope.Trans.DiscountAmount, 0) + $scope.Trans.TaxAmount
-            + parseFloat($scope.Trans.Freight) + parseFloat($scope.Trans.FreightTax) +
-            $scope.Trans.OtherChargeAmount + $scope.Trans.ChargesTax;
+        $scope.Trans.Total = $scope.Trans.SubTotal
+            - parseFloat($scope.Trans.DiscountAmount || 0)
+            + ($scope.Trans.TaxAmount || 0)
+            + (parseFloat($scope.Trans.Freight) || 0)
+            + (parseFloat($scope.Trans.FreightIn) || 0)
+            + $scope.Trans.OtherChargeAmount;
 
         return $scope.Trans.SubTotal;
-
     };
     $scope.selectedProduct = function (selected) {
 
@@ -2201,9 +2250,9 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
 
                 $scope.Trans.PartyType = $scope.Trans.LedgerId > 0 ? 1 : 2;
 
-                $scope.Trans.IGST = !!$scope.Trans.IGST;
-                $scope.Trans.CGST = !!$scope.Trans.CGST;
-                $scope.Trans.SGST = !!$scope.Trans.SGST;
+                //$scope.Trans.IGST = !!$scope.Trans.IGST;
+                //$scope.Trans.CGST = !!$scope.Trans.CGST;
+                //$scope.Trans.SGST = !!$scope.Trans.SGST;
                 if (!$scope.Trans.UnregisteredPartyName) {
                     $scope.Trans.UnregisteredPartyName = '';
                 }
@@ -2232,9 +2281,12 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
                     $scope.ApplyFreightGST = true;
 
                 }
+                debugger
                 $scope.GetBillingConfig();
-                if ($scope.Trans.QuotationType == 16)
+                loadQuotationTaxMasters($scope, TaxService).then(function () {
+                    loadSavedQuotationTaxes(quoteId, $scope, ChallanTaxService);
                     $scope.SubTotal(0);
+                });
             }, quoteId);
         }
     }
@@ -2287,9 +2339,11 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
     }, true);
 
     $scope.$watch('ApplyGST', function () {
-
         $scope.SubTotal(0);
+    }, true);
 
+    $scope.$watch('ItemTaxSettings', function () {
+        $scope.SubTotal(0);
     }, true);
 
     $scope.$watch('Trans.PartyType', function (n, o) {
@@ -2303,100 +2357,13 @@ app.controller('QuotationEditController', function ($scope, $rootScope, $statePa
             $scope.Trans.UnregisteredPartyName = '';
             $scope.Trans.UnregisteredPartyAddress = '';
             $scope.Trans.UnregisteredPartyPhone = '';
-            $scope.Trans.GstRate = 0;
-            //$scope.Trans.IGST = false;
-            //$scope.Trans.CGST = false;
-            //$scope.Trans.SGST = false;
             $scope.ApplyGST = true;
         }
         $scope.SubTotal(0);
     });
 
-    $scope.$watchGroup(['Trans.GstRate', 'Trans.IGST', 'Trans.CGST', 'Trans.SGST'], function () {
-        $scope.SubTotal(0);
-    });
-
-    function applyTaxRate(productId) {
-        var taxes = StaicData.TAX_CATEGORY;
-        var pt = parseInt($scope.Trans.PartyType, 10) || 1;
-        var lineItems = $scope.Trans.Items.filter(o => o.ProductId == productId);
-        if (!lineItems.length) {
-            return;
-        }
-
-       // if (pt === 2) {
-            var rate = parseFloat($scope.Trans.GstRate) || 0;
-            for (var i = 0; i < lineItems.length; i++) {
-                if (!lineItems[i].DiscountAmount) {
-                    lineItems[i].DiscountAmount = 0;
-                }
-                var slab = quotationProductGstSlabForManualUnregistered($scope.AllSizes, lineItems[i].ProductId, taxes);
-                if (!slab.eligible) {
-                    lineItems[i].CGST = 0;
-                    lineItems[i].SGST = 0;
-                    lineItems[i].IGST = 0;
-                    clearLineGstRates(lineItems[i]);
-                    lineItems[i].TaxName = slab.tax ? slab.tax.TaxName : '';
-                    continue;
-                }
-                var taxable = lineItems[i].SubTotal - lineItems[i].DiscountAmount;
-                lineItems[i].CGST = 0;
-                lineItems[i].SGST = 0;
-                lineItems[i].IGST = 0;
-                if (rate > 0) {
-                    if ($scope.Trans.IGST) {
-                        lineItems[i].IGST = taxable * rate / 100;
-                    }
-                    if ($scope.Trans.CGST) {
-                        lineItems[i].CGST = taxable * rate / 100;
-                    }
-                    if ($scope.Trans.SGST) {
-                        lineItems[i].SGST = taxable * rate / 100;
-                    }
-                }
-                lineItems[i].TaxName = 'GST';
-                setLineGstRatesUnregistered(lineItems[i], $scope.Trans);
-            }
-            return;
-      //  }
-
-        if ($scope.AllSizes) {
-            var item = $scope.AllSizes.find(o => o.ProductId == productId);
-            if (item) {
-                var tax = taxes.find(o => o.TaxId == item.TaxCategoryId);
-                var isIntraState = $scope.comp && ledgerDTO.Props && $scope.comp.StateCode == ledgerDTO.Props.StateCode;
-
-                if (tax) {
-                    for (var i = 0; i < lineItems.length; i++) {
-                        if (!lineItems[i].DiscountAmount) {
-                            lineItems[i].DiscountAmount = 0;
-                        }
-                        lineItems[i].CGST = 0;
-                        lineItems[i].SGST = 0;
-                        lineItems[i].IGST = 0;
-                        setLineGstRatesFromTaxCategory(lineItems[i], tax, isIntraState);
-                        lineItems[i].TaxName = tax.TaxName;
-                        if ($scope.ApplyGST == true) {
-                            if (isIntraState) {
-                                lineItems[i].CGST = (lineItems[i].SubTotal - lineItems[i].DiscountAmount) * tax.CGST / 100;
-                                lineItems[i].SGST = (lineItems[i].SubTotal - lineItems[i].DiscountAmount) * tax.SGST / 100;
-                            }
-                            else {
-                                lineItems[i].IGST = (lineItems[i].SubTotal - lineItems[i].DiscountAmount) * tax.IGST / 100;
-                            }
-                        }
-                    }
-                } else {
-                    for (var j = 0; j < lineItems.length; j++) {
-                        clearLineGstRates(lineItems[j]);
-                    }
-                }
-            }
-        }
-
-    }
-
     getAllProductSizesByCompany();
+    loadTaxSettings();
     FormsValidation.init('frmQuotation');
     function getInfo() {
 

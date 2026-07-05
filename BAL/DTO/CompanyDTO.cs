@@ -32,6 +32,8 @@ namespace BAL.DTO
         public string GSTNo { get; set; }
         public string TIN { get; set; }
         public string TAN { get; set; }
+        public string VAT { get; set; }
+
         public string PAN { get; set; }
         public string SignAuthority { get; set; }
         public string ReportHeader { get; set; }

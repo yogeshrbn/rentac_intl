@@ -161,7 +161,7 @@ namespace BAL.Objects
             WorkorderDAL dal = new WorkorderDAL();
             return await dal.DeleteChallan(workOrderId, siteId, user);
         }
-        public List<TaxDTO> GetSiteTaxes(int siteId)
+        public List<WorkOrderTaxDTO> GetSiteTaxes(int siteId)
         {
             WorkorderDAL dal = new WorkorderDAL();
             return dal.GetSiteTaxes(siteId);

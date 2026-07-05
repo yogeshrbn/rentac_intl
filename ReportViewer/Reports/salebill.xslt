@@ -3,37 +3,93 @@
 
 <xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:util="urn:util-format">
 
+  <xsl:template name="saleBillTaxRowName">
+    <xsl:choose>
+      <xsl:when test="normalize-space(TaxName) != ''">
+        <xsl:value-of select="TaxName"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="Name"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="printSaleBillLineTaxes">
+    <xsl:for-each select="data/Table1">
+      <tr class="table-row">
+        <td class="text-right table-cell" colspan="2">
+          <xsl:call-template name="saleBillTaxRowName"/>
+          <xsl:text> (</xsl:text>
+          <xsl:value-of select="format-number(number(Rate), '#0.##')"/>
+          <xsl:text>%)</xsl:text>
+        </td>
+        <td class="text-right table-cell">
+          <xsl:value-of select="util:FormatNumber(number(Amount | TaxAmount))"/>
+        </td>
+      </tr>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="printSaleBillLegacyGst">
+    <tr class="table-row">
+      <td class="text-right table-cell" colspan="2">
+        IGST ( <xsl:value-of select="data/Table/IGSTRate"/> % )
+      </td>
+      <td class="text-right">
+        <xsl:value-of select="util:FormatNumber(sum(data/Table/IGST) + data/Table/chargesTaxIGST + data/Table/FreightIGST)"/>
+      </td>
+    </tr>
+    <tr class="table-row">
+      <td class="text-right table-cell" colspan="2">
+        SGST ( <xsl:value-of select="data/Table/SGSTRate"/> % )
+      </td>
+      <td class="text-right">
+        <xsl:value-of select="util:FormatNumber(sum(data/Table/SGST) + data/Table/chargesTaxSGST + data/Table/FreightSGST)"/>
+      </td>
+    </tr>
+    <tr class="table-row">
+      <td class="text-right table-cell" colspan="2">
+        CGST ( <xsl:value-of select="data/Table/CGSTRate"/> % )
+      </td>
+      <td class="text-right table-cell">
+        <xsl:value-of select="util:FormatNumber(sum(data/Table/CGST) + data/Table/chargesTaxSGST + data/Table/FreightSGST)"/>
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template name="printSaleBillTaxSection">
+    <xsl:choose>
+      <xsl:when test="count(data/Table1) &gt; 0">
+        <xsl:call-template name="printSaleBillLineTaxes"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="printSaleBillLegacyGst"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="/">
-    <xsl:variable name="freightIGST">
-      <xsl:choose>
-        <xsl:when test="number(data/Table/FreightTax) > 0 and number(data/Table/IGST) > 0">
-          <xsl:value-of select="number(data/Table/FreightTax)" />
-        </xsl:when>
-        <xsl:otherwise>
-          0
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="freightSGST">
-      <xsl:choose>
-        <xsl:when test="number(data/Table/FreightTax) > 0 and number(data/Table/SGST) > 0">
-          <xsl:value-of select="round(number(data/Table/FreightTax) div 2)" />
-        </xsl:when>
-        <xsl:otherwise>
-          0
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="rowSpan">
+    <xsl:variable name="baseRowSpan">
       <xsl:choose>
         <xsl:when test="data/Table/OtherChargeAmount > 0">
-          8
+          5
         </xsl:when>
         <xsl:otherwise>
-          7
+          4
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="taxRowCount">
+      <xsl:choose>
+        <xsl:when test="count(data/Table1) &gt; 0">
+          <xsl:value-of select="count(data/Table1)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          3
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="rowSpan" select="number($baseRowSpan) + number($taxRowCount)"/>
 
 
 
@@ -429,37 +485,21 @@
                     <xsl:value-of select="util:FormatNumber(data/Table/discount)" />
                   </td>
                 </tr>
-                <tr class="table-row">
-                  <td class="text-right table-cell" colspan="2">
-                    IGST ( <xsl:value-of select="data/Table/IGSTRate"/> % )
-                  </td>
-                  <td class="text-right" >
-                    <xsl:value-of select="util:FormatNumber(sum(data/Table/IGST) +  data/Table/chargesTaxIGST + data/Table/FreightIGST   )"/>
-                  </td>
-                </tr>
-                <tr class="table-row">
-                  <td class="text-right table-cell" colspan="2">
-                    SGST ( <xsl:value-of select="data/Table/SGSTRate"/> % )
-                  </td>
-                  <td   class="text-right" >
-                    <xsl:value-of select="util:FormatNumber(sum(data/Table/SGST) + data/Table/chargesTaxSGST + data/Table/FreightSGST)"/>
-                  </td>
-                </tr>
-                <tr class="table-row">
-                  <td class="text-right table-cell" colspan="2">
-                    CGST ( <xsl:value-of select="data/Table/CGSTRate"/> % )
-                  </td>
-                  <td   class="text-right table-cell" >
-                    <xsl:value-of select="util:FormatNumber(sum(data/Table/CGST) + data/Table/chargesTaxSGST + data/Table/FreightSGST)"/>
-                  </td>
-                </tr>
+                <xsl:call-template name="printSaleBillTaxSection"/>
 
                 <tr class="table-row">
                   <td class="text-right table-cell" colspan="2">
                     Total
                   </td>
                   <td   class="text-right table-cell" >
-                    <xsl:value-of select="util:FormatNumber(data/Table/Total)" />
+                    <xsl:choose>
+                      <xsl:when test="count(data/Table1) &gt; 0">
+                        <xsl:value-of select="util:FormatNumber(sum(data/Table/SubTotal) - number(data/Table/discount) + number(data/Table/Freight) + number(data/Table/OtherChargeAmount) + sum(data/Table1/Amount | data/Table1/TaxAmount))"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="util:FormatNumber(data/Table/Total)" />
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </td>
                 </tr>
                 <tr class="table-row">

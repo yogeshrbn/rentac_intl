@@ -1,0 +1,93 @@
+<md-dialog style="width:60%;">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{isEdit ? 'Edit Tax' : 'Add Tax'}}</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="closeDialog()">
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout="row" layout-wrap layout-margin layout-align="center">
+        <form id="form-tax" method="post" class="form-horizontal form-bordered">
+            <div class="form-group">
+                <div class="col-sm-6 col-xs-12">
+                    <label>Name *</label>
+                    <input type="text" class="form-control" name="name" ng-model="Tax.Name" maxlength="100" required />
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <label>Code *</label>
+                    <input type="text" class="form-control" name="code" ng-model="Tax.Code" maxlength="20" required />
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <label>Rate *</label>
+                    <input type="number" class="form-control" name="rate" ng-model="Tax.Rate" min="0" step="0.0001" required />
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <label>Rate Type *</label>
+                    <select class="form-control" name="rateType" ng-model="Tax.RateType" required>
+                        <option value="Percentage">Percentage</option>
+                        <option value="Fixed">Fixed</option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <label>Country</label>
+                    <input type="text" class="form-control" name="country" ng-model="Tax.Country" maxlength="10" />
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <label>Location</label>
+                    <input type="text" class="form-control" name="location" ng-model="Tax.Location" maxlength="100" />
+                </div>
+                <div class="col-sm-12 col-xs-12">
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" ng-model="Tax.Description" maxlength="500" rows="2"></textarea>
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>Effective From *</label>
+                    <input type="date" class="form-control" name="effectiveFrom" ng-model="Tax.EffectiveFrom" required />
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>Effective To</label>
+                    <input type="date" class="form-control" name="effectiveTo" ng-model="Tax.EffectiveTo" />
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>Applicable To</label>
+                    <input type="text" class="form-control" name="applicableTo" ng-model="Tax.ApplicableTo" maxlength="50" />
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>Customer Type</label>
+                    <input type="text" class="form-control" name="customerType" ng-model="Tax.CustomerType" maxlength="50" />
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>Min Amount</label>
+                    <input type="number" class="form-control" name="minAmount" ng-model="Tax.MinAmount" min="0" step="0.01" />
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>Max Amount</label>
+                    <input type="number" class="form-control" name="maxAmount" ng-model="Tax.MaxAmount" min="0" step="0.01" />
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>
+                        <input type="checkbox" ng-model="Tax.IsActive" /> Active
+                    </label>
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>
+                        <input type="checkbox" ng-model="Tax.IsCompound" /> Compound
+                    </label>
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label>
+                        <input type="checkbox" ng-model="Tax.IsDefault" /> Default
+                    </label>
+                </div>
+            </div>
+        </form>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <div class="pull-right">
+            <button ng-click="closeDialog()" class="btn btn-danger" value="Close">Close</button>
+            <span flex></span>
+            <button ng-click="OkButtonClick()" class="btn btn-primary" value="Save">Save</button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

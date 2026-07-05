@@ -13,13 +13,34 @@
             <div class="form-group row">
                 <label class="col-sm-6 control-label">Apply Tax</label>
                 <div class="col-sm-6">
-                    <input type="checkbox" ng-model="Billing.applyTax" ng-disabled="Billing.IsCashBill" />
+                    <input type="checkbox" ng-model="Billing.applyTax" ng-disabled="Billing.IsCashBill" ng-change="ApplyGST = Billing.applyTax" />
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-6 control-label">Cash bill</label>
                 <div class="col-sm-6">
-                    <input type="checkbox" ng-model="Billing.IsCashBill" ng-change="Billing.IsCashBill && (Billing.applyTax = false)" />
+                    <input type="checkbox" ng-model="Billing.IsCashBill" ng-change="Billing.IsCashBill && (Billing.applyTax = false) && (ApplyGST = false)" />
+                </div>
+            </div>
+            <div class="form-group row" ng-if="Billing.applyTax">
+                <div class="col-sm-12">
+                    <label class="control-label">Tax on items</label>
+                    <div ng-repeat="tax in ItemTaxSettings" style="margin-top:6px;">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" ng-model="tax.Selected" />
+                            {{tax.TaxName}} <span ng-if="tax.TaxCode">({{tax.TaxCode}})</span>
+                        </label>
+                        <span style="margin-left:8px;">Rate %</span>
+                        <input type="text" class="form-control maskednumber"
+                               style="display:inline-block;width:90px;vertical-align:middle;"
+                               ng-model="tax.Rate"
+                               ng-disabled="!tax.Selected" />
+                    </div>
+                    <p class="text-muted" style="font-size:12px;margin-top:6px;">
+                        Selected taxes override product tax category. Leave all unchecked to use product categories.
+                    </p>
+                    <input type="checkbox" ng-model="ApplyFreightGST" /> <label>Apply Tax On Freight</label><br />
+                    <input type="checkbox" ng-model="ApplyOtherChargeGST" /> <label>Apply Tax On Other Charges</label>
                 </div>
             </div>
             <div class="form-group row">

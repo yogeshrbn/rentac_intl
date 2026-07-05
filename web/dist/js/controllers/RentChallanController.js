@@ -1,7 +1,7 @@
 app.controller('RentChallanController', function ($scope, $rootScope, $route, $state, $stateParams, $mdDialog, $window, $filter,
     LedgerFactory, StorageService,
     InventoryFactory, ModalFactory, CompanyService, EmployeeService, WorkOrderFactory, toaster,
-    $crypto, CompanyService, WarehouseService, ChallanService, AuthenticationService, $q) {
+    $crypto, CompanyService, WarehouseService, ChallanService, AuthenticationService, $q, ChallanTaxService, TaxService) {
     var wId = $stateParams.WorkOrderId == undefined ? 0 : $stateParams.WorkOrderId;
 
     var JobCardId = $stateParams.JobCardId == undefined ? 0 : $stateParams.JobCardId;
@@ -319,6 +319,33 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
             $scope.WorkOrder.LedgerId = item.LedgerId;
         }
     };
+    function recalculateChallanTaxes() {
+        if (!$scope.WorkOrder) {
+            return $q.when();
+        }
+
+        var result = ChallanTaxService.calculateChallanTaxes({
+            items: $scope.WorkOrder.Items,
+            allSizes: $scope.AllSizes,
+            taxCategories: $scope.TaxCategories,
+            applyGst: $scope.ApplyGST !== false && $scope.Config.applyTax !== false,
+            freight: $scope.WorkOrder.SiteInfo ? $scope.WorkOrder.SiteInfo.Freight : 0,
+            otherCharges: $filter('sumByKey')($scope.WorkOrder.OtherCharges, 'Amount'),
+            freightTax: $scope.Config.freightTax,
+            otherChargesTax: $scope.Config.otherChargesTax
+        });
+
+        $scope.WorkOrder.AppliedTaxes = result.appliedTaxes || [];
+        $scope.WorkOrder.TaxAmount = result.taxAmount || 0;
+        $scope.WorkOrder.Taxes = result.legacyTaxes || {
+            IGST: 0, IGSTAmount: 0,
+            SGST: 0, SGSTAmount: 0,
+            CGST: 0, CGSTAmount: 0
+        };
+
+        return $q.when();
+    }
+
     $scope.SubTotal = function (_total) {
         $scope.WorkOrder.TaxAmount = 0;
         if ($scope.WorkOrder == undefined) {
@@ -346,85 +373,28 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
         }
         $scope.WorkOrder.SubTotal = $scope.WorkOrder.SiteInfo.SubTotal = subTotal;
         $scope.WorkOrder.SubTotal1 = $scope.WorkOrder.SubTotal + parseFloat($scope.WorkOrder.SiteInfo.Freight);
-        var taxAmount = 0;
-        $scope.CalcTax();
-        if ($scope.WorkOrder.Taxes != null) {
+        recalculateChallanTaxes().then(function () {
+            var otherCharges = $filter('sumByKey')($scope.WorkOrder.OtherCharges, 'Amount');
+            $scope.WorkOrder.Total = $scope.WorkOrder.SubTotal
+                + parseFloat($scope.WorkOrder.SiteInfo.Freight)
+                + ($scope.WorkOrder.TaxAmount || 0)
+                + otherCharges;
 
-            /*    $scope.WorkOrder.Taxes.IGSTAmount = ($scope.WorkOrder.SubTotal1) * $scope.WorkOrder.Taxes.IGST / 100.00;  
-                    $scope.WorkOrder.Taxes.SGSTAmount = ($scope.WorkOrder.SubTotal1) * $scope.WorkOrder.Taxes.SGST / 100.00;        
-             $scope.WorkOrder.Taxes.CGSTAmount = ($scope.WorkOrder.SubTotal1) * $scope.WorkOrder.Taxes.CGST / 100.00;    */
-
-            taxAmount = $scope.WorkOrder.Taxes.IGSTAmount + $scope.WorkOrder.Taxes.SGSTAmount +
-                $scope.WorkOrder.Taxes.CGSTAmount;
-
-        }
-
-        var otherCharges = $filter('sumByKey')($scope.WorkOrder.OtherCharges, 'Amount');
-        // $scope.WorkOrder.TaxAmount = taxAmount;
-        $scope.WorkOrder.Total = $scope.WorkOrder.SubTotal + parseFloat($scope.WorkOrder.SiteInfo.Freight)
-            + $scope.WorkOrder.TaxAmount + otherCharges;
+            if (_total == 1) {
+                $scope.WorkOrder.Total = $scope.WorkOrder.SiteInfo.Total = $scope.WorkOrder.Total;
+            }
+        });
 
         if (_total == 1) {
-            // console.log($scope.WorkOrder.Taxes.length);
-            /*
-            old code
-            if ($scope.WorkOrder.Taxes != null) {
-                  for (var i = 0; i < $scope.WorkOrder.Taxes.length; i++) {
-                      if ($scope.WorkOrder.Taxes[i].Applicable) {
-                          taxAmount += ($scope.WorkOrder.SubTotal1) * $scope.WorkOrder.Taxes[i].Rate / 100.00;
-                      }
-                  }
-              } */
-            if ($scope.WorkOrder.Taxes != null) {
-
-                $scope.CalcTax();
-                // taxAmount = $scope.WorkOrder.Taxes.IGSTAmount + $scope.WorkOrder.Taxes.SGSTAmount + $scope.WorkOrder.Taxes.CGSTAmount;
-            }
-
-            $scope.WorkOrder.Total = $scope.WorkOrder.SiteInfo.Total =
-                $scope.WorkOrder.SubTotal + parseFloat($scope.WorkOrder.SiteInfo.Freight) + $scope.WorkOrder.TaxAmount + otherCharges;
             return $scope.WorkOrder.Total;
-        } else {
-            return subTotal;
         }
+
         return subTotal;
-
     };
+
     $scope.CalcTax = function () {
-        if (!$scope.WorkOrder.Taxes) {
-            $scope.WorkOrder.Taxes = {
-                IGSTAmount: 0, SGSTAmount: 0, CGSTAmount: 0,
-                IGST: 0, SGST: 0, CGST: 0,
-                IGSTRate: 0, SGSTRate: 0, CGSTRate: 0
-            };
-            return;
-        }
-        $scope.WorkOrder.Taxes.IGSTAmount = 0;
-        $scope.WorkOrder.Taxes.SGSTAmount = 0;
-        $scope.WorkOrder.Taxes.CGSTAmount = 0;
-
-        if (!$scope.WorkOrder.Taxes) {
-            return;
-        }
-        var amountToCalculateTax = $scope.WorkOrder.SubTotal;
-
-        if ($scope.Config.freightTax == true) {
-            amountToCalculateTax += parseFloat($scope.WorkOrder.SiteInfo.Freight);
-        }
-
-        if ($scope.Config.otherChargesTax == true) {
-            amountToCalculateTax +=
-                $filter('sumByKey')($scope.WorkOrder.OtherCharges, 'Amount');
-
-        }
-
-        $scope.WorkOrder.Taxes.IGSTAmount = (amountToCalculateTax) * $scope.WorkOrder.Taxes.IGST / 100.00;
-        $scope.WorkOrder.Taxes.SGSTAmount = (amountToCalculateTax) * $scope.WorkOrder.Taxes.SGST / 100.00;
-        $scope.WorkOrder.Taxes.CGSTAmount = (amountToCalculateTax) * $scope.WorkOrder.Taxes.CGST / 100.00;
-
-        $scope.WorkOrder.TaxAmount = $scope.WorkOrder.Taxes.IGSTAmount + $scope.WorkOrder.Taxes.SGSTAmount + $scope.WorkOrder.Taxes.CGSTAmount;
-
-    }
+        recalculateChallanTaxes();
+    };
     $scope.itemSelected = function (itemId) {
         //here itemId is selected index
 
@@ -574,89 +544,27 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
     }
 
     $scope.ApplyGST = true;
-    $scope.$watch('ApplyGST', function (e) {
-
-        if ($scope.ApplyGST == false) {
+    $scope.$watch('ApplyGST', function () {
+        if ($scope.ApplyGST === false) {
+            $scope.WorkOrder.AppliedTaxes = [];
+            $scope.WorkOrder.TaxAmount = 0;
             $scope.WorkOrder.Taxes = null;
         }
 
         $scope.ApplySiteConfig();
-        $scope.SubTotal(0);
-
     }, true);
     $scope.ApplySiteConfig = function () {
         $scope.ProductRates = [];
 
-        if ($scope.WorkOrder.SiteInfo.LedgerSiteId) {
-
-            var allTaxes = StaicData.TAX_CATEGORY;
-
-            if ($scope.LedgerSites == undefined) return;
-            var site = $scope.LedgerSites.find(o => o.LedgerSiteId == $scope.WorkOrder.SiteInfo.LedgerSiteId);
-            var partyStateIdForGST = $scope.Ledger.StateId;
-            if (site && allTaxes) {
-                if (site.UseForBilling == 1) {
-
-                    partyStateIdForGST = site.State;
-                }
-                var tax = allTaxes.find(o => o.TaxId == site.TaxCategoryId);
-                var config = $scope.Config;
-                if (tax) {
-                    //if (config && config.applyTax == false) {
-                    //    return;
-                    //}
-                    if ($scope.ApplyGST == false) {
-                        return;
-                    }
-
-                    var token = $rootScope.getTokenInfo();
-                    if (!$scope.WorkOrder.Taxes) {
-                        $scope.WorkOrder.Taxes = tax;
-                    }
-                    else {
-
-                        $scope.WorkOrder.Taxes.IGST = $scope.WorkOrder.Taxes.IGST != tax.IGST ? tax.IGST : $scope.WorkOrder.Taxes.IGST;
-                        $scope.WorkOrder.Taxes.SGST = $scope.WorkOrder.Taxes.SGST != tax.SGST ? tax.SGST : $scope.WorkOrder.Taxes.SGST;
-                        $scope.WorkOrder.Taxes.CGST = $scope.WorkOrder.Taxes.CGST != tax.CGST ? tax.CGST : $scope.WorkOrder.Taxes.CGST;
-
-                        //  if ($scope.Ledger.StateId == token.CompanyStateId) {
-                        if (partyStateIdForGST == token.CompanyStateId) {
-
-                            $scope.WorkOrder.Taxes.IGST = 0;
-                        }
-                        else {
-                            if ($scope.WorkOrder.Taxes.IGST > 0) {
-                                $scope.WorkOrder.Taxes.CGST = 0;
-                                $scope.WorkOrder.Taxes.SGST = 0;
-
-                            }
-                        }
-                        $scope.SubTotal(0);
-                        return;
-                        //$scope.WorkOrder.Total = $scope.WorkOrder.SiteInfo.Total = $scope.WorkOrder.SubTotal +
-                        //    parseFloat($scope.WorkOrder.SiteInfo.Freight) + $scope.WorkOrder.TaxAmount;
-
-                    }
-
-
-                    // if ($scope.Ledger.StateId == token.CompanyStateId) {
-                    if (site.State == token.CompanyStateId) {
-
-                        $scope.WorkOrder.Taxes.IGST = 0;
-                    }
-                    else {
-                        if ($scope.WorkOrder.Taxes.IGST > 0) {
-                            $scope.WorkOrder.Taxes.CGST = 0;
-                            $scope.WorkOrder.Taxes.SGST = 0;
-
-                        }
-                    }
-                }
-
-
-            }
+        if (!$scope.WorkOrder.SiteInfo.LedgerSiteId) {
+            return;
         }
-    }
+
+        getAllProducts();
+        recalculateChallanTaxes().then(function () {
+            $scope.SubTotal(0);
+        });
+    };
 
 
     function getLedgerDetails() {
@@ -679,7 +587,18 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
         }, model);
 
     }
+    $scope.TaxCategories = [];
+
+    function loadTaxCategories() {
+        TaxService.getTaxCategories(null, true).then(function (response) {
+            if (response.data && response.data.Code === 200) {
+                $scope.TaxCategories = response.data.Data || [];
+            }
+        });
+    }
+
     getAllProductSizesByCompany();
+    loadTaxCategories();
 
     function getAllProductSizesByCompany() {
         var product = new $.Product();
@@ -905,6 +824,7 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
             if (model.ShipFrom)
                 model.ShipFrom = htmlEncode(model.ShipFrom);
 
+            model.AppliedTaxes = $scope.WorkOrder.AppliedTaxes || [];
             $scope.addWorkOrder(fileList, model);
         }
     };
@@ -1173,6 +1093,35 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
         // $(event.target).hide();
     }
 
+    function loadSavedChallanTaxes(siteId) {
+        if (!siteId) {
+            return;
+        }
+
+        var taxLoader = new $.WorkOrder({ SiteId: siteId });
+        taxLoader.GetTaxes(function (e) {
+            var lineTaxes = e.data || [];
+            var taxesByItem = {};
+
+            lineTaxes.forEach(function (tax) {
+                if (!taxesByItem[tax.WorkOrderItemId]) {
+                    taxesByItem[tax.WorkOrderItemId] = [];
+                }
+                taxesByItem[tax.WorkOrderItemId].push(tax);
+            });
+
+            ($scope.WorkOrder.Items || []).forEach(function (item) {
+                item.LineTaxes = taxesByItem[item.WorkOrderItemId] || [];
+            });
+
+            $scope.WorkOrder.AppliedTaxes = ChallanTaxService.aggregateUniqueTaxes(lineTaxes);
+            $scope.WorkOrder.TaxAmount = $scope.WorkOrder.AppliedTaxes.reduce(function (sum, tax) {
+                return sum + (parseFloat(tax.Amount) || 0);
+            }, 0);
+            $scope.WorkOrder.Taxes = ChallanTaxService.buildLegacyTaxSummary($scope.WorkOrder.AppliedTaxes);
+        });
+    }
+
     function init() {
 
         newRecord();
@@ -1184,6 +1133,7 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
         $scope.Trans.EntryType = $scope.TranType == 1 ? 8 : 9;
         //GetTaxes();
         getAllOtherCharges();
+        $scope.WorkOrder.AppliedTaxes = [];
         $scope.WorkOrder.Taxes = {
             IGST: 0, IGSTAmount: 0, SGST: 0,
             SGSTAmount: 0, CGST: 0, CGSTAmount: 0
@@ -1208,7 +1158,6 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
                     $scope.WorkOrder.Tnc = wOrder.Tnc;
                     // var siteObj = e.data[0];
                     var siteObj = e.data.Items[0];
-                    debugger
                     $scope.WorkOrder.SiteInfo.Freight = siteObj.Freight;
                     $scope.WorkOrder.WorkOrderDate = convertDate(siteObj.SentDate);
                     $scope.WorkOrder.RentStartDate = convertDate(siteObj.RentStartDate);
@@ -1240,8 +1189,9 @@ app.controller('RentChallanController', function ($scope, $rootScope, $route, $s
                         SGSTAmount: wOrder.SGSTAmount, CGST: wOrder.CGSTRate, CGSTAmount: wOrder.CGSTAmount
                     };
 
+                    loadSavedChallanTaxes(siteObj.SiteId);
+
                     $scope.WorkOrder.Remarks = wOrder.Remarks;
-                   
                     $scope.WorkOrder.SezDescription = wOrder.SezDescription || '';
                     $scope.WorkOrder.ShipFrom = wOrder.ShipFrom || '';
                     $scope.WorkOrder.RefNo = wOrder.RefNo;

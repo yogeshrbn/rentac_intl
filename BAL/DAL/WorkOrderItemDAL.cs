@@ -9,23 +9,20 @@ namespace BAL.DAL
 {
     internal class WorkOrderItemDAL
     {
-        public void Save(WorkOrderItemDTO dto, SQL objSql)
+        public int Save(WorkOrderItemDTO dto, SQL objSql)
         {
             try
             {
-
-                //   objSql.AddParameter("@WorkOrderId", DbType.Int64, ParameterDirection.Input, 0, dto.WorkOrder.WorkOrderId);
                 objSql.AddParameter("@ProductId", DbType.Int64, ParameterDirection.Input, 0, dto.ProductId);
                 objSql.AddParameter("@Rate", DbType.Double, ParameterDirection.Input, 0, dto.Rate);
                 objSql.AddParameter("@SubTotal", DbType.Double, ParameterDirection.Input, 0, dto.SubTotal);
                 objSql.AddParameter("@PurchaseQty", DbType.Double, ParameterDirection.Input, 0, dto.PurchaseQty);
                 objSql.AddParameter("@SiteId", DbType.Int32, ParameterDirection.Input, 0, dto.SiteId);
                 objSql.AddParameter("@Mode", DbType.Int16, ParameterDirection.Input, 0, Convert.ToInt16(dto.SiteItemType));
-                
+
                 objSql.AddParameter("@igst", DbType.Double, ParameterDirection.Input, 0, dto.IGSTAmount);
                 objSql.AddParameter("@cgst", DbType.Double, ParameterDirection.Input, 0, dto.CGSTAmount);
                 objSql.AddParameter("@sgst", DbType.Double, ParameterDirection.Input, 0, dto.SGSTAmount);
-        
 
                 if (dto.ProductSizeId > 0)
                 {
@@ -34,25 +31,26 @@ namespace BAL.DAL
                 if (dto.GroupItemId > 0)
                 {
                     objSql.AddParameter("@GroupItemId", DbType.Int32, ParameterDirection.Input, 0, dto.GroupItemId);
-
                 }
                 if (dto.WorkOrderItemId > 0)
                 {
                     objSql.AddParameter("@WorkOrderItemId", DbType.Int32, ParameterDirection.Input, 0, dto.WorkOrderItemId);
                     objSql.ExecuteNonQuery(UPDATE);
-                }
-                else
-                {
-                    objSql.ExecuteNonQuery(SAVE);
+                    return dto.WorkOrderItemId;
                 }
 
+                var result = objSql.ExecuteScalar(SAVE);
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result);
+                }
+
+                return 0;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-
         }
 
         #region StoredProcedures

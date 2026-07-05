@@ -17,6 +17,7 @@ namespace BAL.DTO
         // public int StateId { get; set; }
         public string StateName { get; set; }
         public string Project { get; set; }
+ 
 
         public string SiteGST { get; set; }
         //public string State { get; set; }

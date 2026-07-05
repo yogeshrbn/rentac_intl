@@ -20,6 +20,84 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template name="quotationTaxRowName">
+    <xsl:choose>
+      <xsl:when test="normalize-space(TaxName) != ''">
+        <xsl:value-of select="TaxName"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="Name"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="printQuotationLineTaxesDetailed">
+    <xsl:for-each select="d/data/Table1">
+      <tr class="table-row">
+        <th class="text-right table-cell" colspan="2">
+          <xsl:call-template name="quotationTaxRowName"/>
+          <xsl:text> (</xsl:text>
+          <xsl:value-of select="format-number(number(Rate), '#0.##')"/>
+          <xsl:text>%)</xsl:text>
+        </th>
+        <th class="text-right table-cell">
+          <xsl:value-of select="format-number(number(Amount | TaxAmount), '#,##0.00')"/>
+        </th>
+      </tr>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="printQuotationHeaderTaxesDetailed">
+    <xsl:if test="number(d/data/Table/FreightTax) &gt; 0">
+      <tr class="table-row">
+        <th class="text-right table-cell" colspan="2">Freight Tax</th>
+        <th class="text-right table-cell">
+          <xsl:value-of select="format-number(number(d/data/Table/FreightTax), '#,##0.00')"/>
+        </th>
+      </tr>
+    </xsl:if>
+    <xsl:if test="number(d/data/Table/chargesTax) &gt; 0">
+      <tr class="table-row">
+        <th class="text-right table-cell" colspan="2">Other Charges Tax</th>
+        <th class="text-right table-cell">
+          <xsl:value-of select="format-number(number(d/data/Table/chargesTax), '#,##0.00')"/>
+        </th>
+      </tr>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="printQuotationLegacyGstDetailed">
+    <tr class="table-row">
+      <th class="text-right table-cell" colspan="2">IGST<xsl:variable name="igstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'IGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($igstPct)) &gt; 0"> (<xsl:value-of select="$igstPct"/>%)</xsl:if></th>
+      <th class="text-right table-cell">
+        <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#,##0.00')"/>
+      </th>
+    </tr>
+    <tr class="table-row">
+      <th class="text-right table-cell" colspan="2">SGST<xsl:variable name="sgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'SGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($sgstPct)) &gt; 0"> (<xsl:value-of select="$sgstPct"/>%)</xsl:if></th>
+      <th class="text-right table-cell">
+        <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#,##0.00')"/>
+      </th>
+    </tr>
+    <tr class="table-row">
+      <th class="text-right table-cell" colspan="2">CGST<xsl:variable name="cgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'CGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($cgstPct)) &gt; 0"> (<xsl:value-of select="$cgstPct"/>%)</xsl:if></th>
+      <th class="text-right table-cell">
+        <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#,##0.00')"/>
+      </th>
+    </tr>
+  </xsl:template>
+
+  <xsl:template name="printQuotationTaxSectionDetailed">
+    <xsl:choose>
+      <xsl:when test="count(d/data/Table1) &gt; 0">
+        <xsl:call-template name="printQuotationLineTaxesDetailed"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="printQuotationLegacyGstDetailed"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="/">
     <xsl:variable name="qType" select="d/data/Table/QuotationType" />
     <xsl:variable name="rowsToSpan" select="d/rowsToSpan" />
@@ -489,24 +567,7 @@
                   </xsl:if>
 
 
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">IGST<xsl:variable name="igstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'IGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($igstPct)) > 0"> (<xsl:value-of select="$igstPct"/>%)</xsl:if></th>
-                    <th  class="text-right table-cell">
-                      <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">SGST<xsl:variable name="sgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'SGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($sgstPct)) > 0"> (<xsl:value-of select="$sgstPct"/>%)</xsl:if></th>
-                    <th   class="text-right  table-cell" >
-                      <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">CGST<xsl:variable name="cgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'CGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($cgstPct)) > 0"> (<xsl:value-of select="$cgstPct"/>%)</xsl:if></th>
-                    <th   class="text-right  table-cell" >
-                      <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
+                  <xsl:call-template name="printQuotationTaxSectionDetailed"/>
                   <xsl:if test="d/data/Table/DiscountAmount > 0">
                     <tr>
                       <th class="text-right table-cell" colspan="2"  >Discount</th>
@@ -858,24 +919,7 @@
                   </xsl:if>
 
 
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">IGST<xsl:variable name="igstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'IGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($igstPct)) > 0"> (<xsl:value-of select="$igstPct"/>%)</xsl:if></th>
-                    <th  class="text-right table-cell">
-                      <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">SGST<xsl:variable name="sgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'SGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($sgstPct)) > 0"> (<xsl:value-of select="$sgstPct"/>%)</xsl:if></th>
-                    <th   class="text-right  table-cell" >
-                      <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">CGST<xsl:variable name="cgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'CGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($cgstPct)) > 0"> (<xsl:value-of select="$cgstPct"/>%)</xsl:if></th>
-                    <th   class="text-right  table-cell" >
-                      <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
+                  <xsl:call-template name="printQuotationTaxSectionDetailed"/>
                   <xsl:if test="d/data/Table/DiscountAmount > 0">
                     <tr>
                       <th class="text-right table-cell" colspan="2"  >Discount</th>
@@ -1213,24 +1257,7 @@
                   </xsl:if>
 
 
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">IGST<xsl:variable name="igstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'IGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($igstPct)) > 0"> (<xsl:value-of select="$igstPct"/>%)</xsl:if></th>
-                    <th  class="text-right table-cell">
-                      <xsl:value-of select="format-number(sum(d/data/Table/IGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">SGST<xsl:variable name="sgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'SGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($sgstPct)) > 0"> (<xsl:value-of select="$sgstPct"/>%)</xsl:if></th>
-                    <th   class="text-right  table-cell" >
-                      <xsl:value-of select="format-number(sum(d/data/Table/SGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
-                  <tr class="table-row">
-                    <th class="text-right table-cell" colspan="2">CGST<xsl:variable name="cgstPct"><xsl:call-template name="summaryGstPercent"><xsl:with-param name="component" select="'CGST'"/></xsl:call-template></xsl:variable><xsl:if test="string-length(normalize-space($cgstPct)) > 0"> (<xsl:value-of select="$cgstPct"/>%)</xsl:if></th>
-                    <th   class="text-right  table-cell" >
-                      <xsl:value-of select="format-number(sum(d/data/Table/CGST),'#,##0.00')"/>
-                    </th>
-                  </tr>
+                  <xsl:call-template name="printQuotationTaxSectionDetailed"/>
                   <xsl:if test="d/data/Table/DiscountAmount > 0">
                     <tr>
                       <th class="text-right table-cell" colspan="2"  >Discount</th>

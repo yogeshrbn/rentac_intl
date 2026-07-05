@@ -24,7 +24,7 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="alert alert-info" style="padding:6px !important"  >
+                        <div class="alert alert-info" style="padding:6px !important">
                             <span> City: {{SelectedLedger.City}}</span>
                             <span>| Phone: {{SelectedLedger.Phone1}}</span>
                         </div>
@@ -490,21 +490,29 @@
                                     <div class="row">
                                         <div class="col-sm-7">
                                             <span>
-                                                <input type="checkbox" ng-model="ApplyGST" /> <label>Apply GST On Items</label><br />
+                                                <input type="checkbox" ng-model="ApplyGST" /> <label>Apply Tax On Items</label><br />
                                             </span>
                                             <div class="form-horizontal" style="margin-bottom:10px;">
-                                                <label class="control-label">GST on items (taxable = line subtotal after line discount)</label>
-                                                <div style="margin-top:6px;">
-                                                    <label class="checkbox-inline"><input type="checkbox" ng-model="Trans.IGST" /> IGST</label>
-                                                    <label class="checkbox-inline"><input type="checkbox" ng-model="Trans.CGST" /> CGST</label>
-                                                    <label class="checkbox-inline"><input type="checkbox" ng-model="Trans.SGST" /> SGST</label>
-                                                    <span style="margin-left:12px;">Rate %</span>
-                                                    <input type="text" class="form-control maskednumber" style="display:inline-block;width:90px;vertical-align:middle;" ng-model="Trans.GstRate" />
+                                                <label class="control-label">Tax on items (taxable = line subtotal after line discount)</label>
+                                                <div ng-repeat="tax in ItemTaxSettings" style="margin-top:6px;">
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" ng-model="tax.Selected" ng-change="SubTotal(0)" />
+                                                        {{tax.TaxName}} <span ng-if="tax.TaxCode">({{tax.TaxCode}})</span>
+                                                    </label>
+                                                    <span style="margin-left:8px;">Rate %</span>
+                                                    <input type="text" class="form-control maskednumber"
+                                                           style="display:inline-block;width:90px;vertical-align:middle;"
+                                                           ng-model="tax.Rate"
+                                                           ng-change="SubTotal(0)"
+                                                           ng-disabled="!tax.Selected" />
                                                 </div>
-                                                <p class="text-muted" style="font-size:12px;margin-top:6px;">Each selected component adds taxable &times; (rate / 100). Multiple selections stack. Applies only to lines whose product tax category is not zero-rated (same rule as registered party).</p>
+                                                <p class="text-muted" style="font-size:12px;margin-top:6px;">
+                                                    Selected taxes apply to all lines and override product tax category.
+                                                    Leave all unchecked to use each product's tax category.
+                                                </p>
                                             </div>
-                                            <input type="checkbox" ng-model="ApplyFreightGST" /> <label>Apply GST On Freight</label><br />
-                                            <input type="checkbox" ng-model="ApplyOtherChargeGST" /> <label>Apply GST On Other Charges</label>
+                                            <input type="checkbox" ng-model="ApplyFreightGST" /> <label>Apply Tax On Freight</label><br />
+                                            <input type="checkbox" ng-model="ApplyOtherChargeGST" /> <label>Apply Tax On Other Charges</label>
                                             <div ng-if="Trans.QuotationType == 16" style="margin-top:12px;">
                                                 <label class="control-label">Line total calculation</label>
                                                 <div>
@@ -538,7 +546,7 @@
                                     <td class="text-right">SubTotal</td>
                                     ss
                                     <td class="text-right" width="80px">
-                                        {{ SubTotal(0) |number:2}}
+                                        {{ Trans.SubTotal |number:2}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -581,35 +589,11 @@
                                         <input type="text" ng-model="Trans.FreightIn" class="form-control maskednumber" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr ng-repeat="tax in Trans.AppliedTaxes">
                                     <td class="text-right">
-                                        IGST<span ng-if="quotationSummaryGstRate('IGST')"> ({{quotationSummaryGstRate('IGST')}}%)</span>
+                                        {{tax.TaxName}} ({{tax.Rate}}{{tax.RateType === 'Fixed' ? '' : '%'}})
                                     </td>
-                                    <td class="text-right">{{Trans.Items|sum:'IGST' |number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        CGST<span ng-if="quotationSummaryGstRate('CGST')"> ({{quotationSummaryGstRate('CGST')}}%)</span>
-                                    </td>
-                                    <td class="text-right">{{Trans.Items|sum:'CGST' |number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        SGST<span ng-if="quotationSummaryGstRate('SGST')"> ({{quotationSummaryGstRate('SGST')}}%)</span>
-                                    </td>
-                                    <td class="text-right">{{Trans.Items|sum:'SGST' |number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        Freight Tax({{Trans.FreightTaxRate}} %)
-                                    </td>
-                                    <td class="text-right">{{Trans.FreightTax  |number:2}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right">
-                                        Other Charges Tax({{Trans.ChargesTaxRate}} %)
-                                    </td>
-                                    <td class="text-right">{{Trans.ChargesTax  |number:2}}</td>
+                                    <td class="text-right">{{tax.Amount | number:2}}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-right text-bold">

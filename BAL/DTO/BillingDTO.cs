@@ -39,6 +39,9 @@ namespace BAL.DTO
 
         /// <summary>Contract bill from contractInfo: quotation ids chosen in the picker (linked to invoice after save).</summary>
         public List<int> BillQuotationIds { get; set; }
+
+        /// <summary>Aggregated unique taxes for sale bill display (InvoiceType 4 / 7).</summary>
+        public List<InvoiceTaxDTO> AppliedTaxes { get; set; }
     }
     public class QuotationDataDTO : QuotationDTO
     {
@@ -89,6 +92,7 @@ namespace BAL.DTO
         public double IGST { get; set; }
         public double CGST { get; set; }
         public double SGST { get; set; }
+        public int TaxCategoryId { get; set; }
     }
     public class BillingItemDTO : InvoiceItemDTO
     {
@@ -139,6 +143,9 @@ namespace BAL.DTO
 
         /// <summary>Contract measure (InvoiceType 5, QuotationType 16): optional per-line subtotal mode; empty = use <see cref="BillingDTO.LineTotalMode"/>.</summary>
         public string LineTotalMode { get; set; }
+
+        /// <summary>Dynamic taxes applied on this invoice line (InvoiceType 4 / 7).</summary>
+        public List<InvoiceTaxDTO> LineTaxes { get; set; }
 
     }
 

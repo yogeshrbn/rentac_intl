@@ -70,14 +70,24 @@
                     <label>TAN</label>
                     <input type="text" id="Url1" tabindex="8" ng-model="Company.Props.TAN" class="form-control" maxlength="10" />
                 </div>
+                <!--<div class="col-lg-6 col-md-4 col-sm-4">
+        <label>GST No.</label>
+
+        <div class="input-group" style="margin:0px;">
+            <input type="text" id="Text1" tabindex="16" ng-model="Company.Props.GSTNo" maxlength="15" class="form-control" placeholder="Your username..">
+            <span class="input-group-btn">
+                <button class="btn btn-success" type="button" ng-click="verifyGST()">Verify</button>
+            </span>
+        </div>
+    </div>-->
                 <div class="col-lg-6 col-md-4 col-sm-4">
-                    <label>GST No.</label>
+                    <label>VAT</label>
 
                     <div class="input-group" style="margin:0px;">
-                        <input type="text" id="Text1" tabindex="16" ng-model="Company.Props.GSTNo" maxlength="15" class="form-control" placeholder="Your username..">
-                        <span class="input-group-btn">
+                        <input type="text" id="Text1" tabindex="16" ng-model="Company.Props.VAT" maxlength="15" class="form-control" placeholder="Your username..">
+                        <!--<span class="input-group-btn">
                             <button class="btn btn-success" type="button" ng-click="verifyGST()">Verify</button>
-                        </span>
+                        </span>-->
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-4 col-sm-4">
@@ -99,16 +109,16 @@
                     </multi-select-dropdown>
                 </div>
                 <div class="col-lg-6 col-md-4 col-sm-4">
-                    <label>Default Warehouse</label>               
+                    <label>Default Warehouse</label>
                     <select class="form-control" ng-model="Company.Props.DefaultWarehouseId">
                         <option ng-selected="Company.Props.DefaultWarehouseId == item.WarehouseId" ng-repeat="item in selectedWarehouses" ng-value="item.WarehouseId">{{item.Name}}</option>
                     </select>
 
                 </div>
                 <!--<div class="col-lg-6 col-md-4 col-sm-4">
-                    <label>Report Header</label>
-                    <input type="text" id="Text6" tabindex="3" ng-model="Company.Props.ReportHeader" class="form-control" />
-                </div>-->
+        <label>Report Header</label>
+        <input type="text" id="Text6" tabindex="3" ng-model="Company.Props.ReportHeader" class="form-control" />
+    </div>-->
 
 
                 <div class="clearfix">&nbsp;</div>

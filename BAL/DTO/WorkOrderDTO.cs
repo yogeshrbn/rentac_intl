@@ -26,6 +26,7 @@ namespace BAL.DTO
         //  public ChallanType Type { get; set; }
         public List<WorkOrderItemDTO> Items { get; set; }
         public List<TaxDTO> ApplicableTaxes { get; set; }
+        public List<WorkOrderTaxDTO> AppliedTaxes { get; set; }
         public List<WorkOrderChageDTO> OtherCharges { get; set; }
         public string Number { get; set; }
         public String Client { get; set; }

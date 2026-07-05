@@ -363,6 +363,7 @@ namespace BAL.Objects
                 var p = allProducts.Where(o => o.ProductId == bItem.ProductId).FirstOrDefault();
                 if (p != null)
                 {
+                    bItem.TaxCategoryId = p.TaxCategoryId;
                     var tax = taxCategories.Where(o => o.TaxCategoryId == p.TaxCategoryId).FirstOrDefault();
                     if (tax != null)
                     {
@@ -401,6 +402,7 @@ namespace BAL.Objects
                     var p = allProducts.Where(o => o.ProductId == bItem.ProductId).FirstOrDefault();
                     if (p != null)
                     {
+                        bItem.TaxCategoryId = p.TaxCategoryId;
                         var rate = rates.Where(o => o.ProductId == bItem.ProductId).FirstOrDefault();
                         if (rate != null)
                         {
@@ -449,6 +451,7 @@ namespace BAL.Objects
                     if (p != null)
                     {
                         var rate = rates.Where(o => o.ProductId == bItem.ProductId).FirstOrDefault();
+                        bItem.TaxCategoryId = p.TaxCategoryId;
                         if (rate != null)
                         {
                             bItem.Rate = rate.DamageRate;
@@ -565,6 +568,7 @@ namespace BAL.Objects
                 if (tax == null)
                     continue;
                 double igstRate = 0, cgstRate = 0, sgstRate = 0;
+                row.TaxCategoryId = p.TaxCategoryId;
                 if (clientStateId == companyStateId)
                 {
                     sgstRate = tax.SGST;
@@ -2036,6 +2040,18 @@ namespace BAL.Objects
         {
             BillingDAL objBillingDAL = new BillingDAL();
             return objBillingDAL.GetQuotationItems(quotationId);
+        }
+
+        public List<QuotationTaxDTO> GetQuotationTaxes(int quotationId)
+        {
+            BillingDAL objBillingDAL = new BillingDAL();
+            return objBillingDAL.GetQuotationTaxes(quotationId);
+        }
+
+        public List<InvoiceTaxDTO> GetInvoiceTaxes(int invoiceId)
+        {
+            BillingDAL objBillingDAL = new BillingDAL();
+            return objBillingDAL.GetInvoiceTaxes(invoiceId);
         }
         public async Task<QuotationDTO> QuotationById(int quotationId, int companyId)
         {

@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using NReco.PdfGenerator;
 using System.Data;
 using BAL.DTO;
+using BAL.Helpers;
 using PdfSharp.Pdf.IO;
 using System.Windows.Shell;
 using BAL.Enums;
@@ -101,13 +102,20 @@ namespace BAL.Services
                 }
 
             }
+            QuotationPrintTaxHelper.ReplaceQuotationTaxTableForPrint(ds);
             var rowsToSpan = 6;
-            rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge1"]) > 0 ? 1 : 0;
-            rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge2"]) > 0 ? 1 : 0;
-            rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge3"]) > 0 ? 1 : 0;
-            rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge4"]) > 0 ? 1 : 0;
-            rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["charge5"]) > 0 ? 1 : 0;
-            rowsToSpan += Convert.ToDecimal(ds.Tables[0].Rows[0]["DiscountAmount"]) > 0 ? 1 : 0;
+            var firstRow = ds.Tables[0].Rows[0];
+            rowsToSpan += Convert.ToDecimal(firstRow["charge1"]) > 0 ? 1 : 0;
+            rowsToSpan += Convert.ToDecimal(firstRow["charge2"]) > 0 ? 1 : 0;
+            rowsToSpan += Convert.ToDecimal(firstRow["charge3"]) > 0 ? 1 : 0;
+            rowsToSpan += Convert.ToDecimal(firstRow["charge4"]) > 0 ? 1 : 0;
+            rowsToSpan += Convert.ToDecimal(firstRow["charge5"]) > 0 ? 1 : 0;
+            rowsToSpan += Convert.ToDecimal(firstRow["DiscountAmount"]) > 0 ? 1 : 0;
+            var lineTaxes = ds.Tables.Count > 1 ? ds.Tables[1] : null;
+            if (lineTaxes != null && lineTaxes.Rows.Count > 0)
+            {
+                rowsToSpan = rowsToSpan - 3 + lineTaxes.Rows.Count;
+            }
 
 
             var d = new { d = new { data = ds, items = productsToAdd, rowsToSpan = rowsToSpan } };
@@ -191,6 +199,7 @@ namespace BAL.Services
             {
                 ds.Tables[0].Rows[0]["CompanyLogo"] = docPath + "/comp/" + compLogo;
             }
+            QuotationPrintTaxHelper.ReplaceQuotationTaxTableForPrint(ds);
             var d = new { data = ds };
             string jsonText = JsonConvert.SerializeObject(d);
             // To convert JSON text contained in string json into an XML node

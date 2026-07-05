@@ -46,18 +46,24 @@
     var minDate = data.Tables[0].Compute("Min(From)", "");
     //var //lastDate = data.Tables[0].Compute("Max(To)", "");
     var lastDate = data.Tables[0].Rows[0]["BillTo"];
+    var hasDynamicTaxes = BillingTaxPrintHelper.HasDynamicTaxes(taxes);
+    var headerTaxes = BillingTaxPrintHelper.GetHeaderTaxAmounts(firstRow);
     var IGST = data.Tables[0].Compute("Sum(IGST)", "");
     var CGST = data.Tables[0].Compute("Sum(CGST)", "");
     var SGST = data.Tables[0].Compute("Sum(SGST)", "");
     decimal lossCharges = 0;
     decimal breakageCharges = 0;
+    decimal taxTotal = 0;
     decimal total = 0;
     var excessQty = data.Tables[0].Select("ExcessQty > 0");
     if (lossItems != null && lossItems.Rows.Count > 0)
     {
-        IGST += lossItems.Compute("Sum(IGST)", "");
-        SGST += lossItems.Compute("Sum(SGST)", "");
-        CGST += lossItems.Compute("Sum(CGST)", "");
+        if (!hasDynamicTaxes)
+        {
+            IGST += lossItems.Compute("Sum(IGST)", "");
+            SGST += lossItems.Compute("Sum(SGST)", "");
+            CGST += lossItems.Compute("Sum(CGST)", "");
+        }
         lossCharges = lossItems.Compute("Sum(Amount)", "");
         rowsToSpanAtBottom++;
     }
@@ -65,9 +71,12 @@
     {
         breakageCharges = breakageDamageDetailsList.Sum(o => o.Cost);
 
-        IGST += (decimal)breakageDamageDetailsList.Sum(o => o.IGST);
-        SGST += (decimal)breakageDamageDetailsList.Sum(o => o.SGST);
-        CGST += (decimal)breakageDamageDetailsList.Sum(o => o.CGST);
+        if (!hasDynamicTaxes)
+        {
+            IGST += (decimal)breakageDamageDetailsList.Sum(o => o.IGST);
+            SGST += (decimal)breakageDamageDetailsList.Sum(o => o.SGST);
+            CGST += (decimal)breakageDamageDetailsList.Sum(o => o.CGST);
+        }
     }
 
     if (breakageItems != null && breakageItems.Rows.Count > 0)
@@ -78,57 +87,73 @@
         //breakageCharges = breakageItems.Compute("Sum(SubTotal)", "");
     }
 
-    total = subTotal + +IGST + CGST + SGST + lossCharges + breakageCharges;
-    total += firstRow["Freight"] + firstRow["FreightTax"] + firstRow["ChargesTax"];
-    if (firstRow["Freight"] > 0)
+    if (hasDynamicTaxes)
+    {
+        taxTotal = BillingTaxPrintHelper.SumTaxAmount(taxes);
+        total = Convert.ToDecimal(subTotal) + lossCharges + breakageCharges;
+        total += BillingTaxPrintHelper.GetDecimal(firstRow, "Freight");
+        total += taxTotal + headerTaxes.FreightTax + headerTaxes.ChargesTax + headerTaxes.BreakageTax;
+    }
+    else
+    {
+        total = Convert.ToDecimal(subTotal) + Convert.ToDecimal(IGST) + Convert.ToDecimal(CGST) + Convert.ToDecimal(SGST) + lossCharges + breakageCharges;
+        total += BillingTaxPrintHelper.GetDecimal(firstRow, "Freight") + headerTaxes.FreightTax + headerTaxes.ChargesTax;
+        if (headerTaxes.FreightTax > 0)
+        {
+            if (Convert.ToDecimal(IGST) == 0)
+            {
+                SGST = Convert.ToDecimal(SGST) + headerTaxes.FreightTax / 2;
+                CGST = Convert.ToDecimal(CGST) + headerTaxes.FreightTax / 2;
+            }
+            else
+            {
+                IGST = Convert.ToDecimal(IGST) + headerTaxes.FreightTax;
+            }
+        }
+        if (headerTaxes.ChargesTax > 0)
+        {
+            if (Convert.ToDecimal(IGST) == 0)
+            {
+                SGST = Convert.ToDecimal(SGST) + headerTaxes.ChargesTax / 2;
+                CGST = Convert.ToDecimal(CGST) + headerTaxes.ChargesTax / 2;
+            }
+            else
+            {
+                IGST = Convert.ToDecimal(IGST) + headerTaxes.ChargesTax;
+            }
+        }
+    }
+
+    if (BillingTaxPrintHelper.GetDecimal(firstRow, "Freight") > 0)
     {
         rowsToSpanAtBottom += 1;
     }
-    if (firstRow["FreightTax"] > 0)
-    {
-        if (IGST == 0)
-        {
-            SGST += firstRow["FreightTax"] / 2;
-            CGST += firstRow["FreightTax"] / 2;
-
-        }
-        else
-        {
-            IGST += firstRow["FreightTax"];
-        }
-    }
-    if (firstRow["ChargesTax"] > 0)
-    {
-        if (IGST == 0)
-        {
-            SGST += firstRow["ChargesTax"] / 2;
-            CGST += firstRow["ChargesTax"] / 2;
-
-        }
-        else
-        {
-            IGST += firstRow["ChargesTax"];
-        }
-    }
     if (charges != null && charges.Rows.Count > 0)
     {
-        total += charges.Compute("Sum(Amount)", "");
+        total += Convert.ToDecimal(charges.Compute("Sum(Amount)", ""));
     }
-    total -= (firstRow["discount"] + firstRow["breakageDiscount"] + firstRow["lossDiscount"]);
+    total -= (BillingTaxPrintHelper.GetDecimal(firstRow, "discount") + BillingTaxPrintHelper.GetDecimal(firstRow, "breakageDiscount") + BillingTaxPrintHelper.GetDecimal(firstRow, "lossDiscount"));
     var totalBeforeRoundOf = total;
     total = Math.Round(total, MidpointRounding.AwayFromZero);
     var roundOf = Math.Abs(totalBeforeRoundOf - total);
-    if (IGST > 0)
+    if (hasDynamicTaxes)
     {
-        rowsToSpanAtBottom++;
+        rowsToSpanAtBottom += BillingTaxPrintHelper.CountTaxDisplayRows(taxes, headerTaxes);
     }
-    if (SGST > 0)
+    else
     {
-        rowsToSpanAtBottom++;
-    }
-    if (CGST > 0)
-    {
-        rowsToSpanAtBottom++;
+        if (Convert.ToDecimal(IGST) > 0)
+        {
+            rowsToSpanAtBottom++;
+        }
+        if (Convert.ToDecimal(SGST) > 0)
+        {
+            rowsToSpanAtBottom++;
+        }
+        if (Convert.ToDecimal(CGST) > 0)
+        {
+            rowsToSpanAtBottom++;
+        }
     }
     if (roundOf != 0)
     {
@@ -942,32 +967,66 @@
                             </tr>
                         }
                     }
-                    @if (IGST > 0)
+                    @if (hasDynamicTaxes)
                     {
-                        <tr class="table-row">
-
-                            <td colspan="2" class="table-cell border noborder_bl">IGST (@Convert.ToInt16(firstRow["IGSTRate"])%)</td>
-                            <td class="table-cell border noborder_bl text-right">@IGST.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
-
-                        </tr>
+                        foreach (System.Data.DataRow tax in taxes.Rows)
+                        {
+                            <tr class="table-row">
+                                <td colspan="2" class="table-cell border noborder_bl">@BillingTaxPrintHelper.GetTaxName(tax) (@BillingTaxPrintHelper.FormatAmount(BillingTaxPrintHelper.GetTaxRate(tax))%)</td>
+                                <td class="table-cell border noborder_bl text-right">@BillingTaxPrintHelper.FormatAmount(BillingTaxPrintHelper.GetTaxAmount(tax))</td>
+                            </tr>
+                        }
+                        if (headerTaxes.FreightTax > 0)
+                        {
+                            <tr class="table-row">
+                                <td colspan="2" class="table-cell border noborder_bl">Freight Tax</td>
+                                <td class="table-cell border noborder_bl text-right">@BillingTaxPrintHelper.FormatAmount(headerTaxes.FreightTax)</td>
+                            </tr>
+                        }
+                        if (headerTaxes.ChargesTax > 0)
+                        {
+                            <tr class="table-row">
+                                <td colspan="2" class="table-cell border noborder_bl">Other Charges Tax</td>
+                                <td class="table-cell border noborder_bl text-right">@BillingTaxPrintHelper.FormatAmount(headerTaxes.ChargesTax)</td>
+                            </tr>
+                        }
+                        if (headerTaxes.BreakageTax > 0)
+                        {
+                            <tr class="table-row">
+                                <td colspan="2" class="table-cell border noborder_bl">Breakage Tax</td>
+                                <td class="table-cell border noborder_bl text-right">@BillingTaxPrintHelper.FormatAmount(headerTaxes.BreakageTax)</td>
+                            </tr>
+                        }
                     }
-                    @if (CGST > 0)
+                    else
                     {
-                        <tr class="table-row">
+                        if (Convert.ToDecimal(IGST) > 0)
+                        {
+                            <tr class="table-row">
 
-                            <td colspan="2" class="table-cell border noborder_bl">CGST  (@Convert.ToInt16(firstRow["CGSTRate"])%)</td>
-                            <td class="table-cell border noborder_bl text-right">@CGST.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                <td colspan="2" class="table-cell border noborder_bl">IGST (@Convert.ToInt16(firstRow["IGSTRate"])%)</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(IGST).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
 
-                        </tr>
-                    }
-                    @if (SGST > 0)
-                    {
-                        <tr class="table-row">
+                            </tr>
+                        }
+                        if (Convert.ToDecimal(CGST) > 0)
+                        {
+                            <tr class="table-row">
 
-                            <td colspan="2" class="table-cell border noborder_bl">SGST  (@Convert.ToInt16(firstRow["SGSTRate"])%)</td>
-                            <td class="table-cell border noborder_bl text-right">@SGST.ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                <td colspan="2" class="table-cell border noborder_bl">CGST  (@Convert.ToInt16(firstRow["CGSTRate"])%)</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(CGST).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
 
-                        </tr>
+                            </tr>
+                        }
+                        if (Convert.ToDecimal(SGST) > 0)
+                        {
+                            <tr class="table-row">
+
+                                <td colspan="2" class="table-cell border noborder_bl">SGST  (@Convert.ToInt16(firstRow["SGSTRate"])%)</td>
+                                <td class="table-cell border noborder_bl text-right">@Convert.ToDecimal(SGST).ToString("N", System.Globalization.CultureInfo.InvariantCulture)</td>
+
+                            </tr>
+                        }
                     }
                     @if (firstRow["discount"] > 0)
                     {

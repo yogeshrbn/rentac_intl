@@ -46,6 +46,8 @@ namespace BAL.DTO
         public string TAN { get; set; }
         public Int16 AccountGroup { get; set; }
         public String GSTNo { get; set; }
+        public String VAT { get; set; }
+
         public double OpeningBal { get; set; }
         public Int16 TransType { get; set; }
         public short BalanceType { get; set; }

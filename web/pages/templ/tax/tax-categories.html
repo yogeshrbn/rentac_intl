@@ -1,0 +1,38 @@
+<div class="col-md-12">
+    <button class="btn btn-primary pull-right mb-1" ng-click="showAddForm()" ng-show="AccessData.Add">
+        <i class="fa fa-plus"></i> New Tax Category
+    </button>
+
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <tr class="headerRow">
+                <th class="text-center">Sr.No</th>
+                <th sort-header="categories" sort-field="TaxName">Tax Name</th>
+                <!--<th class="text-center">CGST (%)</th>
+                <th class="text-center">SGST (%)</th>
+                <th class="text-center">IGST (%)</th>-->
+                <th class="text-center">Actions</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="item in categories">
+                    <td class="text-center">{{$index + 1}}</td>
+                    <td>{{item.TaxName}}</td>
+                    <!--<td class="text-center">{{item.CGST}}</td>
+                    <td class="text-center">{{item.SGST}}</td>
+                    <td class="text-center">{{item.IGST}}</td>-->
+                    <td class="table-actions text-center">
+                        <a href="javascript:void(0)" ng-click="edit(item)" ng-show="AccessData.Edit">
+                            <i class="fa fa-edit fa-2x text-primary"></i>
+                        </a>
+                        &nbsp;
+                        <a href="javascript:void(0)" ng-click="deleteCategory(item)" ng-show="AccessData.Edit">
+                            <i class="fa fa-trash fa-2x text-danger"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+       
+       
+    </div>
+</div>

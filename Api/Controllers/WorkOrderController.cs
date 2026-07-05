@@ -210,23 +210,7 @@ namespace FarmaAPI.Controllers
                 }
 
                 //  }
-                wOrder.Sites[0].Taxes = new List<TaxDTO>();
-
-                //var taxInfo = jsonObject["AppliedTaxes"];
-                //if (taxInfo != null)
-                //{
-                //    foreach (var tax in taxInfo)
-                //    {
-                //        TaxDTO taxDto = new TaxDTO();
-                //        taxDto.TaxId = Convert.ToInt16(tax["TaxId"]);
-                //        taxDto.ItemValue = Convert.ToInt16(tax["ProductId"]);
-                //        taxDto.Rate = Convert.ToDouble(tax["TaxRate"]);
-                //        bool applicable = Convert.ToBoolean(tax["Applicable"]);
-                //        taxDto.TaxAmount = Convert.ToDouble(tax["TaxAmount"]);// (billingDTO.SubTotal + billingDTO.Freight + breakageAmount);
-
-                //        wOrder.Sites[0].Taxes.Add(taxDto);
-                //    }
-                //}
+                wOrder.Sites[0].AppliedTaxes = ParseWorkOrderTaxList(jsonObject["AppliedTaxes"]);
                 int workOrderId = wOrder.Save();
                 if (workOrderId > 0)
                 {
@@ -759,6 +743,7 @@ namespace FarmaAPI.Controllers
                 siteDto.GRNumber = Convert.ToString(siteInfo["GRNumber"]);
 
             siteDto.Items = woItems;
+            siteDto.AppliedTaxes = ParseWorkOrderTaxList(jsonObject["AppliedTaxes"]);
 
             //var taxInfo = jsonObject["Taxes"];
             //siteDto.Taxes = new List<TaxDTO>();
@@ -773,6 +758,39 @@ namespace FarmaAPI.Controllers
             //        siteDto.Taxes.Add(taxDto);
             //}
             return siteDto;
+        }
+
+        private static List<WorkOrderTaxDTO> ParseWorkOrderTaxList(JToken token)
+        {
+            var taxes = new List<WorkOrderTaxDTO>();
+            if (token == null)
+            {
+                return taxes;
+            }
+
+            foreach (var tax in token)
+            {
+                if (tax == null || tax["TaxId"] == null)
+                {
+                    continue;
+                }
+
+                taxes.Add(new WorkOrderTaxDTO
+                {
+                    TaxId =  Convert.ToInt32(tax["TaxId"]),
+                    TaxCategoryId = tax["TaxCategoryId"] != null ? Convert.ToInt32(tax["TaxCategoryId"]) : 0,
+                    TaxName = Convert.ToString(tax["TaxName"]),
+                    TaxCode = Convert.ToString(tax["TaxCode"]),
+                    Rate = tax["Rate"] != null ? Convert.ToDecimal(tax["Rate"]) : 0,
+                    RateType = tax["RateType"] != null ? Convert.ToString(tax["RateType"]) : "Percentage",
+                    Amount = tax["Amount"] != null ? Convert.ToDecimal(tax["Amount"]) : 0,
+                    WorkOrderItemId = tax["WorkOrderItemId"] != null ? Convert.ToInt32(tax["WorkOrderItemId"]) : 0,
+                    ProductId = tax["ProductId"] != null ? Convert.ToInt32(tax["ProductId"]) : 0,
+                    SiteId = tax["SiteId"] != null ? Convert.ToInt32(tax["SiteId"]) : 0
+                });
+            }
+
+            return taxes;
         }
 
         private static List<WorkOrderItemDTO> AddItemsToSite(JToken items)
@@ -798,6 +816,13 @@ namespace FarmaAPI.Controllers
                 itemDto.Rate = Convert.ToDouble(item["Rate"]);
                 itemDto.PurchaseQty = Convert.ToDouble(item["SentQty"]);
                 itemDto.SubTotal = itemDto.Rate * itemDto.PurchaseQty;
+
+                if (item["TaxCategoryId"] != null)
+                {
+                    itemDto.TaxCategoryId = Convert.ToInt32(item["TaxCategoryId"]);
+                }
+
+                itemDto.LineTaxes = ParseWorkOrderTaxList(item["LineTaxes"]);
                 woItems.Add(itemDto);
 
             }
